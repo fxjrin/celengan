@@ -17,11 +17,9 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
-import { CONTRACT_ID } from '@/lib/config'
+import { CONTRACT_ID, EXPLORER_CONTRACT_URL } from '@/lib/config'
 import { useT } from '@/lib/i18n'
 import { useSettings } from '@/lib/settings'
-
-const EXPLORER_URL = `https://stellar.expert/explorer/testnet/contract/${CONTRACT_ID}`
 
 function shortContract(id: string): string {
   return `${id.slice(0, 4)}...${id.slice(-4)}`
@@ -104,7 +102,7 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
               </span>
             </div>
             <a
-              href={EXPLORER_URL}
+              href={EXPLORER_CONTRACT_URL}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1 text-primary underline-offset-4 hover:underline"

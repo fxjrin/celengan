@@ -1,5 +1,7 @@
 import { useState } from 'react'
+import { Link2Icon } from 'lucide-react'
 import { toast } from 'sonner'
+import { PaymentLinkDialog } from '@/components/payment-link-dialog'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -33,6 +35,7 @@ export function ReceiveCard({ account, showFaucetRow, onFaucet }: ReceiveCardPro
   const { rate, busy, runAction } = useAppState()
   const { locale } = useSettings()
   const [value, setValue] = useState('')
+  const [linkOpen, setLinkOpen] = useState(false)
   const anyBusy = busy !== null
 
   const previewAmount = (): bigint => {
@@ -102,14 +105,26 @@ export function ReceiveCard({ account, showFaucetRow, onFaucet }: ReceiveCardPro
         </div>
         <p className="text-sm text-muted-foreground tabular-nums">{preview}</p>
       </CardContent>
-      {showFaucetRow && (
-        <CardFooter className="justify-between gap-2">
-          <p className="text-xs text-muted-foreground">{t('faucet.caption')}</p>
-          <Button variant="ghost" size="sm" disabled={anyBusy} onClick={onFaucet}>
-            {busy === 'faucet' ? `${t('common.loading')}...` : t('faucet.button')}
-          </Button>
-        </CardFooter>
-      )}
+      <CardFooter className="flex-col items-stretch gap-1">
+        {showFaucetRow && (
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-xs text-muted-foreground">{t('faucet.caption')}</p>
+            <Button variant="ghost" size="sm" disabled={anyBusy} onClick={onFaucet}>
+              {busy === 'faucet' ? `${t('common.loading')}...` : t('faucet.button')}
+            </Button>
+          </div>
+        )}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="justify-start gap-2 text-muted-foreground hover:text-foreground"
+          onClick={() => setLinkOpen(true)}
+        >
+          <Link2Icon className="size-4" />
+          {t('paylink.share')}
+        </Button>
+      </CardFooter>
+      <PaymentLinkDialog open={linkOpen} onOpenChange={setLinkOpen} />
     </Card>
   )
 }

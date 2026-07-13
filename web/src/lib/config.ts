@@ -8,3 +8,5 @@ export const USDC_ID: string =
   import.meta.env.VITE_USDC_ID ?? 'CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU'
 export const VAULT_ID: string =
   import.meta.env.VITE_VAULT_ID ?? 'CBMVK2JK6NTOT2O4HNQAIQFJY232BHKGLIMXDVQVHIIZKDACXDFZDWHN'
+
+export const EXPLORER_CONTRACT_URL = `https://stellar.expert/explorer/testnet/contract/${CONTRACT_ID}`

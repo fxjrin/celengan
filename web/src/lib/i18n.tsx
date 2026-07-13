@@ -15,9 +15,11 @@ const en = {
   'landing.feature3Title': 'Lock it in',
   'landing.feature3Body':
     'Set a lock date to keep your future self honest. Savings stay put until the day you choose.',
+  'landing.feature4Title': 'Get paid with a link',
+  'landing.feature4Body':
+    'Share your payment link or QR code. Customers pay in USDC and part of every sale goes straight to savings.',
   'landing.footer': 'Built on Stellar testnet. Demo funds only, no real money.',
 
-  'topbar.settings': 'Settings',
   'topbar.connect': 'Connect wallet',
   'topbar.disconnect': 'Disconnect',
   'topbar.connected': 'Connected',
@@ -27,6 +29,25 @@ const en = {
   'dashboard.connectTitle': 'Connect your wallet',
   'dashboard.connectCaption':
     'Every payment you receive lands in two pockets: one to spend, one that grows as savings.',
+
+  'greeting.morning': 'Good morning',
+  'greeting.afternoon': 'Good afternoon',
+  'greeting.evening': 'Good evening',
+  'greeting.night': 'Good night',
+
+  'nav.menu': 'Menu',
+  'nav.action': 'Action',
+  'nav.protocol': 'Protocol',
+  'nav.dashboard': 'Dashboard',
+  'nav.activity': 'Activity',
+  'nav.faucet': 'Get test USDC',
+  'nav.paymentLink': 'Payment link',
+  'nav.viewContract': 'View contract',
+  'nav.disconnect': 'Disconnect wallet',
+
+  'shell.openMenu': 'Open menu',
+  'shell.theme': 'Toggle theme',
+  'shell.copyAddress': 'Copy address',
 
   'onboarding.title': 'Get set up in three steps',
   'onboarding.step1Title': 'Connect your wallet',
@@ -74,7 +95,34 @@ const en = {
   'withdraw.sharesHint':
     'Savings are held as vault shares; the USDC you receive includes any yield earned.',
 
+  'pay.title': 'Pay {name}',
+  'pay.splitInfo': '{pct}% of this payment goes straight to their savings',
+  'pay.payingAs': 'Paying as',
+  'pay.button': 'Pay now',
+  'pay.connectCaption': 'Connect a Stellar wallet to pay. No account needed.',
+  'pay.successTitle': 'Payment sent',
+  'pay.successBody': 'You paid {amount} to {name}.',
+  'pay.payAgain': 'Pay again',
+  'pay.createOwn': 'Create your own Celengan',
+  'pay.invalidTitle': 'This payment link looks broken',
+  'pay.goHome': 'Go to Celengan',
+
+  'paylink.title': 'Your payment link',
+  'paylink.caption':
+    'Anyone with this link can pay you. Your split rule tucks part of every payment into savings automatically.',
+  'paylink.nameLabel': 'Display name',
+  'paylink.namePlaceholder': 'Shown to the payer, optional',
+  'paylink.amountLabel': 'Preset amount',
+  'paylink.amountPlaceholder': 'USDC, optional',
+  'paylink.copy': 'Copy link',
+  'paylink.share': 'Share your payment link',
+
   'activity.title': 'Activity',
+  'activity.viewAll': 'View all',
+  'activity.filterAll': 'All',
+  'activity.filterPayments': 'Payments',
+  'activity.filterWithdrawals': 'Withdrawals',
+  'activity.filterChanges': 'Changes',
   'activity.empty': 'Nothing here yet. Receive a payment to get things moving.',
   'activity.pay': 'Received {amount}, saved {saved}',
   'activity.wdSpend': 'Withdrew {amount} from spendable',
@@ -103,6 +151,7 @@ const en = {
   'faucet.success': 'Test funds are on the way to your wallet',
 
   'success.paid': 'Payment received and split',
+  'success.linkPaid': 'Payment sent',
   'success.withdrewSpend': 'Withdrawn to your wallet',
   'success.withdrewSavings': 'Savings withdrawn to your wallet',
   'success.splitSaved': 'Saving rule updated',
@@ -122,6 +171,7 @@ const en = {
   'errors.faucetUnavailable': 'The faucet is unavailable right now. Try again in a bit.',
   'errors.faucetAlreadyFunded': 'This wallet already has test funds.',
   'errors.loadFailed': 'Could not load your account. Check your connection and try again.',
+  'errors.invalidPayAddress': 'The address in this payment link is not a valid Stellar address.',
 
   'common.loading': 'Loading',
   'common.retry': 'Try again',
@@ -144,9 +194,11 @@ const id = {
   'landing.feature3Title': 'Kunci tabunganmu',
   'landing.feature3Body':
     'Pasang tanggal kunci supaya kamu tidak mudah tergoda. Tabungan tetap tersimpan sampai hari yang kamu pilih.',
+  'landing.feature4Title': 'Dibayar lewat tautan',
+  'landing.feature4Body':
+    'Bagikan tautan pembayaran atau kode QR-mu. Pelanggan membayar dengan USDC dan sebagian dari tiap penjualan langsung masuk tabungan.',
   'landing.footer': 'Dibangun di Stellar testnet. Dana demo saja, bukan uang sungguhan.',
 
-  'topbar.settings': 'Pengaturan',
   'topbar.connect': 'Hubungkan dompet',
   'topbar.disconnect': 'Putuskan',
   'topbar.connected': 'Terhubung',
@@ -156,6 +208,25 @@ const id = {
   'dashboard.connectTitle': 'Hubungkan dompetmu',
   'dashboard.connectCaption':
     'Setiap pembayaran yang kamu terima masuk ke dua kantong: satu siap dipakai, satu tumbuh jadi tabungan.',
+
+  'greeting.morning': 'Selamat pagi',
+  'greeting.afternoon': 'Selamat siang',
+  'greeting.evening': 'Selamat sore',
+  'greeting.night': 'Selamat malam',
+
+  'nav.menu': 'Menu',
+  'nav.action': 'Aksi',
+  'nav.protocol': 'Protokol',
+  'nav.dashboard': 'Dasbor',
+  'nav.activity': 'Aktivitas',
+  'nav.faucet': 'Ambil USDC uji',
+  'nav.paymentLink': 'Tautan pembayaran',
+  'nav.viewContract': 'Lihat kontrak',
+  'nav.disconnect': 'Putuskan dompet',
+
+  'shell.openMenu': 'Buka menu',
+  'shell.theme': 'Ganti tema',
+  'shell.copyAddress': 'Salin alamat',
 
   'onboarding.title': 'Siap dalam tiga langkah',
   'onboarding.step1Title': 'Hubungkan dompetmu',
@@ -204,7 +275,34 @@ const id = {
   'withdraw.sharesHint':
     'Tabungan disimpan sebagai unit vault; USDC yang kamu terima sudah termasuk imbal hasil.',
 
+  'pay.title': 'Bayar {name}',
+  'pay.splitInfo': '{pct}% dari pembayaran ini langsung masuk ke tabungannya',
+  'pay.payingAs': 'Membayar sebagai',
+  'pay.button': 'Bayar sekarang',
+  'pay.connectCaption': 'Hubungkan dompet Stellar untuk membayar. Tidak perlu akun.',
+  'pay.successTitle': 'Pembayaran terkirim',
+  'pay.successBody': 'Kamu membayar {amount} ke {name}.',
+  'pay.payAgain': 'Bayar lagi',
+  'pay.createOwn': 'Bikin Celengan-mu sendiri',
+  'pay.invalidTitle': 'Tautan pembayaran ini tidak valid',
+  'pay.goHome': 'Buka Celengan',
+
+  'paylink.title': 'Tautan pembayaranmu',
+  'paylink.caption':
+    'Siapa pun yang punya tautan ini bisa membayar kamu. Aturan porsimu otomatis menyisihkan sebagian dari tiap pembayaran ke tabungan.',
+  'paylink.nameLabel': 'Nama tampilan',
+  'paylink.namePlaceholder': 'Ditampilkan ke pembayar, opsional',
+  'paylink.amountLabel': 'Nominal awal',
+  'paylink.amountPlaceholder': 'USDC, opsional',
+  'paylink.copy': 'Salin tautan',
+  'paylink.share': 'Bagikan tautan pembayaranmu',
+
   'activity.title': 'Aktivitas',
+  'activity.viewAll': 'Lihat semua',
+  'activity.filterAll': 'Semua',
+  'activity.filterPayments': 'Pembayaran',
+  'activity.filterWithdrawals': 'Penarikan',
+  'activity.filterChanges': 'Perubahan',
   'activity.empty': 'Belum ada apa-apa. Terima pembayaran dulu untuk memulai.',
   'activity.pay': 'Terima {amount}, {saved} ditabung',
   'activity.wdSpend': 'Tarik {amount} dari dana siap pakai',
@@ -233,6 +331,7 @@ const id = {
   'faucet.success': 'Dana uji sedang meluncur ke dompetmu',
 
   'success.paid': 'Pembayaran diterima dan dibagi',
+  'success.linkPaid': 'Pembayaran terkirim',
   'success.withdrewSpend': 'Berhasil ditarik ke dompetmu',
   'success.withdrewSavings': 'Tabungan berhasil ditarik ke dompetmu',
   'success.splitSaved': 'Aturan menabung diperbarui',
@@ -252,6 +351,7 @@ const id = {
   'errors.faucetUnavailable': 'Faucet sedang tidak tersedia. Coba beberapa saat lagi.',
   'errors.faucetAlreadyFunded': 'Dompet ini sudah punya dana uji.',
   'errors.loadFailed': 'Tidak bisa memuat akunmu. Periksa koneksimu dan coba lagi.',
+  'errors.invalidPayAddress': 'Alamat di tautan pembayaran ini bukan alamat Stellar yang valid.',
 
   'common.loading': 'Memuat',
   'common.retry': 'Coba lagi',

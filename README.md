@@ -76,6 +76,13 @@ End-to-end check on testnet (faucet -> pay -> split -> vault -> withdraw):
    testnet USDC via the Blend faucet, trustline included).
 4. Simulate an incoming payment and watch it split between spendable and
    savings, then try both withdrawals, the savings rule slider, and the lock.
+5. Share your payment link (`/pay/<address>?name=...&amount=...`, with a QR
+   code) and pay it from a second wallet: the payer signs, the recipient's
+   split rule routes part of the payment straight into their vault.
+
+The app ships in English and Indonesian with a settings dialog for language
+and primary display currency; history is reconstructed from on-chain contract
+events, so it survives refreshes and device switches.
 
 ## Design notes
 
@@ -93,7 +100,7 @@ End-to-end check on testnet (faucet -> pay -> split -> vault -> withdraw):
 
 ## Roadmap
 
-- Merchant payment links and QR flow for real customer payments
+- Username registry so payment links read `/pay/budi` instead of an address
 - IDR display via an on-chain FX oracle once IDR feeds are available
   (Reflector's testnet FX feed does not serve IDR yet)
 - Anchor cash-out integration (SEP-31 style corridors like PeraHub in the

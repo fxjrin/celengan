@@ -8,10 +8,21 @@ import { formatDate, formatMoney, useT } from '@/lib/i18n'
 import { useSettings } from '@/lib/settings'
 import type { CelenganAccount } from '@/lib/types'
 
+const MIN_SEGMENT_PCT = 4 // keep tiny pockets visible on the bar
+
 type BalanceHeroProps = {
   account: CelenganAccount | null
   loading: boolean
   rate: number
+}
+
+function segmentWidths(spend: number, save: number): [number, number] {
+  const total = spend + save
+  if (total <= 0) return [0, 0]
+  let spendPct = (spend / total) * 100
+  if (spend > 0 && spendPct < MIN_SEGMENT_PCT) spendPct = MIN_SEGMENT_PCT
+  if (save > 0 && spendPct > 100 - MIN_SEGMENT_PCT) spendPct = 100 - MIN_SEGMENT_PCT
+  return [spendPct, 100 - spendPct]
 }
 
 export function BalanceHero({ account, loading, rate }: BalanceHeroProps) {
@@ -31,10 +42,11 @@ export function BalanceHero({ account, loading, rate }: BalanceHeroProps) {
           <Skeleton className="h-4 w-24" />
           <Skeleton className="mt-3 h-10 w-48" />
           <Skeleton className="mt-2 h-4 w-32" />
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <Skeleton className="h-24 w-full rounded-xl" />
-            <Skeleton className="h-24 w-full rounded-xl" />
+          <div className="mt-6 flex justify-between">
+            <Skeleton className="h-14 w-32" />
+            <Skeleton className="h-14 w-32" />
           </div>
+          <Skeleton className="mt-3 h-3 w-full rounded-full" />
         </CardContent>
       </Card>
     )
@@ -42,6 +54,10 @@ export function BalanceHero({ account, loading, rate }: BalanceHeroProps) {
 
   const total = account.spend + account.shares // shares valued 1:1 for the MVP
   const locked = Number(account.lockUntil) * 1000 > Date.now()
+  const [spendPct, savePct] = segmentWidths(
+    usdcToNumber(account.spend),
+    usdcToNumber(account.shares),
+  )
 
   return (
     <Card className="rounded-2xl shadow-none">
@@ -76,33 +92,55 @@ export function BalanceHero({ account, loading, rate }: BalanceHeroProps) {
             {t('balances.rateCaption', { rate: Math.round(rate).toLocaleString(intl) })}
           </p>
         )}
-        <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border bg-muted/30 p-4">
-            <p className="text-sm text-muted-foreground">{t('balances.spendable')}</p>
-            <p className="mt-1 text-lg font-semibold tracking-tight tabular-nums">
-              {primary(account.spend)}
-            </p>
-            <p className="text-xs text-muted-foreground tabular-nums">
-              ~ {secondary(account.spend)}
-            </p>
-          </div>
-          <div className="rounded-xl border bg-muted/30 p-4">
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-sm text-muted-foreground">{t('balances.savings')}</p>
-              {locked && (
-                <Badge variant="secondary" className="gap-1 text-xs">
-                  <LockIcon className="size-3" />
-                  {t('balances.lockedUntil', { date: formatDate(account.lockUntil, locale) })}
-                </Badge>
-              )}
+        <div className="mt-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="flex items-center gap-1.5 text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
+                <span className="size-2 rounded-full bg-sky-500 dark:bg-sky-400" />
+                {t('balances.spendable')}
+              </p>
+              <p className="mt-1 text-lg font-semibold tracking-tight tabular-nums">
+                {primary(account.spend)}
+              </p>
+              <p className="text-xs text-muted-foreground tabular-nums">
+                ~ {secondary(account.spend)}
+              </p>
             </div>
-            <p className="mt-1 text-lg font-semibold tracking-tight tabular-nums">
-              {primary(account.shares)}
-            </p>
-            <p className="text-xs text-muted-foreground tabular-nums">
-              ~ {secondary(account.shares)}
-            </p>
-            <p className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+            <div className="text-right">
+              <p className="flex items-center justify-end gap-1.5 text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
+                {t('balances.savings')}
+                <span className="size-2 rounded-full bg-amber-500 dark:bg-amber-400" />
+              </p>
+              <p className="mt-1 text-lg font-semibold tracking-tight tabular-nums">
+                {primary(account.shares)}
+              </p>
+              <p className="text-xs text-muted-foreground tabular-nums">
+                ~ {secondary(account.shares)}
+              </p>
+            </div>
+          </div>
+          <div className="mt-3 flex h-3 w-full gap-0.5 overflow-hidden rounded-full bg-muted">
+            {spendPct > 0 && (
+              <div
+                className="rounded-full bg-sky-500 dark:bg-sky-400"
+                style={{ width: `${spendPct}%` }}
+              />
+            )}
+            {savePct > 0 && (
+              <div
+                className="rounded-full bg-amber-500 dark:bg-amber-400"
+                style={{ width: `${savePct}%` }}
+              />
+            )}
+          </div>
+          <div className="mt-2 flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
+            {locked && (
+              <Badge variant="secondary" className="gap-1 text-xs">
+                <LockIcon className="size-3" />
+                {t('balances.lockedUntil', { date: formatDate(account.lockUntil, locale) })}
+              </Badge>
+            )}
+            <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <span className="size-1.5 rounded-full bg-emerald-500" />
               {t('balances.earningCaption')}
             </p>

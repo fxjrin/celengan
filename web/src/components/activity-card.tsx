@@ -1,84 +1,40 @@
-import {
-  ArrowDownLeftIcon,
-  ArrowUpRightIcon,
-  LockIcon,
-  SlidersHorizontalIcon,
-} from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { ArrowRightIcon } from 'lucide-react'
+import { ActivityList } from '@/components/activity-list'
 import {
   Card,
+  CardAction,
   CardContent,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { type ActivityItem } from '@/lib/activity'
 import { useAppState } from '@/lib/app-state'
-import { formatDate, formatDateTime, formatMoney, useT } from '@/lib/i18n'
-import { useSettings } from '@/lib/settings'
+import { useT } from '@/lib/i18n'
 
-const ICONS: Record<ActivityItem['kind'], typeof LockIcon> = {
-  pay: ArrowDownLeftIcon,
-  wd_spend: ArrowUpRightIcon,
-  wd_save: ArrowUpRightIcon,
-  split: SlidersHorizontalIcon,
-  lock: LockIcon,
-}
+const RECENT_LIMIT = 5
 
 export function ActivityCard() {
-  const { activity, activityLoading, rate } = useAppState()
-  const { locale, primaryCurrency } = useSettings()
+  const { activity, activityLoading } = useAppState()
   const t = useT()
-
-  const money = (amount: bigint | undefined): string =>
-    formatMoney(amount ?? 0n, primaryCurrency, rate, locale)
-
-  const label = (item: ActivityItem): string => {
-    switch (item.kind) {
-      case 'pay':
-        return t('activity.pay', { amount: money(item.amount), saved: money(item.saved) })
-      case 'wd_spend':
-        return t('activity.wdSpend', { amount: money(item.amount) })
-      case 'wd_save':
-        return t('activity.wdSave', { amount: money(item.amount) })
-      case 'split':
-        return t('activity.split', { pct: (item.bps ?? 0) / 100 })
-      case 'lock':
-        return t('activity.lock', { date: formatDate(item.until ?? 0n, locale) })
-    }
-  }
 
   return (
     <Card className="rounded-2xl shadow-none">
       <CardHeader>
         <CardTitle>{t('activity.title')}</CardTitle>
+        {activity.length > 0 && (
+          <CardAction>
+            <Link
+              to="/app/activity"
+              className="inline-flex items-center gap-1 text-sm text-primary underline-offset-4 hover:underline"
+            >
+              {t('activity.viewAll')}
+              <ArrowRightIcon className="size-3.5" />
+            </Link>
+          </CardAction>
+        )}
       </CardHeader>
       <CardContent>
-        {activityLoading ? (
-          <div className="space-y-3">
-            <Skeleton className="h-9 w-full" />
-            <Skeleton className="h-9 w-4/5" />
-            <Skeleton className="h-9 w-3/5" />
-          </div>
-        ) : activity.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t('activity.empty')}</p>
-        ) : (
-          <ul className="space-y-3">
-            {activity.map((item) => {
-              const Icon = ICONS[item.kind]
-              return (
-                <li key={item.id} className="flex items-center gap-3 text-sm">
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted">
-                    <Icon className="size-4 text-muted-foreground" />
-                  </span>
-                  <span className="min-w-0 flex-1">{label(item)}</span>
-                  <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
-                    {formatDateTime(item.at, locale)}
-                  </span>
-                </li>
-              )
-            })}
-          </ul>
-        )}
+        <ActivityList items={activity.slice(0, RECENT_LIMIT)} loading={activityLoading} />
       </CardContent>
     </Card>
   )
