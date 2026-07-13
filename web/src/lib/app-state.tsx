@@ -63,7 +63,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       setAccount(accountResult.value)
       setAccountStatus('ready')
     } else {
-      setAccount(null)
+      if (initial) setAccount(null) // keep stale data on refresh failure so cards stay usable
       setAccountStatus('error')
     }
     if (activityResult.status === 'fulfilled') setActivity(activityResult.value)

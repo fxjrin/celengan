@@ -1,4 +1,10 @@
 import {
+  ArrowDownLeftIcon,
+  ArrowUpRightIcon,
+  LockIcon,
+  SlidersHorizontalIcon,
+} from 'lucide-react'
+import {
   Card,
   CardContent,
   CardHeader,
@@ -9,6 +15,14 @@ import { type ActivityItem } from '@/lib/activity'
 import { useAppState } from '@/lib/app-state'
 import { formatDate, formatDateTime, formatMoney, useT } from '@/lib/i18n'
 import { useSettings } from '@/lib/settings'
+
+const ICONS: Record<ActivityItem['kind'], typeof LockIcon> = {
+  pay: ArrowDownLeftIcon,
+  wd_spend: ArrowUpRightIcon,
+  wd_save: ArrowUpRightIcon,
+  split: SlidersHorizontalIcon,
+  lock: LockIcon,
+}
 
 export function ActivityCard() {
   const { activity, activityLoading, rate } = useAppState()
@@ -41,22 +55,28 @@ export function ActivityCard() {
       <CardContent>
         {activityLoading ? (
           <div className="space-y-3">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-4/5" />
-            <Skeleton className="h-4 w-3/5" />
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-4/5" />
+            <Skeleton className="h-9 w-3/5" />
           </div>
         ) : activity.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t('activity.empty')}</p>
         ) : (
           <ul className="space-y-3">
-            {activity.map((item) => (
-              <li key={item.id} className="flex items-baseline justify-between gap-4 text-sm">
-                <span>{label(item)}</span>
-                <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
-                  {formatDateTime(item.at, locale)}
-                </span>
-              </li>
-            ))}
+            {activity.map((item) => {
+              const Icon = ICONS[item.kind]
+              return (
+                <li key={item.id} className="flex items-center gap-3 text-sm">
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted">
+                    <Icon className="size-4 text-muted-foreground" />
+                  </span>
+                  <span className="min-w-0 flex-1">{label(item)}</span>
+                  <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
+                    {formatDateTime(item.at, locale)}
+                  </span>
+                </li>
+              )
+            })}
           </ul>
         )}
       </CardContent>

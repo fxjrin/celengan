@@ -55,28 +55,25 @@ function toItem(event: rpc.Api.EventResponse, user: string): ActivityItem | null
   }
 }
 
+// rejects on rpc failure so callers can keep previously loaded items
 export async function fetchActivity(user: string): Promise<ActivityItem[]> {
   if (CONTRACT_ID === '') return []
-  try {
-    const server = new rpc.Server(RPC_URL)
-    const latest = await server.getLatestLedger()
-    const startLedger = Math.max(latest.sequence - LOOKBACK_LEDGERS, 1)
-    const filters: rpc.Api.EventFilter[] = [
-      { type: 'contract', contractIds: [CONTRACT_ID] },
-    ]
+  const server = new rpc.Server(RPC_URL)
+  const latest = await server.getLatestLedger()
+  const startLedger = Math.max(latest.sequence - LOOKBACK_LEDGERS, 1)
+  const filters: rpc.Api.EventFilter[] = [
+    { type: 'contract', contractIds: [CONTRACT_ID] },
+  ]
 
-    const items: ActivityItem[] = []
-    let page = await server.getEvents({ startLedger, filters, limit: PAGE_LIMIT })
-    for (let i = 0; i < MAX_PAGES; i++) {
-      for (const event of page.events) {
-        const item = toItem(event, user)
-        if (item) items.push(item)
-      }
-      if (!page.cursor || cursorLedger(page.cursor) >= latest.sequence) break
-      page = await server.getEvents({ filters, cursor: page.cursor, limit: PAGE_LIMIT })
+  const items: ActivityItem[] = []
+  let page = await server.getEvents({ startLedger, filters, limit: PAGE_LIMIT })
+  for (let i = 0; i < MAX_PAGES; i++) {
+    for (const event of page.events) {
+      const item = toItem(event, user)
+      if (item) items.push(item)
     }
-    return items.sort((a, b) => (a.id < b.id ? 1 : a.id > b.id ? -1 : 0))
-  } catch {
-    return []
+    if (!page.cursor || cursorLedger(page.cursor) >= latest.sequence) break
+    page = await server.getEvents({ filters, cursor: page.cursor, limit: PAGE_LIMIT })
   }
+  return items.sort((a, b) => (a.id < b.id ? 1 : a.id > b.id ? -1 : 0))
 }

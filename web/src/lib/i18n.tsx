@@ -17,7 +17,6 @@ const en = {
     'Set a lock date to keep your future self honest. Savings stay put until the day you choose.',
   'landing.footer': 'Built on Stellar testnet. Demo funds only, no real money.',
 
-  'topbar.launch': 'Launch app',
   'topbar.settings': 'Settings',
   'topbar.connect': 'Connect wallet',
   'topbar.disconnect': 'Disconnect',
@@ -45,7 +44,6 @@ const en = {
   'balances.earningCaption': 'Earning yield in the vault',
   'balances.lockedUntil': 'Locked until {date}',
   'balances.rateCaption': 'Estimated at Rp {rate} per USDC',
-  'balances.connectPrompt': 'Connect a wallet to see your balances',
 
   'receive.title': 'Receive a payment',
   'receive.caption':
@@ -56,7 +54,6 @@ const en = {
   'receive.quickAmounts': 'Quick amounts',
 
   'rules.title': 'Your saving rules',
-  'rules.splitCaption': 'How much of every incoming payment goes to savings',
   'rules.lockTitle': 'Time lock',
   'rules.splitLabel': 'Savings split',
   'rules.splitSentence': '{pct}% of every payment goes to savings',
@@ -70,17 +67,12 @@ const en = {
   'withdraw.title': 'Withdraw',
   'withdraw.spendTab': 'Spendable',
   'withdraw.saveTab': 'Savings',
-  'withdraw.spendTitle': 'Withdraw spendable',
-  'withdraw.spendCaption': 'Move USDC from your spendable balance back to your wallet',
-  'withdraw.saveTitle': 'Withdraw savings',
   'withdraw.max': 'Max',
+  'withdraw.sharesPlaceholder': 'Shares to withdraw',
   'withdraw.button': 'Withdraw',
   'withdraw.lockedReason': 'Savings are locked until {date}',
   'withdraw.sharesHint':
     'Savings are held as vault shares; the USDC you receive includes any yield earned.',
-
-  'actions.title': 'Actions',
-  'actions.caption': 'Try the full flow with testnet USDC',
 
   'activity.title': 'Activity',
   'activity.empty': 'Nothing here yet. Receive a payment to get things moving.',
@@ -106,7 +98,6 @@ const en = {
   'settings.langEn': 'English',
   'settings.langId': 'Bahasa Indonesia',
 
-  'faucet.title': 'Test funds',
   'faucet.caption': 'Get 1,000 testnet USDC and some XLM for fees, free.',
   'faucet.button': 'Get test funds',
   'faucet.success': 'Test funds are on the way to your wallet',
@@ -133,8 +124,6 @@ const en = {
   'errors.loadFailed': 'Could not load your account. Check your connection and try again.',
 
   'common.loading': 'Loading',
-  'common.cancel': 'Cancel',
-  'common.close': 'Close',
   'common.retry': 'Try again',
   'common.connectFirst': 'Connect your wallet first.',
 }
@@ -157,7 +146,6 @@ const id = {
     'Pasang tanggal kunci supaya kamu tidak mudah tergoda. Tabungan tetap tersimpan sampai hari yang kamu pilih.',
   'landing.footer': 'Dibangun di Stellar testnet. Dana demo saja, bukan uang sungguhan.',
 
-  'topbar.launch': 'Buka aplikasi',
   'topbar.settings': 'Pengaturan',
   'topbar.connect': 'Hubungkan dompet',
   'topbar.disconnect': 'Putuskan',
@@ -185,18 +173,16 @@ const id = {
   'balances.earningCaption': 'Menghasilkan imbal hasil di vault',
   'balances.lockedUntil': 'Terkunci sampai {date}',
   'balances.rateCaption': 'Perkiraan kurs Rp {rate} per USDC',
-  'balances.connectPrompt': 'Hubungkan dompet untuk melihat saldomu',
 
   'receive.title': 'Terima pembayaran',
   'receive.caption':
-    'Di demo ini dompetmu berperan jadi pelanggan: dia membayar kamu, dan Celengan langsung membagi uangnya begitu masuk.',
+    'Di demo ini dompetmu berperan jadi pelanggan yang membayar kamu; Celengan langsung membagi uangnya begitu masuk.',
   'receive.amountPlaceholder': 'Jumlah dalam USDC',
   'receive.preview': '{spend} siap dipakai, {save} masuk tabungan',
   'receive.button': 'Terima pembayaran',
   'receive.quickAmounts': 'Pilih nominal',
 
   'rules.title': 'Aturan menabungmu',
-  'rules.splitCaption': 'Seberapa besar bagian dari setiap pembayaran masuk yang ditabung',
   'rules.lockTitle': 'Kunci waktu',
   'rules.splitLabel': 'Porsi tabungan',
   'rules.splitSentence': '{pct}% dari setiap pembayaran masuk ke tabungan',
@@ -211,17 +197,12 @@ const id = {
   'withdraw.title': 'Tarik dana',
   'withdraw.spendTab': 'Siap dipakai',
   'withdraw.saveTab': 'Tabungan',
-  'withdraw.spendTitle': 'Tarik dana siap pakai',
-  'withdraw.spendCaption': 'Pindahkan USDC dari saldo siap pakai kembali ke dompetmu',
-  'withdraw.saveTitle': 'Tarik tabungan',
   'withdraw.max': 'Maks',
+  'withdraw.sharesPlaceholder': 'Jumlah unit yang mau ditarik',
   'withdraw.button': 'Tarik',
   'withdraw.lockedReason': 'Tabungan terkunci sampai {date}',
   'withdraw.sharesHint':
     'Tabungan disimpan sebagai unit vault; USDC yang kamu terima sudah termasuk imbal hasil.',
-
-  'actions.title': 'Aksi',
-  'actions.caption': 'Coba alur lengkapnya pakai USDC testnet',
 
   'activity.title': 'Aktivitas',
   'activity.empty': 'Belum ada apa-apa. Terima pembayaran dulu untuk memulai.',
@@ -247,7 +228,6 @@ const id = {
   'settings.langEn': 'English',
   'settings.langId': 'Bahasa Indonesia',
 
-  'faucet.title': 'Dana uji',
   'faucet.caption': 'Dapatkan 1.000 USDC testnet dan sedikit XLM untuk biaya, gratis.',
   'faucet.button': 'Ambil dana uji',
   'faucet.success': 'Dana uji sedang meluncur ke dompetmu',
@@ -269,13 +249,11 @@ const id = {
   'errors.paused': 'Kontrak sedang dijeda. Coba lagi nanti.',
   'errors.walletCancelled': 'Permintaan dibatalkan di dompetmu.',
   'errors.generic': 'Ada yang tidak beres. Coba lagi, ya.',
-  'errors.faucetUnavailable': 'Faucet sedang tidak tersedia. Coba lagi sebentar lagi.',
+  'errors.faucetUnavailable': 'Faucet sedang tidak tersedia. Coba beberapa saat lagi.',
   'errors.faucetAlreadyFunded': 'Dompet ini sudah punya dana uji.',
   'errors.loadFailed': 'Tidak bisa memuat akunmu. Periksa koneksimu dan coba lagi.',
 
   'common.loading': 'Memuat',
-  'common.cancel': 'Batal',
-  'common.close': 'Tutup',
   'common.retry': 'Coba lagi',
   'common.connectFirst': 'Hubungkan dompetmu dulu.',
 } satisfies Record<MessageKey, string>

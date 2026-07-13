@@ -19,6 +19,7 @@ export async function requestTestUsdc(bridge: WalletBridge): Promise<void> {
   const server = new rpc.Server(RPC_URL)
   const tx = TransactionBuilder.fromXDR(signedTxXdr, NETWORK_PASSPHRASE)
   const sent = await server.sendTransaction(tx)
+  if (sent.status === 'TRY_AGAIN_LATER') throw new Error('faucet_unavailable')
   if (sent.status === 'ERROR') {
     throw new Error('faucet_maybe_funded') // usually a duplicate claim on an already funded wallet
   }

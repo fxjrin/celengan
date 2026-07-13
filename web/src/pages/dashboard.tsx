@@ -1,110 +1,108 @@
-import { toast } from 'sonner'
-import { ActionsCard } from '@/components/actions-card'
+import { useEffect, useState } from 'react'
 import { ActivityCard } from '@/components/activity-card'
-import { BalanceCards } from '@/components/balance-cards'
-import { LockCard } from '@/components/lock-card'
-import { SplitCard } from '@/components/split-card'
+import { BalanceHero } from '@/components/balance-hero'
+import { ConnectButton } from '@/components/connect-button'
+import { OnboardingChecklist } from '@/components/onboarding-checklist'
+import { ReceiveCard } from '@/components/receive-card'
+import { RulesCard } from '@/components/rules-card'
 import { TopBar } from '@/components/top-bar'
+import { WithdrawCard } from '@/components/withdraw-card'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useAppState } from '@/lib/app-state'
-import { celengan } from '@/lib/celengan'
 import { requestTestUsdc } from '@/lib/faucet'
-import { parseUsdc } from '@/lib/format'
 import { useT } from '@/lib/i18n'
 import { useWallet } from '@/lib/wallet'
 import { requireWalletBridge } from '@/lib/wallet-bridge'
 
 export function Dashboard() {
   const { address } = useWallet()
-  const { account, accountStatus, rate, busy, refresh, runAction } = useAppState()
+  const { account, accountStatus, rate, activity, busy, refresh, runAction } = useAppState()
   const t = useT()
+  const [fauceted, setFauceted] = useState(
+    () => address !== null && localStorage.getItem(`celengan:fauceted:${address}`) === '1',
+  )
 
-  const parseAmount = (raw: string): bigint | null => {
-    try {
-      const amount = parseUsdc(raw)
-      if (amount <= 0n) throw new Error('invalid amount')
-      return amount
-    } catch {
-      toast.error(t('errors.invalidAmount'))
-      return null
+  useEffect(() => {
+    setFauceted(address !== null && localStorage.getItem(`celengan:fauceted:${address}`) === '1')
+  }, [address])
+
+  const handleFaucet = async () => {
+    const ok = await runAction('faucet', 'faucet.success', () =>
+      requestTestUsdc(requireWalletBridge()),
+    )
+    if (ok && address) {
+      localStorage.setItem(`celengan:fauceted:${address}`, '1')
+      setFauceted(true)
     }
   }
 
-  const handleFaucet = async (): Promise<boolean> =>
-    runAction('faucet', 'faucet.success', () => requestTestUsdc(requireWalletBridge()))
-
-  const handlePay = async (raw: string): Promise<boolean> => {
-    const amount = parseAmount(raw)
-    if (amount === null || !address) return false
-    return runAction('pay', 'success.paid', () => celengan.pay(address, address, amount))
+  const scrollToReceive = () => {
+    document.getElementById('receive')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  const handleWithdrawSpend = async (raw: string): Promise<boolean> => {
-    const amount = parseAmount(raw)
-    if (amount === null || !address) return false
-    return runAction('spend', 'success.withdrewSpend', () =>
-      celengan.withdrawSpend(address, amount),
+  if (!address) {
+    return (
+      <div className="min-h-svh">
+        <TopBar />
+        <main className="mx-auto flex w-full max-w-2xl flex-col items-center px-4 py-24 text-center">
+          <h1 className="text-2xl font-semibold tracking-tight">{t('dashboard.connectTitle')}</h1>
+          <p className="mt-2 max-w-md text-muted-foreground">{t('dashboard.connectCaption')}</p>
+          <div className="mt-6">
+            <ConnectButton />
+          </div>
+        </main>
+      </div>
     )
   }
 
-  const handleWithdrawSavings = async (raw: string): Promise<boolean> => {
-    const shares = parseAmount(raw)
-    if (shares === null || !address) return false
-    return runAction('savings', 'success.withdrewSavings', async () => {
-      await celengan.withdrawSavings(address, shares)
-    })
-  }
-
-  const handleSaveSplit = (bps: number) => {
-    if (!address) return
-    void runAction('split', 'success.splitSaved', () => celengan.setSplit(address, bps))
-  }
-
-  const handleLock = (until: bigint) => {
-    if (!address) return
-    void runAction('lock', 'success.lockSet', () => celengan.setLock(address, until))
-  }
-
   const loading = accountStatus === 'loading'
-  const disabled = !address || loading || busy !== null
+  const funded = fauceted || activity.length > 0
+  const received = activity.some((item) => item.kind === 'pay')
+  const onboarding = !(funded && received)
 
   return (
     <div className="min-h-svh">
       <TopBar />
-      <main className="mx-auto w-full max-w-5xl px-4 py-8">
-        {accountStatus === 'error' && (
-          <div className="mb-4 flex items-center justify-between gap-4 rounded-2xl border bg-card px-4 py-3 text-sm">
+      <main key={address} className="mx-auto w-full max-w-2xl space-y-4 px-4 py-8">
+        {accountStatus === 'error' ? (
+          <div className="flex items-center justify-between gap-4 rounded-2xl border bg-card px-4 py-3 text-sm">
             <span>{t('errors.loadFailed')}</span>
             <Button variant="outline" size="sm" onClick={() => void refresh()}>
               {t('common.retry')}
             </Button>
           </div>
+        ) : (
+          <BalanceHero account={account} loading={loading} rate={rate} />
         )}
-        <BalanceCards account={account} loading={loading} rate={rate} />
-        <div className="mt-4 grid items-start gap-4 md:grid-cols-2">
-          <SplitCard
-            key={address ?? 'disconnected'}
-            splitBps={account ? account.splitBps : null}
-            disabled={disabled}
-            saving={busy === 'split'}
-            onSave={handleSaveSplit}
-          />
-          <LockCard
-            lockUntil={account ? account.lockUntil : null}
-            disabled={disabled}
-            saving={busy === 'lock'}
-            onLock={handleLock}
-          />
-          <ActionsCard
-            disabled={disabled}
-            busy={busy}
-            onFaucet={handleFaucet}
-            onPay={handlePay}
-            onWithdrawSpend={handleWithdrawSpend}
-            onWithdrawSavings={handleWithdrawSavings}
-          />
-          <ActivityCard />
-        </div>
+        {loading && (
+          <>
+            <Skeleton className="h-40 w-full rounded-2xl" />
+            <Skeleton className="h-40 w-full rounded-2xl" />
+          </>
+        )}
+        {account !== null && (
+          <>
+            {onboarding && (
+              <OnboardingChecklist
+                connected
+                funded={funded}
+                received={received}
+                faucetBusy={busy === 'faucet'}
+                onFaucet={() => void handleFaucet()}
+                onGoToReceive={scrollToReceive}
+              />
+            )}
+            <ReceiveCard
+              account={account}
+              showFaucetRow={!onboarding}
+              onFaucet={() => void handleFaucet()}
+            />
+            <RulesCard account={account} />
+            <WithdrawCard account={account} />
+            <ActivityCard />
+          </>
+        )}
       </main>
     </div>
   )
