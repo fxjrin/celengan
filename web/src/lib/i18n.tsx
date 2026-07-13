@@ -97,11 +97,12 @@ const en = {
 
   'pay.title': 'Pay {name}',
   'pay.splitInfo': '{pct}% of this payment goes straight to their savings',
-  'pay.payingAs': 'Paying as',
+  'pay.payingFrom': 'Paying from',
   'pay.button': 'Pay now',
-  'pay.connectCaption': 'Connect a Stellar wallet to pay. No account needed.',
+  'pay.connectCta': 'Connect wallet to pay',
+  'pay.connectCaption': 'You pay straight from your own Stellar wallet. No account needed.',
   'pay.successTitle': 'Payment sent',
-  'pay.successBody': 'You paid {amount} to {name}.',
+  'pay.successBody': 'Your payment to {name} went through.',
   'pay.payAgain': 'Pay again',
   'pay.createOwn': 'Create your own Celengan',
   'pay.invalidTitle': 'This payment link looks broken',
@@ -131,7 +132,13 @@ const en = {
   'activity.lock': 'Savings locked until {date}',
 
   'settings.title': 'Settings',
+  'settings.preferences': 'Preferences',
   'settings.language': 'Language',
+  'settings.theme': 'Theme',
+  'settings.themeLight': 'Light',
+  'settings.themeDark': 'Dark',
+  'settings.themeSystem': 'System',
+  'settings.aboutTitle': 'About',
   'settings.currency': 'Display currency',
   'settings.currencyIdr': 'Rupiah (IDR)',
   'settings.currencyUsdc': 'USDC',
@@ -175,6 +182,7 @@ const en = {
 
   'common.loading': 'Loading',
   'common.retry': 'Try again',
+  'common.close': 'Close',
   'common.connectFirst': 'Connect your wallet first.',
 }
 
@@ -277,11 +285,12 @@ const id = {
 
   'pay.title': 'Bayar {name}',
   'pay.splitInfo': '{pct}% dari pembayaran ini langsung masuk ke tabungannya',
-  'pay.payingAs': 'Membayar sebagai',
+  'pay.payingFrom': 'Membayar dari',
   'pay.button': 'Bayar sekarang',
-  'pay.connectCaption': 'Hubungkan dompet Stellar untuk membayar. Tidak perlu akun.',
+  'pay.connectCta': 'Hubungkan dompet untuk membayar',
+  'pay.connectCaption': 'Kamu bayar langsung dari dompet Stellar-mu sendiri. Tidak perlu akun.',
   'pay.successTitle': 'Pembayaran terkirim',
-  'pay.successBody': 'Kamu membayar {amount} ke {name}.',
+  'pay.successBody': 'Pembayaranmu ke {name} sudah masuk.',
   'pay.payAgain': 'Bayar lagi',
   'pay.createOwn': 'Bikin Celengan-mu sendiri',
   'pay.invalidTitle': 'Tautan pembayaran ini tidak valid',
@@ -311,7 +320,13 @@ const id = {
   'activity.lock': 'Tabungan dikunci sampai {date}',
 
   'settings.title': 'Pengaturan',
+  'settings.preferences': 'Preferensi',
   'settings.language': 'Bahasa',
+  'settings.theme': 'Tema',
+  'settings.themeLight': 'Terang',
+  'settings.themeDark': 'Gelap',
+  'settings.themeSystem': 'Ikuti sistem',
+  'settings.aboutTitle': 'Tentang',
   'settings.currency': 'Mata uang tampilan',
   'settings.currencyIdr': 'Rupiah (IDR)',
   'settings.currencyUsdc': 'USDC',
@@ -355,6 +370,7 @@ const id = {
 
   'common.loading': 'Memuat',
   'common.retry': 'Coba lagi',
+  'common.close': 'Tutup',
   'common.connectFirst': 'Hubungkan dompetmu dulu.',
 } satisfies Record<MessageKey, string>
 

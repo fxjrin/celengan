@@ -5,6 +5,7 @@ export type ActivityItem = {
   id: string
   kind: 'pay' | 'wd_spend' | 'wd_save' | 'split' | 'lock'
   at: Date
+  from?: string
   amount?: bigint
   saved?: bigint
   shares?: bigint
@@ -39,8 +40,8 @@ function toItem(event: rpc.Api.EventResponse, user: string): ActivityItem | null
   const value: unknown = scValToNative(event.value)
   switch (kind) {
     case 'pay': {
-      const [, amount, saved] = value as [string, bigint, bigint]
-      return { ...base, kind, amount, saved }
+      const [from, amount, saved] = value as [string, bigint, bigint]
+      return { ...base, kind, from, amount, saved }
     }
     case 'wd_spend':
       return { ...base, kind, amount: value as bigint }

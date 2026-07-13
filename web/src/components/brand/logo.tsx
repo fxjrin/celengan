@@ -1,27 +1,55 @@
+import { useId } from 'react'
 import { cn } from '@/lib/utils'
 
 /**
- * Brand mark: a coin dropping into an abstract celengan (piggy bank),
- * reduced to a dome body, coin slot, and snout bump on a terracotta tile.
+ * Brand mark: a coin dropping into an abstract celengan (piggy bank)
+ * on a glossy terracotta tile matching the FloatingDeco balloon style.
  */
 export function LogoMark({ size = 24 }: { size?: number }) {
+  // strip useId wrapper chars; they break url(#...) gradient references
+  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '')
+  const tile = `cel-logo-tile-${uid}`
+  const depth = `cel-logo-depth-${uid}`
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 48 48"
-      className="shrink-0 text-primary"
+      className="shrink-0"
       aria-hidden="true"
       focusable="false"
     >
-      <rect width="48" height="48" rx="12" fill="currentColor" />
-      <g fill="var(--primary-foreground)">
+      <defs>
+        <radialGradient id={tile} gradientUnits="userSpaceOnUse" cx="13" cy="10" r="56">
+          <stop offset="0%" stopColor="#e89552" />
+          <stop offset="48%" stopColor="#bb5f1e" />
+          <stop offset="100%" stopColor="#74360c" />
+        </radialGradient>
+        <linearGradient id={depth} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.25" />
+          <stop offset="35%" stopColor="#ffffff" stopOpacity="0" />
+          <stop offset="70%" stopColor="#000000" stopOpacity="0" />
+          <stop offset="100%" stopColor="#000000" stopOpacity="0.2" />
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="14" fill={`url(#${tile})`} />
+      <rect width="48" height="48" rx="14" fill={`url(#${depth})`} />
+      <ellipse
+        cx="14"
+        cy="10"
+        rx="8.5"
+        ry="4"
+        fill="#fff"
+        opacity="0.5"
+        transform="rotate(-28 14 10)"
+      />
+      <g fill="#fff7ed">
         <circle cx="24" cy="12.5" r="3.5" />
         <path d="M11 34a13 13 0 0 1 26 0Z" />
         <ellipse cx="37.3" cy="29.5" rx="2.8" ry="2.4" />
       </g>
-      {/* slot drawn in tile color so it reads as a cut into the dome */}
-      <rect x="18.5" y="23.5" width="11" height="3" rx="1.5" fill="currentColor" />
+      {/* userSpaceOnUse lets the slot sample the tile gradient in place so it reads as a cut */}
+      <rect x="18.5" y="23.5" width="11" height="3" rx="1.5" fill={`url(#${tile})`} />
     </svg>
   )
 }

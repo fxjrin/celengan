@@ -29,7 +29,7 @@ export function ActivityPage() {
   const items = kinds === null ? activity : activity.filter((item) => kinds.includes(item.kind))
 
   return (
-    <section className="space-y-4">
+    <section className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-semibold tracking-tight">{t('activity.title')}</h2>
         <div className="flex flex-wrap gap-1.5">

@@ -30,9 +30,9 @@ export function Dashboard() {
   }
 
   return (
-    <div key={address} className="space-y-4">
+    <div key={address} className="space-y-5">
       {accountStatus === 'error' ? (
-        <div className="flex items-center justify-between gap-4 rounded-2xl border bg-card px-4 py-3 text-sm">
+        <div className="flex items-center justify-between gap-4 rounded-2xl border bg-card px-5 py-4 text-sm">
           <span>{t('errors.loadFailed')}</span>
           <Button variant="outline" size="sm" onClick={() => void refresh()}>
             {t('common.retry')}

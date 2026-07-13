@@ -1,7 +1,8 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Link2Icon } from 'lucide-react'
 import { toast } from 'sonner'
-import { PaymentLinkDialog } from '@/components/payment-link-dialog'
+import { TokenIcon } from '@/components/brand/token-icon'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -35,7 +36,6 @@ export function ReceiveCard({ account, showFaucetRow, onFaucet }: ReceiveCardPro
   const { rate, busy, runAction } = useAppState()
   const { locale } = useSettings()
   const [value, setValue] = useState('')
-  const [linkOpen, setLinkOpen] = useState(false)
   const anyBusy = busy !== null
 
   const previewAmount = (): bigint => {
@@ -76,14 +76,21 @@ export function ReceiveCard({ account, showFaucetRow, onFaucet }: ReceiveCardPro
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="flex gap-2">
-          <Input
-            value={value}
-            placeholder={t('receive.amountPlaceholder')}
-            inputMode="decimal"
-            className="tabular-nums"
-            disabled={anyBusy}
-            onChange={(e) => setValue(e.target.value)}
-          />
+          <div className="relative flex-1">
+            <TokenIcon
+              token="usdc"
+              size={16}
+              className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
+            />
+            <Input
+              value={value}
+              placeholder={t('receive.amountPlaceholder')}
+              inputMode="decimal"
+              className="pl-9 tabular-nums"
+              disabled={anyBusy}
+              onChange={(e) => setValue(e.target.value)}
+            />
+          </div>
           <Button onClick={() => void handleSubmit()} disabled={anyBusy || value.trim() === ''}>
             {busy === 'pay' ? `${t('common.loading')}...` : t('receive.button')}
           </Button>
@@ -115,16 +122,17 @@ export function ReceiveCard({ account, showFaucetRow, onFaucet }: ReceiveCardPro
           </div>
         )}
         <Button
+          asChild
           variant="ghost"
           size="sm"
           className="justify-start gap-2 text-muted-foreground hover:text-foreground"
-          onClick={() => setLinkOpen(true)}
         >
-          <Link2Icon className="size-4" />
-          {t('paylink.share')}
+          <Link to="/app/link">
+            <Link2Icon className="size-4" />
+            {t('paylink.share')}
+          </Link>
         </Button>
       </CardFooter>
-      <PaymentLinkDialog open={linkOpen} onOpenChange={setLinkOpen} />
     </Card>
   )
 }

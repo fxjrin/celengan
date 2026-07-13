@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type PointerEvent } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { useTheme } from 'next-themes'
 import {
@@ -9,18 +9,17 @@ import {
   LinkIcon,
   Loader2Icon,
   LogOutIcon,
-  MenuIcon,
   MoonIcon,
   SettingsIcon,
   SunIcon,
   WalletIcon,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { LogoWordmark } from '@/components/brand/logo'
-import { PaymentLinkDialog } from '@/components/payment-link-dialog'
-import { SettingsDialog } from '@/components/settings-dialog'
+import { AddressAvatar } from '@/components/brand/address-avatar'
+import { FloatingDeco } from '@/components/brand/floating-deco'
+import { LogoMark, LogoWordmark } from '@/components/brand/logo'
 import { Button } from '@/components/ui/button'
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { EXPLORER_CONTRACT_URL } from '@/lib/config'
 import { errorKey } from '@/lib/errors'
 import { useT, type MessageKey } from '@/lib/i18n'
@@ -29,9 +28,12 @@ import { cn } from '@/lib/utils'
 import { useWallet } from '@/lib/wallet'
 
 const ITEM =
-  'flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium transition-colors'
+  'flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50'
 const ITEM_IDLE = 'text-muted-foreground hover:bg-muted hover:text-foreground'
 const ITEM_ACTIVE = 'bg-primary/10 text-primary'
+
+// long enough to cross the gap between edge, toggle, and panel without flicker
+const CLOSE_DELAY_MS = 200
 
 function shortAddress(address: string): string {
   return `${address.slice(0, 4)}...${address.slice(-4)}`
@@ -53,12 +55,11 @@ function SectionLabel({ children }: { children: string }) {
 }
 
 type SidebarContentProps = {
-  onOpenSettings: () => void
-  onOpenPaymentLink: () => void
+  withHeader?: boolean
   onNavigate?: () => void
 }
 
-function SidebarContent({ onOpenSettings, onOpenPaymentLink, onNavigate }: SidebarContentProps) {
+function SidebarContent({ withHeader = false, onNavigate }: SidebarContentProps) {
   const t = useT()
   const { address, connecting, connect, disconnect } = useWallet()
   const { faucetBusy, anyBusy, runFaucet } = useFaucet()
@@ -78,9 +79,11 @@ function SidebarContent({ onOpenSettings, onOpenPaymentLink, onNavigate }: Sideb
 
   return (
     <div className="flex h-full flex-col p-4">
-      <div className="px-3 pt-1 pb-2">
-        <LogoWordmark />
-      </div>
+      {withHeader && (
+        <div className="px-3 pt-1 pb-2">
+          <LogoWordmark />
+        </div>
+      )}
       <nav className="min-h-0 flex-1 overflow-y-auto">
         <SectionLabel>{t('nav.menu')}</SectionLabel>
         <NavLink to="/app" end onClick={onNavigate} className={navClass}>
@@ -92,6 +95,10 @@ function SidebarContent({ onOpenSettings, onOpenPaymentLink, onNavigate }: Sideb
           {t('nav.activity')}
         </NavLink>
         <SectionLabel>{t('nav.action')}</SectionLabel>
+        <NavLink to="/app/link" onClick={onNavigate} className={navClass}>
+          <LinkIcon className="size-4" />
+          {t('nav.paymentLink')}
+        </NavLink>
         <button
           type="button"
           className={cn(ITEM, ITEM_IDLE, 'disabled:pointer-events-none disabled:opacity-50')}
@@ -105,24 +112,11 @@ function SidebarContent({ onOpenSettings, onOpenPaymentLink, onNavigate }: Sideb
           )}
           {faucetBusy ? `${t('common.loading')}...` : t('nav.faucet')}
         </button>
-        <button
-          type="button"
-          data-slot="paylink-entry"
-          className={cn(ITEM, ITEM_IDLE, 'disabled:pointer-events-none disabled:opacity-50')}
-          disabled={!address}
-          onClick={onOpenPaymentLink}
-        >
-          <LinkIcon className="size-4" />
-          {t('nav.paymentLink')}
-        </button>
-        {!address && (
-          <p className="px-3 pb-1 text-[11px] text-muted-foreground">{t('common.connectFirst')}</p>
-        )}
         <SectionLabel>{t('nav.protocol')}</SectionLabel>
-        <button type="button" className={cn(ITEM, ITEM_IDLE)} onClick={onOpenSettings}>
+        <NavLink to="/app/settings" onClick={onNavigate} className={navClass}>
           <SettingsIcon className="size-4" />
           {t('settings.title')}
-        </button>
+        </NavLink>
         <a
           href={EXPLORER_CONTRACT_URL}
           target="_blank"
@@ -191,69 +185,135 @@ function AddressChip({ address }: { address: string }) {
     <button
       type="button"
       aria-label={t('shell.copyAddress')}
-      className="rounded-full border bg-card px-3 py-1.5 font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
+      className="flex items-center gap-2 rounded-full border bg-card py-1 pr-3 pl-1 font-mono text-xs text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
       onClick={() => void copy()}
     >
+      <AddressAvatar address={address} size={24} className="rounded-full" />
       {shortAddress(address)}
     </button>
   )
 }
 
+function isDesktop(): boolean {
+  return window.matchMedia('(min-width: 768px)').matches
+}
+
 export function AppShell() {
   const t = useT()
   const { address } = useWallet()
-  const [settingsOpen, setSettingsOpen] = useState(false)
-  const [paylinkOpen, setPaylinkOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sheetOpen, setSheetOpen] = useState(false)
+  const closeTimer = useRef<number | null>(null)
+  const toggleRef = useRef<HTMLButtonElement>(null)
+
+  const cancelClose = useCallback(() => {
+    if (closeTimer.current !== null) {
+      window.clearTimeout(closeTimer.current)
+      closeTimer.current = null
+    }
+  }, [])
+
+  const reveal = useCallback(() => {
+    cancelClose()
+    setSidebarOpen(true)
+  }, [cancelClose])
+
+  const scheduleHide = useCallback(() => {
+    cancelClose()
+    closeTimer.current = window.setTimeout(() => setSidebarOpen(false), CLOSE_DELAY_MS)
+  }, [cancelClose])
+
+  useEffect(() => cancelClose, [cancelClose])
+
+  useEffect(() => {
+    if (!sidebarOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      setSidebarOpen(false)
+      toggleRef.current?.focus()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [sidebarOpen])
+
+  // touch taps fire hover events right before click, which would open the
+  // sidebar and let the click toggle it straight back closed
+  const handleHoverReveal = (e: PointerEvent) => {
+    if (e.pointerType === 'mouse' && isDesktop()) reveal()
+  }
+
+  const handleHoverHide = (e: PointerEvent) => {
+    if (e.pointerType === 'mouse') scheduleHide()
+  }
+
+  const handleToggle = () => {
+    if (isDesktop()) {
+      cancelClose()
+      setSidebarOpen((open) => !open)
+    } else {
+      setSheetOpen(true)
+    }
+  }
 
   return (
-    <div className="min-h-svh">
-      <aside className="fixed inset-y-4 left-4 z-40 hidden w-64 flex-col overflow-hidden rounded-3xl border bg-card shadow-lg shadow-stone-950/5 md:flex">
-        <SidebarContent
-          onOpenSettings={() => setSettingsOpen(true)}
-          onOpenPaymentLink={() => setPaylinkOpen(true)}
-        />
-      </aside>
-      <header className="sticky top-0 z-30 flex items-center justify-between border-b bg-background/80 px-4 py-3 backdrop-blur md:hidden">
-        <LogoWordmark />
-        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" aria-label={t('shell.openMenu')}>
-              <MenuIcon className="size-4" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-72" aria-describedby={undefined}>
-            <SheetTitle className="sr-only">{t('nav.menu')}</SheetTitle>
-            <SidebarContent
-              onOpenSettings={() => {
-                setSheetOpen(false)
-                setSettingsOpen(true)
-              }}
-              onOpenPaymentLink={() => {
-                setSheetOpen(false)
-                setPaylinkOpen(true)
-              }}
-              onNavigate={() => setSheetOpen(false)}
-            />
-          </SheetContent>
-        </Sheet>
-      </header>
-      <div className="md:pl-72">
-        <main className="mx-auto w-full max-w-2xl px-4 py-8 md:py-10">
-          <div className="mb-8 flex items-center justify-between gap-3">
-            <h1 className="text-3xl font-semibold tracking-tight">
-              {t(greetingKey(new Date().getHours()))}
-            </h1>
-            <div className="flex items-center gap-2">
-              {address && <AddressChip address={address} />}
-              <ThemeToggle />
-            </div>
-          </div>
-          <Outlet />
-        </main>
+    <div className="relative min-h-svh">
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0">
+        <FloatingDeco side="both" className="opacity-40" />
       </div>
-      <SettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
-      <PaymentLinkDialog open={paylinkOpen} onOpenChange={setPaylinkOpen} />
+      {/* invisible strip that reveals the sidebar when the cursor nears the left edge */}
+      <div
+        className="fixed inset-y-0 left-0 z-30 hidden w-4 md:block"
+        onPointerEnter={handleHoverReveal}
+        onPointerLeave={handleHoverHide}
+      />
+      <button
+        ref={toggleRef}
+        type="button"
+        aria-label={t('shell.openMenu')}
+        aria-expanded={sidebarOpen || sheetOpen}
+        aria-controls="app-sidebar"
+        className="fixed top-4 left-4 z-50 flex size-10 items-center justify-center rounded-xl border bg-card shadow-sm outline-none transition-shadow hover:shadow-md focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+        onPointerEnter={handleHoverReveal}
+        onPointerLeave={handleHoverHide}
+        onClick={handleToggle}
+      >
+        <LogoMark size={22} />
+      </button>
+      <aside
+        id="app-sidebar"
+        inert={!sidebarOpen}
+        className={cn(
+          'fixed top-16 bottom-4 left-4 z-40 hidden w-64 flex-col overflow-hidden rounded-2xl border bg-card shadow-lg shadow-stone-950/10 transition-transform duration-200 ease-out md:flex',
+          sidebarOpen ? 'translate-x-0' : '-translate-x-[calc(100%+2.5rem)]',
+        )}
+        onPointerEnter={handleHoverReveal}
+        onPointerLeave={handleHoverHide}
+      >
+        <SidebarContent onNavigate={() => setSidebarOpen(false)} />
+      </aside>
+      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <SheetContent
+          side="left"
+          className="w-72"
+          closeLabel={t('common.close')}
+          aria-describedby={undefined}
+        >
+          <SheetTitle className="sr-only">{t('nav.menu')}</SheetTitle>
+          <SidebarContent withHeader onNavigate={() => setSheetOpen(false)} />
+        </SheetContent>
+      </Sheet>
+      <main className="relative z-10 mx-auto w-full max-w-2xl px-4 pt-16 pb-12">
+        <div className="mb-8 flex items-center justify-between gap-3">
+          <h1 className="text-3xl font-semibold tracking-tight">
+            {t(greetingKey(new Date().getHours()))}
+          </h1>
+          <div className="flex items-center gap-2">
+            {address && <AddressChip address={address} />}
+            <ThemeToggle />
+          </div>
+        </div>
+        <Outlet />
+      </main>
     </div>
   )
 }

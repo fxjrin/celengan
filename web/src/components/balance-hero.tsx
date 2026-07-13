@@ -1,4 +1,5 @@
 import { LockIcon } from 'lucide-react'
+import { TokenIcon } from '@/components/brand/token-icon'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { NumberTicker } from '@/components/ui/number-ticker'
@@ -82,11 +83,17 @@ export function BalanceHero({ account, loading, rate }: BalanceHeroProps) {
                 locale={intl}
                 className="text-4xl font-semibold tracking-tight text-foreground tabular-nums"
               />
-              <span className="text-lg text-muted-foreground">USDC</span>
+              <span className="inline-flex items-center gap-1.5 text-lg text-muted-foreground">
+                <TokenIcon token="usdc" size={18} />
+                USDC
+              </span>
             </>
           )}
         </div>
-        <p className="mt-1 text-sm text-muted-foreground tabular-nums">~ {secondary(total)}</p>
+        <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground tabular-nums">
+          {secondaryCurrency === 'usdc' && <TokenIcon token="usdc" size={14} />}~{' '}
+          {secondary(total)}
+        </p>
         {primaryCurrency === 'idr' && (
           <p className="mt-1 text-xs text-muted-foreground">
             {t('balances.rateCaption', { rate: Math.round(rate).toLocaleString(intl) })}
@@ -99,7 +106,8 @@ export function BalanceHero({ account, loading, rate }: BalanceHeroProps) {
                 <span className="size-2 rounded-full bg-sky-500 dark:bg-sky-400" />
                 {t('balances.spendable')}
               </p>
-              <p className="mt-1 text-lg font-semibold tracking-tight tabular-nums">
+              <p className="mt-1 flex items-center gap-1.5 text-lg font-semibold tracking-tight tabular-nums">
+                <TokenIcon token="usdc" size={14} />
                 {primary(account.spend)}
               </p>
               <p className="text-xs text-muted-foreground tabular-nums">
@@ -111,7 +119,8 @@ export function BalanceHero({ account, loading, rate }: BalanceHeroProps) {
                 {t('balances.savings')}
                 <span className="size-2 rounded-full bg-amber-500 dark:bg-amber-400" />
               </p>
-              <p className="mt-1 text-lg font-semibold tracking-tight tabular-nums">
+              <p className="mt-1 flex items-center justify-end gap-1.5 text-lg font-semibold tracking-tight tabular-nums">
+                <TokenIcon token="usdc" size={14} />
                 {primary(account.shares)}
               </p>
               <p className="text-xs text-muted-foreground tabular-nums">

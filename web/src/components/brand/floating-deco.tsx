@@ -47,6 +47,47 @@ function RpCoin({ uid }: DecoProps) {
   )
 }
 
+function DollarCoin({ uid }: DecoProps) {
+  const rim = `${uid}-rim`
+  const face = `${uid}-face`
+  const sh = `${uid}-sh`
+  return (
+    <svg viewBox="0 0 64 64" width="100%" height="100%" overflow="visible" aria-hidden="true">
+      <defs>
+        <radialGradient id={rim} cx="35%" cy="28%" r="80%">
+          <stop offset="0%" stopColor="#ecf6d8" />
+          <stop offset="55%" stopColor="#a8c377" />
+          <stop offset="100%" stopColor="#5e7f3d" />
+        </radialGradient>
+        <linearGradient id={face} x1="0" y1="0" x2="0.6" y2="1">
+          <stop offset="0%" stopColor="#d9e9b4" />
+          <stop offset="100%" stopColor="#8fb05c" />
+        </linearGradient>
+        <filter id={sh} {...SHADOW}>
+          <feDropShadow dx="0" dy="5" stdDeviation="5" floodColor="#425f2b" floodOpacity="0.3" />
+        </filter>
+      </defs>
+      <g filter={`url(#${sh})`}>
+        <circle cx="32" cy="32" r="27" fill={`url(#${rim})`} />
+        <circle cx="32" cy="32" r="21" fill={`url(#${face})`} />
+        <circle cx="32" cy="32" r="21" fill="none" stroke="#6d8c44" strokeWidth="1.2" opacity="0.5" />
+        <text
+          x="32"
+          y="40"
+          textAnchor="middle"
+          fontFamily="'Geist Variable', system-ui, sans-serif"
+          fontSize="22"
+          fontWeight="700"
+          fill="#4c672c"
+        >
+          $
+        </text>
+        <ellipse cx="22" cy="16" rx="9" ry="4.2" fill="#fff" opacity="0.55" transform="rotate(-28 22 16)" />
+      </g>
+    </svg>
+  )
+}
+
 function CoinStack({ uid }: DecoProps) {
   const side = `${uid}-side`
   const top = `${uid}-top`
@@ -216,7 +257,7 @@ const PLACEMENTS: Placement[] = [
   { obj: CoinStack, side: 'left', top: '76%', left: '12%', size: 76, rotate: -8, depth: 18, duration: 6.5, delay: 1.2 },
   { obj: HeartBlob, side: 'right', top: '10%', right: '10%', size: 72, rotate: 10, depth: 20, duration: 7.5, delay: 0.6 },
   { obj: SoftArrow, side: 'right', top: '36%', right: '4%', size: 88, rotate: 4, depth: 10, duration: 8.5, delay: 0.2 },
-  { obj: RpCoin, side: 'right', top: '60%', right: '14%', size: 52, rotate: 14, depth: 26, duration: 5, delay: 1 },
+  { obj: DollarCoin, side: 'right', top: '60%', right: '14%', size: 52, rotate: 14, depth: 26, duration: 5, delay: 1 },
   { obj: Sparkle, side: 'right', top: '80%', right: '7%', size: 40, rotate: -10, depth: 24, duration: 6, delay: 0.3 },
 ]
 

@@ -2,14 +2,17 @@ import { useMemo, useState } from 'react'
 import { CopyIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import { renderSVG } from 'uqr'
+import { AddressAvatar } from '@/components/brand/address-avatar'
+import { TokenIcon } from '@/components/brand/token-icon'
+import { ConnectPrompt } from '@/components/connect-prompt'
 import { Button } from '@/components/ui/button'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { parseUsdc } from '@/lib/format'
@@ -30,12 +33,7 @@ function buildLink(address: string, name: string, amount: string): string {
   return `${window.location.origin}/pay/${address}${query === '' ? '' : `?${query}`}`
 }
 
-type PaymentLinkDialogProps = {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
-
-export function PaymentLinkDialog({ open, onOpenChange }: PaymentLinkDialogProps) {
+export function PaymentLinkPage() {
   const t = useT()
   const { address } = useWallet()
   const [name, setName] = useState('')
@@ -47,7 +45,7 @@ export function PaymentLinkDialog({ open, onOpenChange }: PaymentLinkDialogProps
   )
   const qr = useMemo(() => (link === '' ? '' : renderSVG(link)), [link])
 
-  if (address === null) return null
+  if (address === null) return <ConnectPrompt />
 
   const copy = async () => {
     await navigator.clipboard.writeText(link)
@@ -55,13 +53,13 @@ export function PaymentLinkDialog({ open, onOpenChange }: PaymentLinkDialogProps
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>{t('paylink.title')}</DialogTitle>
-          <DialogDescription>{t('paylink.caption')}</DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4">
+    <div className="flex justify-center">
+      <Card className="w-full max-w-md rounded-2xl shadow-none">
+        <CardHeader className="items-center text-center">
+          <CardTitle className="text-2xl tracking-tight">{t('paylink.title')}</CardTitle>
+          <CardDescription>{t('paylink.caption')}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-5">
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label htmlFor="paylink-name">{t('paylink.nameLabel')}</Label>
@@ -74,34 +72,44 @@ export function PaymentLinkDialog({ open, onOpenChange }: PaymentLinkDialogProps
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="paylink-amount">{t('paylink.amountLabel')}</Label>
-              <Input
-                id="paylink-amount"
-                value={amount}
-                placeholder={t('paylink.amountPlaceholder')}
-                inputMode="decimal"
-                className="tabular-nums"
-                onChange={(e) => setAmount(e.target.value)}
-              />
+              <div className="relative">
+                <TokenIcon
+                  token="usdc"
+                  size={16}
+                  className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
+                />
+                <Input
+                  id="paylink-amount"
+                  value={amount}
+                  placeholder={t('paylink.amountPlaceholder')}
+                  inputMode="decimal"
+                  className="pl-9 tabular-nums"
+                  onChange={(e) => setAmount(e.target.value)}
+                />
+              </div>
             </div>
           </div>
           {/* white card in both themes so scanners always see dark modules on white */}
-          <div className="mx-auto w-fit rounded-2xl border bg-white p-3">
+          <div className="mx-auto w-fit rounded-2xl border bg-white p-4">
             <div
-              className="size-44 [&_svg]:h-full [&_svg]:w-full"
+              className="size-52 [&_svg]:h-full [&_svg]:w-full"
               dangerouslySetInnerHTML={{ __html: qr }}
             />
           </div>
           <div className="flex items-center gap-2">
-            <p className="min-w-0 flex-1 truncate rounded-xl border bg-muted/50 px-3 py-2 font-mono text-xs text-muted-foreground">
-              {link}
-            </p>
-            <Button size="sm" className="shrink-0" onClick={() => void copy()}>
+            <div className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border bg-muted/50 py-2 pr-3 pl-2">
+              <AddressAvatar address={address} size={24} className="rounded-md" />
+              <p className="min-w-0 flex-1 truncate font-mono text-xs text-muted-foreground">
+                {link}
+              </p>
+            </div>
+            <Button className="shrink-0" onClick={() => void copy()}>
               <CopyIcon />
               {t('paylink.copy')}
             </Button>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

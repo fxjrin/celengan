@@ -3,15 +3,17 @@ import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { StrKey } from 'celengan'
 import { CheckIcon, CopyIcon } from 'lucide-react'
 import { toast } from 'sonner'
+import { AddressAvatar } from '@/components/brand/address-avatar'
 import { FloatingDeco } from '@/components/brand/floating-deco'
 import { LogoWordmark } from '@/components/brand/logo'
-import { ConnectButton } from '@/components/connect-button'
+import { TokenIcon } from '@/components/brand/token-icon'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useAppState } from '@/lib/app-state'
 import { celengan } from '@/lib/celengan'
+import { errorKey } from '@/lib/errors'
 import { parseUsdc } from '@/lib/format'
 import { formatMoney, useT } from '@/lib/i18n'
 import { useSettings } from '@/lib/settings'
@@ -36,7 +38,7 @@ function AddressChip({ address }: { address: string }) {
     <button
       type="button"
       aria-label={t('shell.copyAddress')}
-      className="inline-flex items-center gap-1.5 rounded-full border bg-muted/50 px-3 py-1 font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
+      className="inline-flex items-center gap-1.5 rounded-full border bg-muted/50 px-3 py-1 font-mono text-xs text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
       onClick={() => void copy()}
     >
       {shortAddress(address)}
@@ -47,7 +49,7 @@ function AddressChip({ address }: { address: string }) {
 
 function PayCard({ recipient }: { recipient: string }) {
   const t = useT()
-  const { address } = useWallet()
+  const { address, connecting, connect } = useWallet()
   const { rate, busy, runAction } = useAppState()
   const { locale } = useSettings()
   const [searchParams] = useSearchParams()
@@ -78,6 +80,16 @@ function PayCard({ recipient }: { recipient: string }) {
     }
   }, [recipient])
 
+  const handleConnect = async () => {
+    try {
+      await connect()
+    } catch (e) {
+      const key = errorKey(e)
+      if (key === 'errors.walletCancelled') return // user closed the modal on purpose
+      toast.error(t(key))
+    }
+  }
+
   const handlePay = async () => {
     let parsed: bigint
     try {
@@ -102,11 +114,12 @@ function PayCard({ recipient }: { recipient: string }) {
             <CheckIcon className="size-7" />
           </span>
           <p className="text-xl font-semibold tracking-tight">{t('pay.successTitle')}</p>
+          <p className="flex items-center gap-2 text-2xl font-semibold tracking-tight tabular-nums">
+            <TokenIcon token="usdc" size={20} />
+            {formatMoney(paid, 'usdc', rate, locale)}
+          </p>
           <p className="text-sm text-muted-foreground">
-            {t('pay.successBody', {
-              amount: formatMoney(paid, 'usdc', rate, locale),
-              name: displayName,
-            })}
+            {t('pay.successBody', { name: displayName })}
           </p>
           <div className="mt-4 flex flex-col items-center gap-2">
             <Button variant="outline" onClick={() => setPaid(null)}>
@@ -124,22 +137,32 @@ function PayCard({ recipient }: { recipient: string }) {
   return (
     <Card className="w-full max-w-md rounded-2xl shadow-none">
       <CardHeader className="items-center text-center">
-        <CardTitle className="text-2xl tracking-tight">
-          {t('pay.title', { name: displayName })}
-        </CardTitle>
+        <div className="flex items-center justify-center gap-3">
+          <AddressAvatar address={recipient} size={40} />
+          <CardTitle className="text-2xl tracking-tight">
+            {t('pay.title', { name: displayName })}
+          </CardTitle>
+        </div>
         <div className="mx-auto mt-1">
           <AddressChip address={recipient} />
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        <Input
-          value={value}
-          placeholder={t('receive.amountPlaceholder')}
-          inputMode="decimal"
-          className="h-12 text-lg tabular-nums"
-          disabled={anyBusy}
-          onChange={(e) => setValue(e.target.value)}
-        />
+        <div className="relative">
+          <TokenIcon
+            token="usdc"
+            size={18}
+            className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2"
+          />
+          <Input
+            value={value}
+            placeholder={t('receive.amountPlaceholder')}
+            inputMode="decimal"
+            className="h-12 pl-10 text-lg tabular-nums"
+            disabled={anyBusy}
+            onChange={(e) => setValue(e.target.value)}
+          />
+        </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">{t('receive.quickAmounts')}</span>
           {QUICK_AMOUNTS.map((quick) => (
@@ -163,24 +186,34 @@ function PayCard({ recipient }: { recipient: string }) {
       </CardContent>
       <CardFooter className="flex-col items-stretch gap-3">
         {address ? (
-          <div className="flex items-center justify-between gap-3">
+          <>
             <div className="flex min-w-0 items-center gap-2">
-              <span className="text-xs text-muted-foreground">{t('pay.payingAs')}</span>
-              <span className="truncate font-mono text-xs">{shortAddress(address)}</span>
+              <AddressAvatar address={address} size={24} className="rounded-md" />
+              <span className="shrink-0 text-xs text-muted-foreground">
+                {t('pay.payingFrom')}
+              </span>
+              <span className="min-w-0 truncate font-mono text-xs">{shortAddress(address)}</span>
             </div>
             <Button
+              size="lg"
+              className="w-full"
               onClick={() => void handlePay()}
               disabled={anyBusy || value.trim() === ''}
             >
               {busy === 'paylink' ? `${t('common.loading')}...` : t('pay.button')}
             </Button>
-          </div>
+          </>
         ) : (
           <>
-            <p className="text-center text-sm text-muted-foreground">{t('pay.connectCaption')}</p>
-            <div className="mx-auto">
-              <ConnectButton />
-            </div>
+            <Button
+              size="lg"
+              className="w-full"
+              disabled={connecting}
+              onClick={() => void handleConnect()}
+            >
+              {connecting ? `${t('topbar.connecting')}...` : t('pay.connectCta')}
+            </Button>
+            <p className="text-center text-xs text-muted-foreground">{t('pay.connectCaption')}</p>
           </>
         )}
       </CardFooter>

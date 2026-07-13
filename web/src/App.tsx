@@ -9,6 +9,8 @@ import { ActivityPage } from '@/pages/activity'
 import { Dashboard } from '@/pages/dashboard'
 import { Landing } from '@/pages/landing'
 import { PayPage } from '@/pages/pay'
+import { PaymentLinkPage } from '@/pages/payment-link'
+import { SettingsPage } from '@/pages/settings'
 
 export function App() {
   return (
@@ -29,6 +31,8 @@ export function App() {
                 <Route path="/app" element={<AppShell />}>
                   <Route index element={<Dashboard />} />
                   <Route path="activity" element={<ActivityPage />} />
+                  <Route path="link" element={<PaymentLinkPage />} />
+                  <Route path="settings" element={<SettingsPage />} />
                 </Route>
               </Routes>
             </BrowserRouter>

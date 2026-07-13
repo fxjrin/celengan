@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { LockIcon } from 'lucide-react'
 import { toast } from 'sonner'
+import { TokenIcon } from '@/components/brand/token-icon'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -71,14 +72,21 @@ export function WithdrawCard({ account }: WithdrawCardProps) {
           </TabsList>
           <TabsContent value="spend" className="mt-3 space-y-3">
             <div className="flex gap-2">
-              <Input
-                value={spendValue}
-                placeholder={t('receive.amountPlaceholder')}
-                inputMode="decimal"
-                className="tabular-nums"
-                disabled={anyBusy}
-                onChange={(e) => setSpendValue(e.target.value)}
-              />
+              <div className="relative flex-1">
+                <TokenIcon
+                  token="usdc"
+                  size={16}
+                  className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
+                />
+                <Input
+                  value={spendValue}
+                  placeholder={t('receive.amountPlaceholder')}
+                  inputMode="decimal"
+                  className="pl-9 tabular-nums"
+                  disabled={anyBusy}
+                  onChange={(e) => setSpendValue(e.target.value)}
+                />
+              </div>
               <Button
                 variant="outline"
                 disabled={anyBusy}
