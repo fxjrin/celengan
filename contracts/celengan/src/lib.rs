@@ -14,6 +14,7 @@ pub const DEFAULT_SPLIT_BPS: u32 = 2_000;
 
 const ACCOUNT_TTL_THRESHOLD: u32 = 518_400; // 30 days in ledgers
 const ACCOUNT_TTL_EXTEND_TO: u32 = 3_110_400; // 180 days in ledgers
+const MAX_LOCK_SECS: u64 = 157_680_000; // 5 years; caps fat-fingered locks
 
 #[contracterror]
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
@@ -25,6 +26,8 @@ pub enum Error {
     InsufficientShares = 4,
     SavingsLocked = 5,
     LockNotExtended = 6,
+    EmptyWithdrawal = 7,
+    LockTooLong = 8,
 }
 
 #[contracttype]
@@ -102,20 +105,24 @@ impl Celengan {
         acc.spend += amount - saved;
         if saved > 0 {
             Self::authorize_vault_pull(e, &cfg, saved);
-            let (_, shares, _) = VaultClient::new(e, &cfg.vault).deposit(
+            let result = VaultClient::new(e, &cfg.vault).try_deposit(
                 &vec![e, saved],
                 &vec![e, saved],
                 &e.current_contract_address(),
                 &true,
             );
-            acc.shares += shares;
+            match result {
+                Ok(Ok((_, shares, _))) => acc.shares += shares,
+                _ => acc.spend += saved, // vault outage must not block payroll
+            }
         }
         Self::store_account(e, &to, &acc);
         e.events()
             .publish((symbol_short!("pay"), &to), (from, amount, saved));
     }
 
-    #[when_not_paused]
+    // Withdrawals are deliberately not pausable: pause stops inflows only,
+    // so the owner can never freeze user exits.
     pub fn withdraw_spend(e: &Env, user: Address, amount: i128) {
         user.require_auth();
         if amount <= 0 {
@@ -139,7 +146,6 @@ impl Celengan {
     }
 
     /// Redeems vault shares and sends the resulting USDC to the user.
-    #[when_not_paused]
     pub fn withdraw_savings(e: &Env, user: Address, shares: i128) -> i128 {
         user.require_auth();
         if shares <= 0 {
@@ -155,20 +161,21 @@ impl Celengan {
         acc.shares -= shares;
         Self::store_account(e, &user, &acc);
 
+        // The payout is measured as a balance delta instead of trusting the
+        // vault's reported amount, so the pooled spend funds stay untouchable.
         let cfg = Self::config(e);
-        let amounts = VaultClient::new(e, &cfg.vault).withdraw(
+        let usdc = token::TokenClient::new(e, &cfg.usdc);
+        let before = usdc.balance(&e.current_contract_address());
+        VaultClient::new(e, &cfg.vault).withdraw(
             &shares,
             &vec![e, 0],
             &e.current_contract_address(),
         );
-        let amount = amounts.get(0).unwrap_or(0);
-        if amount > 0 {
-            token::TokenClient::new(e, &cfg.usdc).transfer(
-                &e.current_contract_address(),
-                &user,
-                &amount,
-            );
+        let amount = usdc.balance(&e.current_contract_address()) - before;
+        if amount <= 0 {
+            panic_with_error!(e, Error::EmptyWithdrawal);
         }
+        usdc.transfer(&e.current_contract_address(), &user, &amount);
         e.events()
             .publish((symbol_short!("wd_save"), &user), (shares, amount));
         amount
@@ -182,6 +189,7 @@ impl Celengan {
         let mut acc = Self::load_account(e, &user);
         acc.split_bps = bps;
         Self::store_account(e, &user, &acc);
+        e.events().publish((symbol_short!("split"), &user), bps);
     }
 
     /// Locks savings withdrawals until `until`; a lock can only be extended.
@@ -191,8 +199,12 @@ impl Celengan {
         if until <= acc.lock_until {
             panic_with_error!(e, Error::LockNotExtended);
         }
+        if until > e.ledger().timestamp() + MAX_LOCK_SECS {
+            panic_with_error!(e, Error::LockTooLong);
+        }
         acc.lock_until = until;
         Self::store_account(e, &user, &acc);
+        e.events().publish((symbol_short!("lock"), &user), until);
     }
 
     pub fn account_of(e: &Env, user: Address) -> Account {

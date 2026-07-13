@@ -9,6 +9,14 @@ use soroban_sdk::{contract, contractimpl, contracttype, token, vec, Address, Env
 enum VaultKey {
     Token,
     PriceBps,
+    Fail,
+}
+
+#[soroban_sdk::contracterror]
+#[derive(Copy, Clone)]
+#[repr(u32)]
+pub enum MockVaultError {
+    Forced = 100,
 }
 
 #[contract]
@@ -25,6 +33,10 @@ impl MockVault {
         e.storage().instance().set(&VaultKey::PriceBps, &bps);
     }
 
+    pub fn set_fail(e: &Env, fail: bool) {
+        e.storage().instance().set(&VaultKey::Fail, &fail);
+    }
+
     pub fn deposit(
         e: Env,
         amounts_desired: Vec<i128>,
@@ -33,6 +45,13 @@ impl MockVault {
         _invest: bool,
     ) -> (Vec<i128>, i128, Option<i128>) {
         from.require_auth();
+        if e.storage()
+            .instance()
+            .get(&VaultKey::Fail)
+            .unwrap_or(false)
+        {
+            soroban_sdk::panic_with_error!(&e, MockVaultError::Forced);
+        }
         let token_addr: Address = e.storage().instance().get(&VaultKey::Token).unwrap();
         let price: i128 = e.storage().instance().get(&VaultKey::PriceBps).unwrap();
         let amount = amounts_desired.get(0).unwrap();
@@ -320,6 +339,62 @@ fn pause_blocks_pay() {
     fund(&s, &payer, 100);
     s.client.pause();
     s.client.pay(&payer, &worker, &100);
+}
+
+#[test]
+fn withdrawals_work_while_paused() {
+    let e = Env::default();
+    let s = setup(&e);
+    let payer = Address::generate(&e);
+    let worker = Address::generate(&e);
+    fund(&s, &payer, 100);
+    s.client.pay(&payer, &worker, &100);
+    s.client.pause();
+
+    s.client.withdraw_spend(&worker, &80);
+    let amount = s.client.withdraw_savings(&worker, &20);
+
+    assert_eq!(amount, 20);
+    assert_eq!(s.usdc.balance(&worker), 100);
+}
+
+#[test]
+fn vault_failure_credits_savings_as_spend() {
+    let e = Env::default();
+    let s = setup(&e);
+    let payer = Address::generate(&e);
+    let worker = Address::generate(&e);
+    fund(&s, &payer, 100);
+    MockVaultClient::new(&e, &s.vault).set_fail(&true);
+
+    s.client.pay(&payer, &worker, &100);
+
+    let acc = s.client.account_of(&worker);
+    assert_eq!(acc.spend, 100);
+    assert_eq!(acc.shares, 0);
+    assert_eq!(s.usdc.balance(&s.client.address), 100);
+}
+
+#[test]
+#[should_panic(expected = "Error(Contract, #7)")]
+fn zero_value_withdrawal_reverts() {
+    let e = Env::default();
+    let s = setup(&e);
+    let payer = Address::generate(&e);
+    let worker = Address::generate(&e);
+    fund(&s, &payer, 100);
+    s.client.pay(&payer, &worker, &100);
+    MockVaultClient::new(&e, &s.vault).set_price_bps(&0);
+    s.client.withdraw_savings(&worker, &20);
+}
+
+#[test]
+#[should_panic(expected = "Error(Contract, #8)")]
+fn set_lock_rejects_absurd_horizon() {
+    let e = Env::default();
+    let s = setup(&e);
+    let user = Address::generate(&e);
+    s.client.set_lock(&user, &(crate::MAX_LOCK_SECS + 1));
 }
 
 #[test]

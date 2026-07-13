@@ -37,11 +37,18 @@ echo "worker: $WORKER"
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
-echo "-- funding payer with test USDC (Blend faucet)"
-curl -sf "$FAUCET?userId=$PAYER" | tr -d '"' > "$tmp/faucet.xdr"
-stellar tx sign --sign-with-key "$PAYER_ID" --network "$NETWORK" \
-  < "$tmp/faucet.xdr" > "$tmp/faucet-signed.xdr"
-stellar tx send --network "$NETWORK" < "$tmp/faucet-signed.xdr" >/dev/null
+payer_balance() {
+  stellar contract invoke --id "$USDC" --source-account "$PAYER_ID" \
+    --network "$NETWORK" -- balance --id "$PAYER" | tr -d '"'
+}
+
+if [ "$(payer_balance)" -lt 1000000000 ]; then
+  echo "-- funding payer with test USDC (Blend faucet)"
+  curl -sf "$FAUCET?userId=$PAYER" | tr -d '"' > "$tmp/faucet.xdr"
+  stellar tx sign --sign-with-key "$PAYER_ID" --network "$NETWORK" \
+    < "$tmp/faucet.xdr" > "$tmp/faucet-signed.xdr"
+  stellar tx send --network "$NETWORK" < "$tmp/faucet-signed.xdr" >/dev/null
+fi
 
 echo "-- ensuring worker USDC trustline"
 stellar tx new change-trust --source-account "$WORKER_ID" \
