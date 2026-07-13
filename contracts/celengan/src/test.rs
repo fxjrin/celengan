@@ -31,7 +31,7 @@ impl MockVault {
         _amounts_min: Vec<i128>,
         from: Address,
         _invest: bool,
-    ) -> (Vec<i128>, i128) {
+    ) -> (Vec<i128>, i128, Option<i128>) {
         from.require_auth();
         let token_addr: Address = e.storage().instance().get(&VaultKey::Token).unwrap();
         let price: i128 = e.storage().instance().get(&VaultKey::PriceBps).unwrap();
@@ -41,7 +41,7 @@ impl MockVault {
             &e.current_contract_address(),
             &amount,
         );
-        (amounts_desired, amount * 10_000 / price)
+        (amounts_desired, amount * 10_000 / price, None)
     }
 
     pub fn withdraw(

@@ -3,7 +3,7 @@
 use soroban_sdk::auth::{ContractContext, InvokerContractAuthEntry, SubContractInvocation};
 use soroban_sdk::{
     contract, contractclient, contracterror, contractimpl, contracttype, panic_with_error,
-    symbol_short, token, vec, Address, Env, IntoVal, Symbol, Vec,
+    symbol_short, token, vec, Address, Env, IntoVal, Symbol, Val, Vec,
 };
 use stellar_access::ownable;
 use stellar_contract_utils::pausable;
@@ -50,6 +50,8 @@ enum DataKey {
     Account(Address),
 }
 
+// Mirrors the DeFindex vault interface; the allocation report in deposit's
+// return value is decoded as a raw Val because it is never inspected here.
 #[contractclient(name = "VaultClient")]
 pub trait Vault {
     fn deposit(
@@ -58,7 +60,7 @@ pub trait Vault {
         amounts_min: Vec<i128>,
         from: Address,
         invest: bool,
-    ) -> (Vec<i128>, i128);
+    ) -> (Vec<i128>, i128, Val);
 
     fn withdraw(
         e: Env,
@@ -100,7 +102,7 @@ impl Celengan {
         acc.spend += amount - saved;
         if saved > 0 {
             Self::authorize_vault_pull(e, &cfg, saved);
-            let (_, shares) = VaultClient::new(e, &cfg.vault).deposit(
+            let (_, shares, _) = VaultClient::new(e, &cfg.vault).deposit(
                 &vec![e, saved],
                 &vec![e, saved],
                 &e.current_contract_address(),
