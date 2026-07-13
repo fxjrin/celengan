@@ -2,12 +2,15 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from 'react'
 import { NETWORK_PASSPHRASE } from '@/lib/config'
 import { setWalletBridge } from '@/lib/wallet-bridge'
+
+const ADDRESS_KEY = 'celengan:address'
 
 type Kit = typeof import('@creit-tech/stellar-wallets-kit').StellarWalletsKit
 
@@ -40,12 +43,39 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const [address, setAddress] = useState<string | null>(null)
   const [connecting, setConnecting] = useState(false)
 
+  useEffect(() => {
+    const stored = localStorage.getItem(ADDRESS_KEY)
+    if (!stored) return
+    let cancelled = false
+    void (async () => {
+      try {
+        const kit = await loadKit()
+        if (cancelled) return
+        setAddress(stored)
+        setWalletBridge({
+          address: stored,
+          sign: (xdr) =>
+            kit.signTransaction(xdr, {
+              networkPassphrase: NETWORK_PASSPHRASE,
+              address: stored,
+            }),
+        })
+      } catch {
+        localStorage.removeItem(ADDRESS_KEY)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const connect = useCallback(async () => {
     setConnecting(true)
     try {
       const kit = await loadKit()
       const result = await kit.authModal()
       setAddress(result.address)
+      localStorage.setItem(ADDRESS_KEY, result.address)
       setWalletBridge({
         address: result.address,
         sign: (xdr) =>
@@ -62,6 +92,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const disconnect = useCallback(async () => {
     setAddress(null)
     setWalletBridge(null)
+    localStorage.removeItem(ADDRESS_KEY)
     try {
       const kit = await loadKit()
       await kit.disconnect()

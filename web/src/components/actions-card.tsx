@@ -9,6 +9,10 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
+import { useAppState } from '@/lib/app-state'
+import { parseUsdc } from '@/lib/format'
+import { formatDate, formatMoney, useT } from '@/lib/i18n'
+import { useSettings } from '@/lib/settings'
 
 type ActionsCardProps = {
   disabled: boolean
@@ -27,6 +31,8 @@ type ActionRowProps = {
   placeholder: string
   disabled: boolean
   busy: boolean
+  disabledReason?: string
+  hint?: (value: string) => string | null
   onSubmit: (value: string) => Promise<boolean>
 }
 
@@ -38,9 +44,13 @@ function ActionRow({
   placeholder,
   disabled,
   busy,
+  disabledReason,
+  hint,
   onSubmit,
 }: ActionRowProps) {
   const [value, setValue] = useState('')
+  const hintText = hint ? hint(value) : null
+  const blocked = disabledReason !== undefined
 
   const handleSubmit = async () => {
     if (await onSubmit(value)) setValue('')
@@ -56,16 +66,21 @@ function ActionRow({
           placeholder={placeholder}
           inputMode="decimal"
           className="tabular-nums"
-          disabled={disabled}
+          disabled={disabled || blocked}
           onChange={(e) => setValue(e.target.value)}
         />
         <Button
           onClick={() => void handleSubmit()}
-          disabled={disabled || busy || value.trim() === ''}
+          disabled={disabled || busy || blocked || value.trim() === ''}
         >
           {busy ? busyLabel : buttonLabel}
         </Button>
       </div>
+      {disabledReason !== undefined ? (
+        <p className="mt-1.5 text-xs text-muted-foreground">{disabledReason}</p>
+      ) : (
+        hintText !== null && <p className="mt-1.5 text-xs text-muted-foreground">{hintText}</p>
+      )}
     </div>
   )
 }
@@ -78,61 +93,87 @@ export function ActionsCard({
   onWithdrawSpend,
   onWithdrawSavings,
 }: ActionsCardProps) {
+  const t = useT()
+  const { account, rate } = useAppState()
+  const { locale, primaryCurrency } = useSettings()
   const anyBusy = busy !== null
+  const busyLabel = `${t('common.loading')}...`
+
+  const payHint = (value: string): string | null => {
+    if (!account || value.trim() === '') return null
+    let amount: bigint
+    try {
+      amount = parseUsdc(value)
+    } catch {
+      return null
+    }
+    const saved = (amount * BigInt(account.splitBps)) / 10_000n
+    return t('receive.preview', {
+      spend: formatMoney(amount - saved, primaryCurrency, rate, locale),
+      save: formatMoney(saved, primaryCurrency, rate, locale),
+    })
+  }
+
+  const savingsLocked =
+    account !== null && Number(account.lockUntil) * 1000 > Date.now()
+  const lockedReason =
+    savingsLocked && account
+      ? t('withdraw.lockedReason', { date: formatDate(account.lockUntil, locale) })
+      : undefined
 
   return (
     <Card className="rounded-2xl shadow-none">
       <CardHeader>
-        <CardTitle>Actions</CardTitle>
-        <CardDescription>Try the flow with testnet USDC</CardDescription>
+        <CardTitle>{t('actions.title')}</CardTitle>
+        <CardDescription>{t('actions.caption')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between gap-2">
           <div>
-            <p className="text-sm font-medium">Get test USDC</p>
-            <p className="text-xs text-muted-foreground">
-              Funds your wallet with 1,000 testnet USDC
-            </p>
+            <p className="text-sm font-medium">{t('faucet.title')}</p>
+            <p className="text-xs text-muted-foreground">{t('faucet.caption')}</p>
           </div>
           <Button
             variant="outline"
             onClick={() => void onFaucet()}
             disabled={disabled || anyBusy}
           >
-            {busy === 'faucet' ? 'Requesting...' : 'Request'}
+            {busy === 'faucet' ? busyLabel : t('faucet.button')}
           </Button>
         </div>
         <Separator />
         <ActionRow
-          title="Simulate incoming payment"
-          caption="Your wallet acts as the customer paying you"
-          buttonLabel="Pay"
-          busyLabel="Paying..."
-          placeholder="25.00"
+          title={t('receive.title')}
+          caption={t('receive.caption')}
+          buttonLabel={t('receive.button')}
+          busyLabel={busyLabel}
+          placeholder={t('receive.amountPlaceholder')}
           disabled={disabled || anyBusy}
           busy={busy === 'pay'}
+          hint={payHint}
           onSubmit={onPay}
         />
         <Separator />
         <ActionRow
-          title="Withdraw spendable"
-          caption="Move USDC out of your spendable balance"
-          buttonLabel="Withdraw"
-          busyLabel="Withdrawing..."
-          placeholder="10.00"
+          title={t('withdraw.spendTitle')}
+          caption={t('withdraw.spendCaption')}
+          buttonLabel={t('withdraw.button')}
+          busyLabel={busyLabel}
+          placeholder={t('receive.amountPlaceholder')}
           disabled={disabled || anyBusy}
           busy={busy === 'spend'}
           onSubmit={onWithdrawSpend}
         />
         <Separator />
         <ActionRow
-          title="Withdraw savings"
-          caption="Redeem vault shares back to USDC"
-          buttonLabel="Withdraw"
-          busyLabel="Withdrawing..."
-          placeholder="5.00"
+          title={t('withdraw.saveTitle')}
+          caption={t('withdraw.sharesHint')}
+          buttonLabel={t('withdraw.button')}
+          busyLabel={busyLabel}
+          placeholder={t('receive.amountPlaceholder')}
           disabled={disabled || anyBusy}
           busy={busy === 'savings'}
+          disabledReason={lockedReason}
           onSubmit={onWithdrawSavings}
         />
       </CardContent>

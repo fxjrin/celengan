@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Slider } from '@/components/ui/slider'
+import { useT } from '@/lib/i18n'
 
 type SplitCardProps = {
   splitBps: number | null
@@ -18,6 +19,7 @@ type SplitCardProps = {
 }
 
 export function SplitCard({ splitBps, disabled, saving, onSave }: SplitCardProps) {
+  const t = useT()
   const [draft, setDraft] = useState<number | null>(null)
   const percent = draft ?? (splitBps !== null ? Math.round(splitBps / 100) : 20)
   const unchanged = splitBps !== null && percent * 100 === splitBps
@@ -25,8 +27,8 @@ export function SplitCard({ splitBps, disabled, saving, onSave }: SplitCardProps
   return (
     <Card className="rounded-2xl shadow-none">
       <CardHeader>
-        <CardTitle>Savings rule</CardTitle>
-        <CardDescription>How much of every incoming payment goes to savings</CardDescription>
+        <CardTitle>{t('rules.title')}</CardTitle>
+        <CardDescription>{t('rules.splitCaption')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-3xl font-semibold tracking-tight tabular-nums">{percent}%</p>
@@ -39,12 +41,12 @@ export function SplitCard({ splitBps, disabled, saving, onSave }: SplitCardProps
           onValueChange={(values) => setDraft(values[0])}
         />
         <p className="text-sm text-muted-foreground">
-          Dari setiap Rp pembayaran, {percent}% langsung ditabung.
+          {t('rules.splitSentence', { pct: percent })}
         </p>
       </CardContent>
       <CardFooter>
         <Button onClick={() => onSave(percent * 100)} disabled={disabled || saving || unchanged}>
-          {saving ? 'Saving...' : 'Save rule'}
+          {saving ? `${t('common.loading')}...` : t('rules.saveButton')}
         </Button>
       </CardFooter>
     </Card>

@@ -40,15 +40,16 @@ export const celenganMock: CelenganService = {
   async withdrawSpend(user, amount) {
     await delay()
     const acc = account(user)
-    if (amount > acc.spend) throw new Error('Insufficient spendable balance')
+    // same format the SDK surfaces for real contract failures, so errorKey maps it
+    if (amount > acc.spend) throw new Error('Error(Contract, #3)')
     acc.spend -= amount
   },
 
   async withdrawSavings(user, shares) {
     await delay()
     const acc = account(user)
-    if (acc.lockUntil > nowSeconds()) throw new Error('Savings are locked')
-    if (shares > acc.shares) throw new Error('Insufficient savings shares')
+    if (acc.lockUntil > nowSeconds()) throw new Error('Error(Contract, #5)')
+    if (shares > acc.shares) throw new Error('Error(Contract, #4)')
     acc.shares -= shares
     return shares // 1:1 redemption in mock
   },

@@ -12,7 +12,7 @@ export async function requestTestUsdc(bridge: WalletBridge): Promise<void> {
   await fetch(FRIENDBOT_URL + bridge.address).catch(() => undefined)
 
   const res = await fetch(`${FAUCET_URL}?userId=${bridge.address}`)
-  if (!res.ok) throw new Error('Faucet is unavailable, try again later')
+  if (!res.ok) throw new Error('faucet_unavailable')
   const xdr = (await res.text()).replaceAll('"', '')
 
   const { signedTxXdr } = await bridge.sign(xdr)
@@ -20,6 +20,6 @@ export async function requestTestUsdc(bridge: WalletBridge): Promise<void> {
   const tx = TransactionBuilder.fromXDR(signedTxXdr, NETWORK_PASSPHRASE)
   const sent = await server.sendTransaction(tx)
   if (sent.status === 'ERROR') {
-    throw new Error('Faucet transaction failed; the wallet may already be funded')
+    throw new Error('faucet_maybe_funded') // usually a duplicate claim on an already funded wallet
   }
 }

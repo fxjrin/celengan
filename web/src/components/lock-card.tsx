@@ -9,6 +9,8 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { formatDate, useT } from '@/lib/i18n'
+import { useSettings } from '@/lib/settings'
 
 type LockCardProps = {
   lockUntil: bigint | null
@@ -17,15 +19,9 @@ type LockCardProps = {
   onLock: (until: bigint) => void
 }
 
-function formatLockDate(until: bigint): string {
-  return new Date(Number(until) * 1000).toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
-}
-
 export function LockCard({ lockUntil, disabled, saving, onLock }: LockCardProps) {
+  const t = useT()
+  const { locale } = useSettings()
   const [date, setDate] = useState('')
   const today = new Date().toISOString().slice(0, 10)
   const locked = lockUntil !== null && Number(lockUntil) * 1000 > Date.now()
@@ -37,16 +33,16 @@ export function LockCard({ lockUntil, disabled, saving, onLock }: LockCardProps)
   return (
     <Card className="rounded-2xl shadow-none">
       <CardHeader>
-        <CardTitle>Time lock</CardTitle>
+        <CardTitle>{t('rules.lockTitle')}</CardTitle>
         <CardDescription>
           {locked && lockUntil !== null
-            ? `Savings locked until ${formatLockDate(lockUntil)}`
-            : 'Savings are unlocked. Set a date to protect your goal.'}
+            ? t('rules.lockedStatus', { date: formatDate(lockUntil, locale) })
+            : t('rules.noLock')}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <label className="text-sm font-medium" htmlFor="lock-date">
-          Lock savings until
+          {t('rules.lockLabel')}
         </label>
         <Input
           id="lock-date"
@@ -57,10 +53,11 @@ export function LockCard({ lockUntil, disabled, saving, onLock }: LockCardProps)
           disabled={disabled}
           onChange={(e) => setDate(e.target.value)}
         />
+        <p className="mt-2 text-xs text-muted-foreground">{t('rules.lockCaption')}</p>
       </CardContent>
       <CardFooter>
         <Button onClick={handleLock} disabled={disabled || saving || date === '' || date < today}>
-          {saving ? 'Locking...' : 'Lock savings'}
+          {saving ? `${t('common.loading')}...` : t('rules.lockButton')}
         </Button>
       </CardFooter>
     </Card>

@@ -1,6 +1,7 @@
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import { errorMessage } from '@/lib/errors'
+import { errorKey } from '@/lib/errors'
+import { useT } from '@/lib/i18n'
 import { useWallet } from '@/lib/wallet'
 
 function shortAddress(address: string): string {
@@ -8,15 +9,16 @@ function shortAddress(address: string): string {
 }
 
 export function ConnectButton() {
+  const t = useT()
   const { address, connecting, connect, disconnect } = useWallet()
 
   const handleConnect = async () => {
     try {
       await connect()
     } catch (e) {
-      const message = errorMessage(e)
-      if (message.includes('closed the modal')) return
-      toast.error(message)
+      const key = errorKey(e)
+      if (key === 'errors.walletCancelled') return // user closed the modal on purpose
+      toast.error(t(key))
     }
   }
 
@@ -30,7 +32,7 @@ export function ConnectButton() {
 
   return (
     <Button onClick={() => void handleConnect()} disabled={connecting}>
-      {connecting ? 'Connecting...' : 'Connect wallet'}
+      {connecting ? `${t('topbar.connecting')}...` : t('topbar.connect')}
     </Button>
   )
 }
