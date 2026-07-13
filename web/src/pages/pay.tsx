@@ -111,7 +111,7 @@ function PayCard({ recipient }: { recipient: string }) {
     return (
       <Card className="w-full max-w-md rounded-2xl shadow-none">
         <CardContent className="flex flex-col items-center gap-3 py-10 text-center">
-          <span className="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <span className="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary-ink">
             <CheckIcon className="size-7" />
           </span>
           <p className="text-xl font-semibold tracking-tight">{t('pay.successTitle')}</p>
@@ -126,7 +126,7 @@ function PayCard({ recipient }: { recipient: string }) {
             <Button variant="outline" onClick={() => setPaid(null)}>
               {t('pay.payAgain')}
             </Button>
-            <Button asChild variant="link" className="text-primary">
+            <Button asChild variant="link">
               <Link to="/">{t('pay.createOwn')}</Link>
             </Button>
           </div>
@@ -180,7 +180,7 @@ function PayCard({ recipient }: { recipient: string }) {
           ))}
         </div>
         {splitPct !== null && (
-          <p className="rounded-xl bg-primary/5 px-3 py-2 text-sm text-primary">
+          <p className="rounded-xl bg-primary/5 px-3 py-2 text-sm text-primary-ink">
             {t('pay.splitInfo', { pct: splitPct })}
           </p>
         )}

@@ -26,7 +26,7 @@ function Step({ done, title, caption, doneLabel, action }: StepProps) {
   return (
     <li className="flex items-center gap-3">
       {done ? (
-        <CircleCheckIcon aria-label={doneLabel} className="size-5 shrink-0 text-primary" />
+        <CircleCheckIcon aria-label={doneLabel} className="size-5 shrink-0 text-primary-ink" />
       ) : (
         <CircleIcon aria-hidden className="size-5 shrink-0 text-muted-foreground/40" />
       )}

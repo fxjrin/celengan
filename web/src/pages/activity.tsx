@@ -42,8 +42,9 @@ export function ActivityPage() {
               aria-pressed={filter === f.key}
               className={cn(
                 'rounded-full',
-                // secondary now reads as the teal spending tone, so the active pill tints emerald
-                filter === f.key && 'bg-primary/10 text-primary hover:bg-primary/15 hover:text-primary',
+                // secondary now reads as the teal spending tone, so the active pill tints brand yellow
+                filter === f.key &&
+                  'bg-primary/10 text-primary-ink hover:bg-primary/15 hover:text-primary-ink',
               )}
               onClick={() => setFilter(f.key)}
             >

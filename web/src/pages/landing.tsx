@@ -41,7 +41,7 @@ export function Landing() {
           {features.map((feature) => (
             <Card key={feature.title} className="rounded-2xl shadow-none">
               <CardContent>
-                <feature.icon className="size-5 text-primary" />
+                <feature.icon className="size-5 text-primary-ink" />
                 <p className="mt-3 font-medium">{t(feature.title)}</p>
                 <p className="mt-1 text-sm text-muted-foreground">{t(feature.body)}</p>
               </CardContent>

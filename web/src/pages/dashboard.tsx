@@ -86,7 +86,7 @@ export function Dashboard() {
                 to={action.to}
                 className="rounded-2xl border bg-card p-4 outline-none transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md active:translate-y-0 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
               >
-                <span className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <span className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary-ink">
                   <action.icon className="size-4" />
                 </span>
                 <p className="mt-3 text-sm font-medium">{t(action.title)}</p>

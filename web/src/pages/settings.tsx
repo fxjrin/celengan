@@ -140,7 +140,7 @@ export function SettingsPage() {
             href={EXPLORER_CONTRACT_URL}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1 text-primary underline-offset-4 hover:underline"
+            className="inline-flex items-center gap-1 text-primary-ink underline-offset-4 hover:underline"
           >
             {t('settings.viewExplorer')}
             <ExternalLinkIcon className="size-3.5" />

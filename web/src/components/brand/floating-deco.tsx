@@ -112,12 +112,17 @@ function XlmCoin({ uid }: DecoProps) {
         <circle cx="32" cy="32" r="27" fill={`url(#${rim})`} />
         <circle cx="32" cy="32" r="21" fill={`url(#${face})`} />
         <circle cx="32" cy="32" r="21" fill="none" stroke="#171a1d" strokeWidth="1.2" opacity="0.5" />
-        {/* stylized lumen: two sweeping arcs plus a dot, not the official flat mark */}
-        <g fill="none" stroke="#ffffff" strokeWidth="3.5" strokeLinecap="round" opacity="0.92">
-          <path d="M16 31 A 27 27 0 0 1 44 23" />
-          <path d="M48 33 A 27 27 0 0 1 20 41" />
+        {/* official lumen mark: its 237.8-wide box (center 195.1,153.1) scaled to 30px on the r-21 face */}
+        <g transform="translate(7.3869 12.6854) scale(0.126156)">
+          <path
+            fill="white"
+            d="M164.1,92.3c22.9-11.7,50.4-9.5,71.1,5.6l-1.7,0.9l-11.1,5.7c-17.3-9.7-38.4-9.4-55.5,0.6c-17.1,10-27.6,28.3-27.6,48.2c0,2.4,0.2,4.9,0.5,7.3l93.9-47.8l19.4-9.9l22.8-11.6v13.9l-23,11.7l-11.1,5.7l-99,50.4l-5.5,2.8l-5.6,2.9l-17.3,8.8v-13.9l5.9-3c4.5-2.3,7.1-7,6.7-12c-0.1-1.7-0.2-3.5-0.2-5.2C126.9,127.5,141.3,104,164.1,92.3z"
+          />
+          <path
+            fill="white"
+            d="M275.9,119v13.9l-5.9,3c-4.5,2.3-7.1,7-6.7,12c0.1,1.7,0.2,3.5,0.2,5.2c0,25.7-14.4,49.2-37.3,60.8s-50.4,9.5-71.1-5.6l12.1-6.2l0.7-0.4c17.3,9.7,38.5,9.5,55.6-0.5c17.1-10,27.7-28.4,27.7-48.2c0-2.5-0.2-4.9-0.5-7.3l-94,47.9l-19.4,9.9l-22.7,11.6v-13.9l22.9-11.7l11.1-5.7L275.9,119z"
+          />
         </g>
-        <circle cx="48" cy="24" r="2.2" fill="#ffffff" opacity="0.92" />
         <ellipse cx="22" cy="16" rx="9" ry="4.2" fill="#fff" opacity="0.45" transform="rotate(-28 22 16)" />
       </g>
     </svg>
@@ -148,18 +153,21 @@ function UsdcCoin({ uid }: DecoProps) {
         <circle cx="32" cy="32" r="27" fill={`url(#${rim})`} />
         <circle cx="32" cy="32" r="21" fill={`url(#${face})`} />
         <circle cx="32" cy="32" r="21" fill="none" stroke="#144a87" strokeWidth="1.2" opacity="0.5" />
-        <circle cx="32" cy="32" r="13.5" fill="none" stroke="#ffffff" strokeWidth="2.4" opacity="0.9" />
-        <text
-          x="32"
-          y="38"
-          textAnchor="middle"
-          fontFamily="'Geist Variable', system-ui, sans-serif"
-          fontSize="16"
-          fontWeight="700"
-          fill="#ffffff"
-        >
-          $
-        </text>
+        {/* official USDC mark: its 192-wide box (center 97,97) scaled to 30px on the r-21 face */}
+        <g transform="translate(16.8438 16.8438) scale(0.15625)">
+          <path
+            fill="white"
+            d="M114.28 27.0996V39.4596C138.94 46.8996 157 69.8196 157 96.9996C157 124.18 138.94 147.1 114.28 154.54V166.9C145.72 159.22 169 130.84 169 96.9996C169 63.1596 145.72 34.7796 114.28 27.0996Z"
+          />
+          <path
+            fill="white"
+            d="M37 96.9996C37 69.8196 55.06 46.8996 79.72 39.4596V27.0996C48.28 34.7796 25 63.1596 25 96.9996C25 130.84 48.28 159.22 79.72 166.9V154.54C55.06 147.16 37 124.18 37 96.9996Z"
+          />
+          <path
+            fill="white"
+            d="M122.8 110.38C122.8 85.84 84.3402 95.92 84.3402 82.36C84.3402 77.5 88.2402 74.38 95.6802 74.38C104.56 74.38 107.62 78.7 108.58 84.52H120.82C119.728 73.5976 113.459 66.7012 103 64.6468V55H91.0002V64.3024C79.542 65.7616 72.3402 72.4342 72.3402 82.36C72.3402 107.02 110.86 97.78 110.86 111.1C110.86 116.14 106 119.5 97.7802 119.5C87.0402 119.5 83.5002 114.76 82.1802 108.22H70.2402C71.0136 120.183 78.3906 127.671 91.0002 129.539V139H103V129.665C115.307 128.075 122.8 120.916 122.8 110.38Z"
+          />
+        </g>
         <ellipse cx="22" cy="16" rx="9" ry="4.2" fill="#fff" opacity="0.55" transform="rotate(-28 22 16)" />
       </g>
     </svg>
@@ -210,22 +218,22 @@ function PiggyBlob({ uid }: DecoProps) {
     <svg viewBox="0 0 64 64" width="100%" height="100%" overflow="visible" aria-hidden="true">
       <defs>
         <radialGradient id={body} cx="32%" cy="26%" r="85%">
-          <stop offset="0%" stopColor="#3fbf94" />
-          <stop offset="55%" stopColor="#0f8560" />
-          <stop offset="100%" stopColor="#06402f" />
+          <stop offset="0%" stopColor="#ffe98a" />
+          <stop offset="55%" stopColor="#f4c81c" />
+          <stop offset="100%" stopColor="#c79400" />
         </radialGradient>
         <filter id={sh} {...SHADOW}>
-          <feDropShadow dx="0" dy="5" stdDeviation="5" floodColor="#053024" floodOpacity="0.32" />
+          <feDropShadow dx="0" dy="5" stdDeviation="5" floodColor="#8a6c00" floodOpacity="0.32" />
         </filter>
       </defs>
       <g filter={`url(#${sh})`}>
         <rect x="6" y="6" width="52" height="52" rx="17" fill={`url(#${body})`} />
-        <g fill="#f6fdf9" opacity="0.95">
+        <g fill="#26201a" opacity="0.95">
           <circle cx="32" cy="20.5" r="3.2" />
           <path d="M20 42a12 12 0 0 1 24 0Z" />
           <ellipse cx="44.3" cy="37.8" rx="2.6" ry="2.2" />
         </g>
-        <rect x="27" y="32.5" width="10.5" height="2.8" rx="1.4" fill="#0a5a42" />
+        <rect x="27" y="32.5" width="10.5" height="2.8" rx="1.4" fill="#a87c08" />
         <ellipse cx="18" cy="14" rx="9" ry="4.2" fill="#fff" opacity="0.45" transform="rotate(-30 18 14)" />
       </g>
     </svg>
@@ -264,13 +272,14 @@ function SoftArrow({ uid }: DecoProps) {
   return (
     <svg viewBox="0 0 64 64" width="100%" height="100%" overflow="visible" aria-hidden="true">
       <defs>
+        {/* sky-teal balances a page that now leans heavily gold */}
         <linearGradient id={body} x1="0" y1="1" x2="1" y2="0">
-          <stop offset="0%" stopColor="#a8dcc8" />
-          <stop offset="55%" stopColor="#45ab8a" />
-          <stop offset="100%" stopColor="#17805e" />
+          <stop offset="0%" stopColor="#a9def0" />
+          <stop offset="55%" stopColor="#4fb0d3" />
+          <stop offset="100%" stopColor="#1f7fa3" />
         </linearGradient>
         <filter id={sh} {...SHADOW}>
-          <feDropShadow dx="0" dy="5" stdDeviation="5" floodColor="#0d4d38" floodOpacity="0.32" />
+          <feDropShadow dx="0" dy="5" stdDeviation="5" floodColor="#175f7d" floodOpacity="0.32" />
         </filter>
       </defs>
       <g

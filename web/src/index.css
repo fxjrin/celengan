@@ -19,6 +19,7 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-ink: var(--primary-ink);
   --color-primary: var(--primary);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
@@ -43,8 +44,9 @@
   --card-foreground: oklch(0.216 0.006 56.043);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.216 0.006 56.043);
-  --primary: oklch(0.516 0.103 167);
-  --primary-foreground: oklch(0.988 0.009 161.4);
+  --primary: oklch(0.892 0.177 96.8);
+  --primary-foreground: oklch(0.228 0.036 93.6); /* dark text on Stellar yellow, never white */
+  --primary-ink: oklch(0.54 0.11 82); /* brand yellow is 1.4:1 as text on white; links and icons need this amber */
   --secondary: oklch(0.671 0.109 225.3);
   --secondary-foreground: oklch(0.263 0.051 236.7);
   --muted: oklch(0.97 0.001 106.424);
@@ -54,30 +56,31 @@
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.923 0.003 48.717);
   --input: oklch(0.923 0.003 48.717);
-  --ring: oklch(0.625 0.114 165.6);
+  --ring: oklch(0.655 0.135 83.6); /* deep amber at 3:1 on the ivory bg; pure yellow vanishes */
   --gold: oklch(0.751 0.13 79.8); /* saturated savings gold; --accent stays a pale wash */
   --radius: 0.75rem;
 }
 
 .dark {
-  --background: oklch(0.186 0.014 169.8);
-  --foreground: oklch(0.951 0.011 158.8);
-  --card: oklch(0.228 0.017 163);
-  --card-foreground: oklch(0.951 0.011 158.8);
-  --popover: oklch(0.256 0.019 160.8);
-  --popover-foreground: oklch(0.951 0.011 158.8);
-  --primary: oklch(0.773 0.153 163.2);
-  --primary-foreground: oklch(0.248 0.046 166);
+  --background: oklch(0.184 0.005 67.5);
+  --foreground: oklch(0.953 0.009 84.6);
+  --card: oklch(0.216 0.006 56);
+  --card-foreground: oklch(0.953 0.009 84.6);
+  --popover: oklch(0.246 0.014 81.6);
+  --popover-foreground: oklch(0.953 0.009 84.6);
+  --primary: oklch(0.892 0.177 96.8); /* full-strength Stellar yellow pops on charcoal */
+  --primary-foreground: oklch(0.228 0.036 93.6);
+  --primary-ink: oklch(0.892 0.177 96.8); /* on charcoal the yellow itself is readable ink */
   --secondary: oklch(0.737 0.104 223.7);
   --secondary-foreground: oklch(0.266 0.049 235);
-  --muted: oklch(0.281 0.018 158.7);
-  --muted-foreground: oklch(0.754 0.024 160);
+  --muted: oklch(0.267 0.011 73.5);
+  --muted-foreground: oklch(0.746 0.023 76.5);
   --accent: oklch(0.311 0.045 87.5);
   --accent-foreground: oklch(0.807 0.122 84);
   --destructive: oklch(0.66 0.2 25);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 14%);
-  --ring: oklch(0.708 0.124 164.8);
+  --ring: oklch(0.775 0.146 90.6);
   --gold: oklch(0.807 0.122 84);
 }
 
@@ -95,16 +98,15 @@
   body {
     @apply bg-background text-foreground;
     background-image:
-      radial-gradient(80rem 44rem at 8% -10%, oklch(0.955 0.042 163 / 0.6), transparent 60%),
-      radial-gradient(64rem 38rem at 105% 0%, oklch(0.955 0.038 92 / 0.5), transparent 55%),
-      linear-gradient(180deg, oklch(0.982 0.01 125), oklch(0.992 0.005 92));
+      radial-gradient(80rem 44rem at 8% -10%, oklch(0.949 0.072 97 / 0.55), transparent 60%),
+      radial-gradient(64rem 38rem at 105% 0%, oklch(0.938 0.052 86 / 0.5), transparent 55%),
+      linear-gradient(180deg, oklch(0.985 0.012 95), oklch(0.992 0.006 92));
     background-attachment: fixed;
   }
   .dark body {
     background-image:
-      radial-gradient(80rem 44rem at 8% -10%, oklch(0.28 0.045 168 / 0.5), transparent 60%),
-      radial-gradient(64rem 38rem at 105% 0%, oklch(0.26 0.035 90 / 0.4), transparent 55%),
-      linear-gradient(180deg, oklch(0.205 0.016 168), oklch(0.172 0.012 168));
+      radial-gradient(64rem 38rem at 105% 0%, oklch(0.28 0.04 86 / 0.4), transparent 55%),
+      linear-gradient(180deg, oklch(0.205 0.008 75), oklch(0.172 0.006 75));
     background-attachment: fixed;
   }
   html {

@@ -35,7 +35,7 @@ import { useWallet } from '@/lib/wallet'
 const ITEM =
   'flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50'
 const ITEM_IDLE = 'text-muted-foreground hover:bg-muted hover:text-foreground'
-const ITEM_ACTIVE = 'bg-primary/10 text-primary'
+const ITEM_ACTIVE = 'bg-primary/10 text-primary-ink'
 
 type SidebarZone = 'hidden' | 'peek' | 'full'
 
@@ -45,6 +45,11 @@ const ZONE_RANK: Record<SidebarZone, number> = { hidden: 0, peek: 1, full: 2 }
 const CLOSE_DELAY_MS = 200
 // hysteresis past the eighth boundary so full<->peek does not jitter on it
 const FULL_EXIT_SLACK_PX = 24
+
+const PANEL_OPEN_MS = 320
+const PANEL_CLOSE_MS = 260
+// fast start, long soft landing (Apple sheet curve)
+const PANEL_EASE = 'cubic-bezier(0.32, 0.72, 0, 1)'
 
 function shortAddress(address: string): string {
   return `${address.slice(0, 4)}...${address.slice(-4)}`
@@ -59,8 +64,9 @@ function greetingKey(hour: number): MessageKey {
 
 function labelClass(rail: boolean): string {
   return cn(
-    'whitespace-nowrap transition-opacity duration-200',
-    rail ? 'opacity-0' : 'opacity-100',
+    'whitespace-nowrap transition-[opacity,translate] duration-[180ms] ease-out motion-reduce:transition-none',
+    // collapse fades with no delay so text never outlives the shrinking panel
+    rail ? '-translate-x-1 opacity-0' : 'translate-x-0 opacity-100 delay-[90ms]',
   )
 }
 
@@ -180,7 +186,7 @@ function SidebarContent({ rail = false, onNavigate }: SidebarContentProps) {
             type="button"
             className={cn(
               ITEM,
-              'text-primary hover:bg-primary/10 disabled:pointer-events-none disabled:opacity-50',
+              'text-primary-ink hover:bg-primary/10 disabled:pointer-events-none disabled:opacity-50',
             )}
             disabled={connecting}
             onClick={() => void handleConnect()}
@@ -238,11 +244,27 @@ function isDesktop(): boolean {
   return window.matchMedia('(min-width: 768px)').matches
 }
 
+// inline transition-duration on the aside beats any motion-reduce: class, so query directly
+function usePrefersReducedMotion(): boolean {
+  const [reduced, setReduced] = useState(
+    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  )
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const onChange = () => setReduced(mq.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+  return reduced
+}
+
 export function AppShell() {
   const t = useT()
   const { address } = useWallet()
   const [zone, setZone] = useState<SidebarZone>('hidden')
+  const [panelMs, setPanelMs] = useState<number>(PANEL_OPEN_MS)
   const [sheetOpen, setSheetOpen] = useState(false)
+  const reducedMotion = usePrefersReducedMotion()
   const zoneRef = useRef<SidebarZone>('hidden')
   const closeTimer = useRef<number | null>(null)
   const overSidebar = useRef(false)
@@ -261,6 +283,8 @@ export function AppShell() {
   }, [pathname])
 
   const commitZone = useCallback((next: SidebarZone) => {
+    // upgrades get the longer glide, downgrades settle a touch quicker
+    setPanelMs(ZONE_RANK[next] > ZONE_RANK[zoneRef.current] ? PANEL_OPEN_MS : PANEL_CLOSE_MS)
     zoneRef.current = next
     setZone(next)
   }, [])
@@ -392,11 +416,16 @@ export function AppShell() {
         id="app-sidebar"
         inert={zone === 'hidden'}
         className={cn(
-          'fixed top-4 bottom-4 left-4 z-40 hidden flex-col overflow-hidden rounded-2xl border bg-card shadow-lg shadow-stone-950/10 transition-[width,transform] duration-200 ease-out md:flex',
+          // v4 translate utilities emit the translate property, so transition that, not transform
+          'fixed top-4 bottom-4 left-4 z-40 hidden flex-col overflow-hidden rounded-2xl border bg-card shadow-lg shadow-stone-950/10 transition-[width,translate] md:flex',
           zone === 'full' ? 'w-[264px]' : 'w-[72px]',
           // translate past the 16px inset minus a 6px sliver kept as affordance
           zone === 'hidden' ? '-translate-x-[calc(100%+10px)]' : 'translate-x-0',
         )}
+        style={{
+          transitionTimingFunction: PANEL_EASE,
+          transitionDuration: reducedMotion ? '0ms' : `${panelMs}ms`,
+        }}
         onPointerEnter={handleAsideEnter}
         onPointerLeave={handleAsideLeave}
         onFocus={handleAsideFocus}
