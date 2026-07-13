@@ -1,8 +1,9 @@
 #![no_std]
 
+use soroban_sdk::auth::{ContractContext, InvokerContractAuthEntry, SubContractInvocation};
 use soroban_sdk::{
     contract, contractclient, contracterror, contractimpl, contracttype, panic_with_error,
-    symbol_short, token, vec, Address, Env, Vec,
+    symbol_short, token, vec, Address, Env, IntoVal, Symbol, Vec,
 };
 use stellar_access::ownable;
 use stellar_contract_utils::pausable;
@@ -98,6 +99,7 @@ impl Celengan {
         let saved = amount * acc.split_bps as i128 / BPS_DENOM as i128;
         acc.spend += amount - saved;
         if saved > 0 {
+            Self::authorize_vault_pull(e, &cfg, saved);
             let (_, shares) = VaultClient::new(e, &cfg.vault).deposit(
                 &vec![e, saved],
                 &vec![e, saved],
@@ -223,6 +225,27 @@ impl Celengan {
 
     fn config(e: &Env) -> Config {
         e.storage().instance().get(&DataKey::Config).unwrap()
+    }
+
+    // The vault pulls USDC from this contract inside its own frame, so the
+    // token transfer must be pre-authorized; invoker auth does not reach it.
+    fn authorize_vault_pull(e: &Env, cfg: &Config, amount: i128) {
+        e.authorize_as_current_contract(vec![
+            e,
+            InvokerContractAuthEntry::Contract(SubContractInvocation {
+                context: ContractContext {
+                    contract: cfg.usdc.clone(),
+                    fn_name: Symbol::new(e, "transfer"),
+                    args: (
+                        e.current_contract_address(),
+                        cfg.vault.clone(),
+                        amount,
+                    )
+                        .into_val(e),
+                },
+                sub_invocations: vec![e],
+            }),
+        ]);
     }
 
     fn load_account(e: &Env, user: &Address) -> Account {
