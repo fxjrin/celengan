@@ -13,6 +13,7 @@ import { Separator } from '@/components/ui/separator'
 type ActionsCardProps = {
   disabled: boolean
   busy: string | null
+  onFaucet: () => Promise<boolean>
   onPay: (amount: string) => Promise<boolean>
   onWithdrawSpend: (amount: string) => Promise<boolean>
   onWithdrawSavings: (shares: string) => Promise<boolean>
@@ -72,6 +73,7 @@ function ActionRow({
 export function ActionsCard({
   disabled,
   busy,
+  onFaucet,
   onPay,
   onWithdrawSpend,
   onWithdrawSavings,
@@ -85,9 +87,25 @@ export function ActionsCard({
         <CardDescription>Try the flow with testnet USDC</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <p className="text-sm font-medium">Get test USDC</p>
+            <p className="text-xs text-muted-foreground">
+              Funds your wallet with 1,000 testnet USDC
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => void onFaucet()}
+            disabled={disabled || anyBusy}
+          >
+            {busy === 'faucet' ? 'Requesting...' : 'Request'}
+          </Button>
+        </div>
+        <Separator />
         <ActionRow
           title="Simulate incoming payment"
-          caption="A demo payer sends USDC to your account"
+          caption="Your wallet acts as the customer paying you"
           buttonLabel="Pay"
           busyLabel="Paying..."
           placeholder="25.00"

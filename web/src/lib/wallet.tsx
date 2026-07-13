@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from 'react'
 import { NETWORK_PASSPHRASE } from '@/lib/config'
+import { setWalletBridge } from '@/lib/wallet-bridge'
 
 type Kit = typeof import('@creit-tech/stellar-wallets-kit').StellarWalletsKit
 
@@ -45,6 +46,14 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       const kit = await loadKit()
       const result = await kit.authModal()
       setAddress(result.address)
+      setWalletBridge({
+        address: result.address,
+        sign: (xdr) =>
+          kit.signTransaction(xdr, {
+            networkPassphrase: NETWORK_PASSPHRASE,
+            address: result.address,
+          }),
+      })
     } finally {
       setConnecting(false)
     }
@@ -52,6 +61,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
   const disconnect = useCallback(async () => {
     setAddress(null)
+    setWalletBridge(null)
     try {
       const kit = await loadKit()
       await kit.disconnect()

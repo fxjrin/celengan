@@ -8,12 +8,12 @@ import { SplitCard } from '@/components/split-card'
 import { TopBar } from '@/components/top-bar'
 import { celengan } from '@/lib/celengan'
 import { errorMessage } from '@/lib/errors'
+import { requestTestUsdc } from '@/lib/faucet'
 import { formatUsdc, parseUsdc } from '@/lib/format'
 import { FALLBACK_IDR_RATE, getUsdIdrRate } from '@/lib/rates'
 import type { CelenganAccount } from '@/lib/types'
 import { useWallet } from '@/lib/wallet'
-
-const DEMO_PAYER = 'GDEMOPAYERXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+import { requireWalletBridge } from '@/lib/wallet-bridge'
 
 let nextActivityId = 0
 
@@ -85,11 +85,18 @@ export function Dashboard() {
     }
   }
 
+  const handleFaucet = async (): Promise<boolean> => {
+    if (!address) return false
+    return runAction('faucet', 'Received 1,000 testnet USDC', () =>
+      requestTestUsdc(requireWalletBridge()),
+    )
+  }
+
   const handlePay = async (raw: string): Promise<boolean> => {
     const amount = parseAmount(raw)
     if (amount === null || !address) return false
     return runAction('pay', `Payment received: ${formatUsdc(amount)} USDC`, () =>
-      celengan.pay(DEMO_PAYER, address, amount),
+      celengan.pay(address, address, amount),
     )
   }
 
@@ -152,6 +159,7 @@ export function Dashboard() {
           <ActionsCard
             disabled={disabled}
             busy={busy}
+            onFaucet={handleFaucet}
             onPay={handlePay}
             onWithdrawSpend={handleWithdrawSpend}
             onWithdrawSavings={handleWithdrawSavings}
