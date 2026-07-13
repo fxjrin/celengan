@@ -29,6 +29,7 @@ const en = {
   'dashboard.connectTitle': 'Connect your wallet',
   'dashboard.connectCaption':
     'Every payment you receive lands in two pockets: one to spend, one that grows as savings.',
+  'dashboard.quickActions': 'Quick actions',
 
   'greeting.morning': 'Good morning',
   'greeting.afternoon': 'Good afternoon',
@@ -40,6 +41,9 @@ const en = {
   'nav.protocol': 'Protocol',
   'nav.dashboard': 'Dashboard',
   'nav.activity': 'Activity',
+  'nav.receive': 'Receive',
+  'nav.withdraw': 'Withdraw',
+  'nav.rules': 'Rules',
   'nav.faucet': 'Get test USDC',
   'nav.paymentLink': 'Payment link',
   'nav.viewContract': 'View contract',
@@ -48,6 +52,11 @@ const en = {
   'shell.openMenu': 'Open menu',
   'shell.theme': 'Toggle theme',
   'shell.copyAddress': 'Copy address',
+
+  'page.receiveCaption': 'Take a payment and watch it split on arrival.',
+  'page.withdrawCaption': 'Move money out of spending or savings.',
+  'page.rulesCaption': 'Tune your savings split and time lock.',
+  'page.settingsCaption': 'Language, currency, theme, and network details.',
 
   'onboarding.title': 'Get set up in three steps',
   'onboarding.step1Title': 'Connect your wallet',
@@ -216,6 +225,7 @@ const id = {
   'dashboard.connectTitle': 'Hubungkan dompetmu',
   'dashboard.connectCaption':
     'Setiap pembayaran yang kamu terima masuk ke dua kantong: satu siap dipakai, satu tumbuh jadi tabungan.',
+  'dashboard.quickActions': 'Aksi cepat',
 
   'greeting.morning': 'Selamat pagi',
   'greeting.afternoon': 'Selamat siang',
@@ -227,6 +237,9 @@ const id = {
   'nav.protocol': 'Protokol',
   'nav.dashboard': 'Dasbor',
   'nav.activity': 'Aktivitas',
+  'nav.receive': 'Terima',
+  'nav.withdraw': 'Tarik dana',
+  'nav.rules': 'Aturan',
   'nav.faucet': 'Ambil USDC uji',
   'nav.paymentLink': 'Tautan pembayaran',
   'nav.viewContract': 'Lihat kontrak',
@@ -235,6 +248,11 @@ const id = {
   'shell.openMenu': 'Buka menu',
   'shell.theme': 'Ganti tema',
   'shell.copyAddress': 'Salin alamat',
+
+  'page.receiveCaption': 'Terima pembayaran dan lihat uangnya langsung terbagi.',
+  'page.withdrawCaption': 'Tarik danamu dari kantong siap pakai atau tabungan.',
+  'page.rulesCaption': 'Atur porsi tabungan dan kunci waktumu.',
+  'page.settingsCaption': 'Bahasa, mata uang, tema, dan detail jaringan.',
 
   'onboarding.title': 'Siap dalam tiga langkah',
   'onboarding.step1Title': 'Hubungkan dompetmu',

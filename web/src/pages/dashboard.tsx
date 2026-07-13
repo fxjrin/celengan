@@ -1,21 +1,50 @@
+import type { ComponentType } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { ArrowDownLeftIcon, ArrowUpRightIcon, SlidersHorizontalIcon } from 'lucide-react'
 import { ActivityCard } from '@/components/activity-card'
 import { BalanceHero } from '@/components/balance-hero'
 import { ConnectPrompt } from '@/components/connect-prompt'
 import { OnboardingChecklist } from '@/components/onboarding-checklist'
-import { ReceiveCard } from '@/components/receive-card'
-import { RulesCard } from '@/components/rules-card'
-import { WithdrawCard } from '@/components/withdraw-card'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppState } from '@/lib/app-state'
-import { useT } from '@/lib/i18n'
+import { useT, type MessageKey } from '@/lib/i18n'
 import { faucetedFlag, useFaucet } from '@/lib/use-faucet'
 import { useWallet } from '@/lib/wallet'
+
+type QuickAction = {
+  to: string
+  icon: ComponentType<{ className?: string }>
+  title: MessageKey
+  caption: MessageKey
+}
+
+const QUICK_ACTIONS: QuickAction[] = [
+  {
+    to: '/app/receive',
+    icon: ArrowDownLeftIcon,
+    title: 'nav.receive',
+    caption: 'page.receiveCaption',
+  },
+  {
+    to: '/app/withdraw',
+    icon: ArrowUpRightIcon,
+    title: 'nav.withdraw',
+    caption: 'page.withdrawCaption',
+  },
+  {
+    to: '/app/rules',
+    icon: SlidersHorizontalIcon,
+    title: 'nav.rules',
+    caption: 'page.rulesCaption',
+  },
+]
 
 export function Dashboard() {
   const { address } = useWallet()
   const { account, accountStatus, rate, activity, refresh } = useAppState()
   const { faucetBusy, runFaucet } = useFaucet()
+  const navigate = useNavigate()
   const t = useT()
 
   if (!address) return <ConnectPrompt />
@@ -24,10 +53,6 @@ export function Dashboard() {
   const funded = faucetedFlag(address) || activity.length > 0
   const received = activity.some((item) => item.kind === 'pay')
   const onboarding = !(funded && received)
-
-  const scrollToReceive = () => {
-    document.getElementById('receive')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
 
   return (
     <div key={address} className="space-y-5">
@@ -41,12 +66,7 @@ export function Dashboard() {
       ) : (
         <BalanceHero account={account} loading={loading} rate={rate} />
       )}
-      {loading && (
-        <>
-          <Skeleton className="h-40 w-full rounded-2xl" />
-          <Skeleton className="h-40 w-full rounded-2xl" />
-        </>
-      )}
+      {loading && <Skeleton className="h-40 w-full rounded-2xl" />}
       {account !== null && (
         <>
           {onboarding && (
@@ -56,16 +76,24 @@ export function Dashboard() {
               received={received}
               faucetBusy={faucetBusy}
               onFaucet={() => void runFaucet()}
-              onGoToReceive={scrollToReceive}
+              onGoToReceive={() => void navigate('/app/receive')}
             />
           )}
-          <ReceiveCard
-            account={account}
-            showFaucetRow={!onboarding}
-            onFaucet={() => void runFaucet()}
-          />
-          <RulesCard account={account} />
-          <WithdrawCard account={account} />
+          <section aria-label={t('dashboard.quickActions')} className="grid gap-3 sm:grid-cols-3">
+            {QUICK_ACTIONS.map((action) => (
+              <Link
+                key={action.to}
+                to={action.to}
+                className="rounded-2xl border bg-card p-4 outline-none transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md active:translate-y-0 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              >
+                <span className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <action.icon className="size-4" />
+                </span>
+                <p className="mt-3 text-sm font-medium">{t(action.title)}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">{t(action.caption)}</p>
+              </Link>
+            ))}
+          </section>
           <ActivityCard />
         </>
       )}

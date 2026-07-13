@@ -22,7 +22,10 @@ export function Landing() {
       <FloatingDeco side="both" />
       <header className="relative z-10 flex items-center justify-between px-6 py-4">
         <LogoWordmark />
-        <Badge variant="secondary">{t('topbar.testnet')}</Badge>
+        {/* outline keeps the badge neutral now that secondary is the teal spending tone */}
+        <Badge variant="outline" className="text-muted-foreground">
+          {t('topbar.testnet')}
+        </Badge>
       </header>
       <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 text-center">
         <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-balance sm:text-5xl">

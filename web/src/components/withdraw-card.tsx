@@ -75,14 +75,14 @@ export function WithdrawCard({ account }: WithdrawCardProps) {
               <div className="relative flex-1">
                 <TokenIcon
                   token="usdc"
-                  size={16}
+                  size={22}
                   className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
                 />
                 <Input
                   value={spendValue}
                   placeholder={t('receive.amountPlaceholder')}
                   inputMode="decimal"
-                  className="pl-9 tabular-nums"
+                  className="pl-11 tabular-nums"
                   disabled={anyBusy}
                   onChange={(e) => setSpendValue(e.target.value)}
                 />
@@ -129,7 +129,7 @@ export function WithdrawCard({ account }: WithdrawCardProps) {
               {busy === 'savings' ? loadingLabel : t('withdraw.button')}
             </Button>
             {locked && (
-              <p className="flex items-center gap-1.5 text-xs font-medium text-foreground">
+              <p className="flex items-center gap-1.5 text-xs font-medium text-accent-foreground">
                 <LockIcon className="size-3 shrink-0" />
                 {t('withdraw.lockedReason', { date: formatDate(account.lockUntil, locale) })}
               </p>

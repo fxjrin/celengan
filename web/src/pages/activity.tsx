@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import type { ActivityItem } from '@/lib/activity'
 import { useAppState } from '@/lib/app-state'
 import { useT, type MessageKey } from '@/lib/i18n'
+import { cn } from '@/lib/utils'
 import { useWallet } from '@/lib/wallet'
 
 type FilterKey = 'all' | 'payments' | 'withdrawals' | 'changes'
@@ -36,9 +37,14 @@ export function ActivityPage() {
           {FILTERS.map((f) => (
             <Button
               key={f.key}
-              variant={filter === f.key ? 'secondary' : 'ghost'}
+              variant="ghost"
               size="sm"
-              className="rounded-full"
+              aria-pressed={filter === f.key}
+              className={cn(
+                'rounded-full',
+                // secondary now reads as the teal spending tone, so the active pill tints emerald
+                filter === f.key && 'bg-primary/10 text-primary hover:bg-primary/15 hover:text-primary',
+              )}
               onClick={() => setFilter(f.key)}
             >
               {t(f.label)}

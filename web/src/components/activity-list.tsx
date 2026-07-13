@@ -79,17 +79,27 @@ export function ActivityList({ items, loading }: ActivityListProps) {
           >
             <span className="relative shrink-0">
               {externalPayer ? (
-                <AddressAvatar address={item.from ?? ''} size={32} className="rounded-full" />
+                <AddressAvatar address={item.from ?? ''} size={40} className="rounded-full" />
+              ) : TOKEN_KINDS.includes(item.kind) ? (
+                // token first so the currency is recognizable at a glance
+                <span className="flex size-10 items-center justify-center rounded-full bg-muted">
+                  <TokenIcon token="usdc" size={24} />
+                </span>
               ) : (
-                <span className="flex size-8 items-center justify-center rounded-full bg-muted">
+                <span className="flex size-10 items-center justify-center rounded-full bg-muted">
                   <Icon className="size-4 text-muted-foreground" />
                 </span>
               )}
-              {TOKEN_KINDS.includes(item.kind) && (
-                <span className="absolute -right-1 -bottom-1 flex rounded-full ring-2 ring-card">
-                  <TokenIcon token="usdc" size={14} />
-                </span>
-              )}
+              {TOKEN_KINDS.includes(item.kind) &&
+                (externalPayer ? (
+                  <span className="absolute -right-1 -bottom-1 flex rounded-full ring-2 ring-card">
+                    <TokenIcon token="usdc" size={16} />
+                  </span>
+                ) : (
+                  <span className="absolute -right-0.5 -bottom-0.5 flex size-4 items-center justify-center rounded-full bg-card ring-2 ring-card">
+                    <Icon className="size-3 text-muted-foreground" />
+                  </span>
+                ))}
             </span>
             <span className="min-w-0 flex-1">{label(item)}</span>
             <span className="shrink-0 text-xs text-muted-foreground tabular-nums">

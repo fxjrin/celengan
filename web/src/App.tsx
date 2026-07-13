@@ -10,7 +10,10 @@ import { Dashboard } from '@/pages/dashboard'
 import { Landing } from '@/pages/landing'
 import { PayPage } from '@/pages/pay'
 import { PaymentLinkPage } from '@/pages/payment-link'
+import { ReceivePage } from '@/pages/receive'
+import { RulesPage } from '@/pages/rules'
 import { SettingsPage } from '@/pages/settings'
+import { WithdrawPage } from '@/pages/withdraw'
 
 export function App() {
   return (
@@ -31,6 +34,9 @@ export function App() {
                 <Route path="/app" element={<AppShell />}>
                   <Route index element={<Dashboard />} />
                   <Route path="activity" element={<ActivityPage />} />
+                  <Route path="receive" element={<ReceivePage />} />
+                  <Route path="withdraw" element={<WithdrawPage />} />
+                  <Route path="rules" element={<RulesPage />} />
                   <Route path="link" element={<PaymentLinkPage />} />
                   <Route path="settings" element={<SettingsPage />} />
                 </Route>

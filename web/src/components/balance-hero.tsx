@@ -84,14 +84,14 @@ export function BalanceHero({ account, loading, rate }: BalanceHeroProps) {
                 className="text-4xl font-semibold tracking-tight text-foreground tabular-nums"
               />
               <span className="inline-flex items-center gap-1.5 text-lg text-muted-foreground">
-                <TokenIcon token="usdc" size={18} />
+                <TokenIcon token="usdc" size={28} />
                 USDC
               </span>
             </>
           )}
         </div>
         <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground tabular-nums">
-          {secondaryCurrency === 'usdc' && <TokenIcon token="usdc" size={14} />}~{' '}
+          {secondaryCurrency === 'usdc' && <TokenIcon token="usdc" size={16} />}~{' '}
           {secondary(total)}
         </p>
         {primaryCurrency === 'idr' && (
@@ -103,11 +103,11 @@ export function BalanceHero({ account, loading, rate }: BalanceHeroProps) {
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="flex items-center gap-1.5 text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
-                <span className="size-2 rounded-full bg-sky-500 dark:bg-sky-400" />
+                <span className="size-2 rounded-full bg-secondary" />
                 {t('balances.spendable')}
               </p>
               <p className="mt-1 flex items-center gap-1.5 text-lg font-semibold tracking-tight tabular-nums">
-                <TokenIcon token="usdc" size={14} />
+                <TokenIcon token="usdc" size={20} />
                 {primary(account.spend)}
               </p>
               <p className="text-xs text-muted-foreground tabular-nums">
@@ -117,10 +117,10 @@ export function BalanceHero({ account, loading, rate }: BalanceHeroProps) {
             <div className="text-right">
               <p className="flex items-center justify-end gap-1.5 text-[11px] font-medium tracking-wider text-muted-foreground uppercase">
                 {t('balances.savings')}
-                <span className="size-2 rounded-full bg-amber-500 dark:bg-amber-400" />
+                <span className="size-2 rounded-full bg-gold" />
               </p>
               <p className="mt-1 flex items-center justify-end gap-1.5 text-lg font-semibold tracking-tight tabular-nums">
-                <TokenIcon token="usdc" size={14} />
+                <TokenIcon token="usdc" size={20} />
                 {primary(account.shares)}
               </p>
               <p className="text-xs text-muted-foreground tabular-nums">
@@ -130,27 +130,21 @@ export function BalanceHero({ account, loading, rate }: BalanceHeroProps) {
           </div>
           <div className="mt-3 flex h-3 w-full gap-0.5 overflow-hidden rounded-full bg-muted">
             {spendPct > 0 && (
-              <div
-                className="rounded-full bg-sky-500 dark:bg-sky-400"
-                style={{ width: `${spendPct}%` }}
-              />
+              <div className="rounded-full bg-secondary" style={{ width: `${spendPct}%` }} />
             )}
             {savePct > 0 && (
-              <div
-                className="rounded-full bg-amber-500 dark:bg-amber-400"
-                style={{ width: `${savePct}%` }}
-              />
+              <div className="rounded-full bg-gold" style={{ width: `${savePct}%` }} />
             )}
           </div>
           <div className="mt-2 flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
             {locked && (
-              <Badge variant="secondary" className="gap-1 text-xs">
+              <Badge variant="secondary" className="gap-1 bg-accent text-xs text-accent-foreground">
                 <LockIcon className="size-3" />
                 {t('balances.lockedUntil', { date: formatDate(account.lockUntil, locale) })}
               </Badge>
             )}
-            <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <span className="size-1.5 rounded-full bg-emerald-500" />
+            <p className="flex items-center gap-1.5 text-xs text-accent-foreground">
+              <span className="size-1.5 rounded-full bg-gold" />
               {t('balances.earningCaption')}
             </p>
           </div>

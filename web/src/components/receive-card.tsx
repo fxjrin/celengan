@@ -69,7 +69,7 @@ export function ReceiveCard({ account, showFaucetRow, onFaucet }: ReceiveCardPro
   }
 
   return (
-    <Card id="receive" className="scroll-mt-20 rounded-2xl shadow-none">
+    <Card className="rounded-2xl shadow-none">
       <CardHeader>
         <CardTitle>{t('receive.title')}</CardTitle>
         <CardDescription>{t('receive.caption')}</CardDescription>
@@ -79,14 +79,14 @@ export function ReceiveCard({ account, showFaucetRow, onFaucet }: ReceiveCardPro
           <div className="relative flex-1">
             <TokenIcon
               token="usdc"
-              size={16}
+              size={22}
               className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
             />
             <Input
               value={value}
               placeholder={t('receive.amountPlaceholder')}
               inputMode="decimal"
-              className="pl-9 tabular-nums"
+              className="pl-11 tabular-nums"
               disabled={anyBusy}
               onChange={(e) => setValue(e.target.value)}
             />

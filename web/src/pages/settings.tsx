@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { useTheme } from 'next-themes'
 import { CopyIcon, ExternalLinkIcon } from 'lucide-react'
 import { toast } from 'sonner'
+import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -55,6 +56,7 @@ export function SettingsPage() {
 
   return (
     <div className="mx-auto w-full max-w-md space-y-5">
+      <PageHeader title={t('settings.title')} caption={t('page.settingsCaption')} />
       <Card className="rounded-2xl shadow-none">
         <CardHeader>
           <CardTitle>{t('settings.preferences')}</CardTitle>

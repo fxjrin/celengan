@@ -17,6 +17,7 @@ import { errorKey } from '@/lib/errors'
 import { parseUsdc } from '@/lib/format'
 import { formatMoney, useT } from '@/lib/i18n'
 import { useSettings } from '@/lib/settings'
+import { useScrollLock } from '@/lib/use-scroll-lock'
 import { useWallet } from '@/lib/wallet'
 
 const QUICK_AMOUNTS = ['25', '50', '100']
@@ -115,7 +116,7 @@ function PayCard({ recipient }: { recipient: string }) {
           </span>
           <p className="text-xl font-semibold tracking-tight">{t('pay.successTitle')}</p>
           <p className="flex items-center gap-2 text-2xl font-semibold tracking-tight tabular-nums">
-            <TokenIcon token="usdc" size={20} />
+            <TokenIcon token="usdc" size={32} />
             {formatMoney(paid, 'usdc', rate, locale)}
           </p>
           <p className="text-sm text-muted-foreground">
@@ -151,14 +152,14 @@ function PayCard({ recipient }: { recipient: string }) {
         <div className="relative">
           <TokenIcon
             token="usdc"
-            size={18}
-            className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2"
+            size={32}
+            className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
           />
           <Input
             value={value}
             placeholder={t('receive.amountPlaceholder')}
             inputMode="decimal"
-            className="h-12 pl-10 text-lg tabular-nums"
+            className="h-12 pl-14 text-lg tabular-nums"
             disabled={anyBusy}
             onChange={(e) => setValue(e.target.value)}
           />
@@ -242,21 +243,29 @@ export function PayPage() {
   const { address: recipient = '' } = useParams()
   const valid = StrKey.isValidEd25519PublicKey(recipient)
 
+  useScrollLock()
+
   return (
-    <div className="relative flex min-h-svh flex-col overflow-hidden">
-      <FloatingDeco side="both" />
-      <header className="relative z-10 flex items-center justify-between px-6 py-4">
-        <Link to="/">
-          <LogoWordmark />
-        </Link>
-        <Badge variant="secondary">{t('topbar.testnet')}</Badge>
-      </header>
-      <main className="relative z-10 flex flex-1 items-start justify-center px-4 py-10 sm:items-center sm:py-4">
-        {valid ? <PayCard recipient={recipient} /> : <InvalidLink />}
-      </main>
-      <footer className="relative z-10 px-6 py-5 text-center text-sm text-muted-foreground">
-        {t('landing.footer')}
-      </footer>
+    <div className="relative h-svh">
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0">
+        <FloatingDeco side="both" />
+      </div>
+      <div className="no-scrollbar relative z-10 flex h-full flex-col overflow-y-auto">
+        <header className="flex items-center justify-between px-6 py-4">
+          <Link to="/">
+            <LogoWordmark />
+          </Link>
+          <Badge variant="outline" className="text-muted-foreground">
+            {t('topbar.testnet')}
+          </Badge>
+        </header>
+        <main className="flex flex-1 items-start justify-center px-4 py-10 sm:items-center sm:py-4">
+          {valid ? <PayCard recipient={recipient} /> : <InvalidLink />}
+        </main>
+        <footer className="px-6 py-5 text-center text-sm text-muted-foreground">
+          {t('landing.footer')}
+        </footer>
+      </div>
     </div>
   )
 }

@@ -5,14 +5,9 @@ import { renderSVG } from 'uqr'
 import { AddressAvatar } from '@/components/brand/address-avatar'
 import { TokenIcon } from '@/components/brand/token-icon'
 import { ConnectPrompt } from '@/components/connect-prompt'
+import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { parseUsdc } from '@/lib/format'
@@ -53,12 +48,9 @@ export function PaymentLinkPage() {
   }
 
   return (
-    <div className="flex justify-center">
-      <Card className="w-full max-w-md rounded-2xl shadow-none">
-        <CardHeader className="items-center text-center">
-          <CardTitle className="text-2xl tracking-tight">{t('paylink.title')}</CardTitle>
-          <CardDescription>{t('paylink.caption')}</CardDescription>
-        </CardHeader>
+    <div className="mx-auto w-full max-w-md space-y-5">
+      <PageHeader title={t('paylink.title')} caption={t('paylink.caption')} />
+      <Card className="rounded-2xl shadow-none">
         <CardContent className="space-y-5">
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
@@ -75,7 +67,7 @@ export function PaymentLinkPage() {
               <div className="relative">
                 <TokenIcon
                   token="usdc"
-                  size={16}
+                  size={22}
                   className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
                 />
                 <Input
@@ -83,7 +75,7 @@ export function PaymentLinkPage() {
                   value={amount}
                   placeholder={t('paylink.amountPlaceholder')}
                   inputMode="decimal"
-                  className="pl-9 tabular-nums"
+                  className="pl-11 tabular-nums"
                   onChange={(e) => setAmount(e.target.value)}
                 />
               </div>
