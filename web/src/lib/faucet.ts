@@ -4,7 +4,8 @@ import type { WalletBridge } from '@/lib/wallet-bridge'
 
 // Blend testnet faucet; issues the USDC the DeFindex vault is denominated in
 // and includes the trustline, so one call fully prepares a demo wallet.
-const FAUCET_URL = 'https://ewqw4hx7oa.execute-api.us-east-1.amazonaws.com/getAssets'
+// Proxied (vite dev proxy / vercel rewrite) because the lambda sends no CORS headers.
+const FAUCET_URL = '/faucet'
 const FRIENDBOT_URL = 'https://friendbot.stellar.org/?addr='
 
 export async function requestTestUsdc(bridge: WalletBridge): Promise<void> {

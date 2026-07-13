@@ -10,4 +10,14 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  server: {
+    proxy: {
+      // the Blend faucet lambda sends no CORS headers; Vercel rewrites cover production
+      '/faucet': {
+        target: 'https://ewqw4hx7oa.execute-api.us-east-1.amazonaws.com',
+        changeOrigin: true,
+        rewrite: (p) => p.replace(/^\/faucet/, '/getAssets'),
+      },
+    },
+  },
 })
