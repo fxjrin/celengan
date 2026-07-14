@@ -7,18 +7,39 @@ const en = {
   'landing.heroSubtitle':
     'Celengan splits every payment you receive: part stays ready to spend, part goes straight into a yield-earning savings vault on Stellar.',
   'landing.cta': 'Open the app',
-  'landing.feature1Title': 'Auto-split payments',
-  'landing.feature1Body':
-    'Pick a percentage once. Every incoming payment is split between spending and savings before you can touch it.',
-  'landing.feature2Title': 'Savings that work',
-  'landing.feature2Body':
-    'Your savings go into a DeFindex vault on Stellar testnet and start earning right away.',
-  'landing.feature3Title': 'Lock it in',
-  'landing.feature3Body':
-    'Set a lock date to keep your future self honest. Savings stay put until the day you choose.',
-  'landing.feature4Title': 'Get paid with a link',
-  'landing.feature4Body':
-    'Share your payment link or QR code. Customers pay in USDC and part of every sale goes straight to savings.',
+  'landing.navHow': 'How it works',
+  'landing.navProtocols': 'Protocols',
+  'landing.navCompare': 'Why Celengan',
+  'landing.demoLabel': 'Someone just paid you',
+  'landing.howTitle': 'How it works',
+  'landing.howCaption': 'From payment to yield, in four automatic steps.',
+  'landing.step1Title': 'Connect your wallet',
+  'landing.step1Body': 'Link any Stellar wallet in seconds. No sign-up, no custody.',
+  'landing.step2Title': 'Get paid',
+  'landing.step2Body': 'Share your payment link, or receive USDC directly.',
+  'landing.step3Title': 'Auto-split',
+  'landing.step3Body': 'Your split rule sends part to spending, part to savings, instantly.',
+  'landing.step4Title': 'Earn yield',
+  'landing.step4Body': 'Savings route into DeFindex, Blend, or Soroswap and start earning right away.',
+  'landing.protocolsTitle': 'Real yield, real protocols',
+  'landing.protocolsCaption':
+    'Your savings route into audited, on-chain protocols on Stellar - never a black box.',
+  'landing.compareTitle': 'Saving by accident vs. saving on purpose',
+  'landing.compareCaption': 'The difference between hoping you save, and knowing you will.',
+  'landing.compareWithoutLabel': 'Without Celengan',
+  'landing.compareWithoutBody':
+    'Money sits in one place until it is spent. Saving depends on remembering to do it.',
+  'landing.compareWithLabel': 'With Celengan',
+  'landing.compareWithBody':
+    'Every payment splits itself on arrival. Savings earn yield while you are not looking.',
+  'landing.finalCtaTitle': 'Split your first payment',
+  'landing.finalCtaBody': 'Connect your wallet and watch it happen in real time.',
+  'landing.footerTagline': 'Programmable savings on every payment, on Stellar.',
+  'landing.footerProduct': 'Product',
+  'landing.footerProtocols': 'Protocols',
+  'landing.footerResources': 'Resources',
+  'landing.footerContract': 'View contract',
+  'landing.backToTop': 'Back to top',
   'landing.footer': 'Built on Stellar testnet. Demo funds only, no real money.',
 
   'topbar.connect': 'Connect wallet',
@@ -43,7 +64,6 @@ const en = {
   'nav.dashboard': 'Dashboard',
   'nav.activity': 'Activity',
   'nav.yield': 'Yield',
-  'nav.receive': 'Receive',
   'nav.withdraw': 'Withdraw',
   'nav.rules': 'Rules',
   'nav.faucet': 'Get test USDC',
@@ -55,7 +75,7 @@ const en = {
   'shell.theme': 'Toggle theme',
   'shell.copyAddress': 'Copy address',
 
-  'page.receiveCaption': 'Take a payment and watch it split on arrival.',
+  'page.paymentLinkCaption': 'Share a link and get paid for real.',
   'page.withdrawCaption': 'Move money out of spending or savings.',
   'page.rulesCaption': 'Tune your savings split and time lock.',
   'page.settingsCaption': 'Language, currency, theme, and network details.',
@@ -66,9 +86,9 @@ const en = {
   'onboarding.step1Caption': 'Use Freighter or any Stellar wallet to get started.',
   'onboarding.step2Title': 'Grab test funds',
   'onboarding.step2Caption': 'Get free testnet USDC from the faucet, plus XLM for fees.',
-  'onboarding.step3Title': 'Receive your first payment',
+  'onboarding.step3Title': 'Share your payment link',
   'onboarding.step3Caption':
-    'Send yourself a payment and watch it split into spending and savings.',
+    'Send your link to get paid for real. It splits into spending and savings the moment it arrives.',
   'onboarding.done': 'All set',
 
   'balances.total': 'Total balance',
@@ -81,17 +101,6 @@ const en = {
   'balances.emptyHint': 'No balance yet.',
   'balances.earningsLine': '+{amount} earned so far',
 
-  'receive.title': 'Receive a payment',
-  'receive.caption':
-    'In this demo your wallet plays the customer: it pays you, and Celengan splits the money the moment it arrives.',
-  'receive.amountPlaceholder': 'Amount in USDC',
-  'receive.preview': '{spend} to spending, {save} to savings',
-  'receive.button': 'Receive payment',
-  'receive.quickAmounts': 'Quick amounts',
-  'receive.realPaymentHint':
-    'This simulates a customer paying you. To get paid for real, share your payment link instead.',
-  'receive.faucetWhy': 'You need testnet USDC in your wallet before you can simulate a payment.',
-
   'rules.title': 'Your saving rules',
   'rules.lockTitle': 'Time lock',
   'rules.splitLabel': 'Savings split',
@@ -103,6 +112,12 @@ const en = {
   'rules.lockButton': 'Lock savings',
   'rules.lockedStatus': 'Locked until {date}',
   'rules.noLock': 'Savings are unlocked. Set a date to protect your goal.',
+  'rules.yieldSourceTitle': 'Yield source',
+  'rules.yieldSourceCaption': 'Choose which protocol your future savings earn yield in.',
+  'rules.yieldSourceDefindexName': 'DeFindex',
+  'rules.yieldSourceBlendName': 'Blend',
+  'rules.yieldSourceSoroswapName': 'Soroswap',
+  'rules.yieldSourceSwitchHint': 'Withdraw your savings to zero before switching source.',
 
   'withdraw.title': 'Withdraw',
   'withdraw.spendTab': 'Spendable',
@@ -115,6 +130,8 @@ const en = {
     'Savings are held as vault shares; the USDC you receive includes any yield earned.',
 
   'yield.positionTitle': 'Your savings position',
+  'yield.statusLabel': 'Savings route to',
+  'yield.historyLabel': 'Savings over time',
   'yield.principal': 'Principal saved',
   'yield.currentValue': 'Current value',
   'yield.earnings': 'Earnings',
@@ -123,14 +140,17 @@ const en = {
     'Estimated from your payment history, assuming a 1:1 share price at each deposit.',
   'yield.shares': 'Vault shares',
   'yield.sharePrice': 'Share price',
+  'yield.blendRate': 'Pool rate',
   'yield.earningsCaption': 'Earnings are your current value minus what you have put in.',
   'yield.refresh': 'Refresh',
   'yield.sourcesTitle': 'Where your yield comes from',
-  'yield.sourcesCaption':
-    'Your savings currently route through DeFindex. More sources are on the roadmap.',
+  'yield.sourcesCaption': 'Pick your source in Rules.',
+  'yield.mainnetRefLabel': 'Mainnet ref:',
+  'yield.mainnetRefCaption': "Mainnet ref shows a real live pool's current rate for context, not your own position - that always lives on testnet and can be much lower with thin testnet activity.",
   'yield.bestYield': 'Best yield',
   'yield.badgeActive': 'Active',
   'yield.badgeSoon': 'Coming soon',
+  'yield.badgeSelected': 'Your source',
   'yield.apyLabel': 'APY',
   'yield.tvlLabel': 'TVL',
   'yield.sourceDefindexName': 'DeFindex USDC vault',
@@ -145,6 +165,8 @@ const en = {
   'pay.signHint':
     'Your wallet signs a single transaction. The split into spending and savings happens automatically on-chain.',
   'pay.payingFrom': 'Paying from',
+  'pay.switchWallet': 'Switch wallet',
+  'pay.needsFundsHint': 'You need testnet USDC to pay from this wallet.',
   'pay.button': 'Pay now',
   'pay.connectCta': 'Connect wallet to pay',
   'pay.connectCaption': 'You pay straight from your own Stellar wallet. No account needed.',
@@ -177,6 +199,7 @@ const en = {
   'activity.wdSave': 'Withdrew {amount} from savings',
   'activity.split': 'Savings split set to {pct}%',
   'activity.lock': 'Savings locked until {date}',
+  'activity.viewOnExplorer': 'View this transaction on the explorer',
 
   'settings.title': 'Settings',
   'settings.preferences': 'Preferences',
@@ -217,6 +240,7 @@ const en = {
   'success.withdrewSavings': 'Savings withdrawn to your wallet',
   'success.splitSaved': 'Saving rule updated',
   'success.lockSet': 'Savings locked',
+  'success.yieldTargetSaved': 'Yield source updated',
 
   'errors.invalidAmount': 'That amount does not look right. Enter a number above zero.',
   'errors.invalidSplit': 'The split must be between 0% and 100%.',
@@ -226,6 +250,7 @@ const en = {
   'errors.lockNotExtended': 'A lock can only be extended, not shortened.',
   'errors.emptyWithdrawal': 'There is nothing to withdraw.',
   'errors.lockTooFar': 'That lock date is too far in the future.',
+  'errors.switchTargetWithBalance': 'Withdraw your savings before switching yield source.',
   'errors.paused': 'The contract is paused right now. Try again later.',
   'errors.walletCancelled': 'Request cancelled in your wallet.',
   'errors.generic': 'Something went wrong. Please try again.',
@@ -238,6 +263,13 @@ const en = {
   'common.retry': 'Try again',
   'common.close': 'Close',
   'common.connectFirst': 'Connect your wallet first.',
+  'common.amountPlaceholder': 'Amount in USDC',
+  'common.quickAmounts': 'Quick amounts',
+  'common.viewTx': 'View transaction',
+  'notFound.title': 'Page not found',
+  'notFound.body': 'The page you are looking for does not exist, or the link is broken.',
+  'notFound.goHome': 'Go to homepage',
+  'notFound.goApp': 'Open the app',
 }
 
 export type MessageKey = keyof typeof en
@@ -247,18 +279,39 @@ const id = {
   'landing.heroSubtitle':
     'Celengan membagi setiap pembayaran yang kamu terima: sebagian siap dipakai, sebagian langsung masuk brankas tabungan yang menghasilkan di Stellar.',
   'landing.cta': 'Buka aplikasi',
-  'landing.feature1Title': 'Bagi otomatis',
-  'landing.feature1Body':
-    'Atur persentasenya sekali saja. Setiap pembayaran masuk langsung dibagi antara dana siap pakai dan tabungan.',
-  'landing.feature2Title': 'Tabungan yang bekerja',
-  'landing.feature2Body':
-    'Tabunganmu masuk ke vault DeFindex di Stellar testnet dan langsung mulai menghasilkan.',
-  'landing.feature3Title': 'Kunci tabunganmu',
-  'landing.feature3Body':
-    'Pasang tanggal kunci supaya kamu tidak mudah tergoda. Tabungan tetap tersimpan sampai hari yang kamu pilih.',
-  'landing.feature4Title': 'Dibayar lewat tautan',
-  'landing.feature4Body':
-    'Bagikan tautan pembayaran atau kode QR-mu. Pelanggan membayar dengan USDC dan sebagian dari tiap penjualan langsung masuk tabungan.',
+  'landing.navHow': 'Cara kerja',
+  'landing.navProtocols': 'Protokol',
+  'landing.navCompare': 'Kenapa Celengan',
+  'landing.demoLabel': 'Ada yang baru saja membayarmu',
+  'landing.howTitle': 'Cara kerjanya',
+  'landing.howCaption': 'Dari pembayaran sampai menghasilkan, dalam empat langkah otomatis.',
+  'landing.step1Title': 'Hubungkan dompetmu',
+  'landing.step1Body': 'Sambungkan wallet Stellar apa saja dalam hitungan detik. Tanpa daftar, tanpa custody.',
+  'landing.step2Title': 'Dibayar',
+  'landing.step2Body': 'Bagikan tautan pembayaranmu, atau terima USDC langsung.',
+  'landing.step3Title': 'Terbagi otomatis',
+  'landing.step3Body': 'Aturan split-mu langsung membagi ke dana siap pakai dan tabungan, seketika.',
+  'landing.step4Title': 'Menghasilkan',
+  'landing.step4Body': 'Tabunganmu masuk ke DeFindex, Blend, atau Soroswap dan langsung mulai menghasilkan.',
+  'landing.protocolsTitle': 'Imbal hasil nyata, protokol nyata',
+  'landing.protocolsCaption':
+    'Tabunganmu disalurkan ke protokol on-chain yang teraudit di Stellar - bukan kotak hitam.',
+  'landing.compareTitle': 'Menabung karena kebetulan vs. menabung dengan sengaja',
+  'landing.compareCaption': 'Bedanya antara berharap kamu menabung, dan tahu pasti kamu menabung.',
+  'landing.compareWithoutLabel': 'Tanpa Celengan',
+  'landing.compareWithoutBody':
+    'Uang menumpuk di satu tempat sampai habis terpakai. Menabung bergantung pada ingat atau tidaknya kamu.',
+  'landing.compareWithLabel': 'Dengan Celengan',
+  'landing.compareWithBody':
+    'Setiap pembayaran langsung terbagi begitu masuk. Tabungan menghasilkan sementara kamu tidak sedang memperhatikan.',
+  'landing.finalCtaTitle': 'Bagi pembayaran pertamamu',
+  'landing.finalCtaBody': 'Hubungkan dompetmu dan lihat langsung terjadi.',
+  'landing.footerTagline': 'Tabungan terprogram dari setiap pembayaran, di Stellar.',
+  'landing.footerProduct': 'Produk',
+  'landing.footerProtocols': 'Protokol',
+  'landing.footerResources': 'Sumber daya',
+  'landing.footerContract': 'Lihat kontrak',
+  'landing.backToTop': 'Kembali ke atas',
   'landing.footer': 'Dibangun di Stellar testnet. Dana demo saja, bukan uang sungguhan.',
 
   'topbar.connect': 'Hubungkan dompet',
@@ -283,7 +336,6 @@ const id = {
   'nav.dashboard': 'Dasbor',
   'nav.activity': 'Aktivitas',
   'nav.yield': 'Imbal hasil',
-  'nav.receive': 'Terima',
   'nav.withdraw': 'Tarik dana',
   'nav.rules': 'Aturan',
   'nav.faucet': 'Ambil USDC uji',
@@ -295,7 +347,7 @@ const id = {
   'shell.theme': 'Ganti tema',
   'shell.copyAddress': 'Salin alamat',
 
-  'page.receiveCaption': 'Terima pembayaran dan lihat uangnya langsung terbagi.',
+  'page.paymentLinkCaption': 'Bagikan tautan dan dapatkan pembayaran beneran.',
   'page.withdrawCaption': 'Tarik danamu dari kantong siap pakai atau tabungan.',
   'page.rulesCaption': 'Atur porsi tabungan dan kunci waktumu.',
   'page.settingsCaption': 'Bahasa, mata uang, tema, dan detail jaringan.',
@@ -306,9 +358,9 @@ const id = {
   'onboarding.step1Caption': 'Pakai Freighter atau dompet Stellar lain untuk mulai.',
   'onboarding.step2Title': 'Ambil dana uji',
   'onboarding.step2Caption': 'Klaim USDC testnet gratis dari faucet, plus XLM untuk biaya.',
-  'onboarding.step3Title': 'Terima pembayaran pertamamu',
+  'onboarding.step3Title': 'Bagikan tautan pembayaranmu',
   'onboarding.step3Caption':
-    'Kirim pembayaran ke dirimu sendiri dan lihat uangnya terbagi ke dana siap pakai dan tabungan.',
+    'Kirim tautanmu supaya benar-benar dibayar. Uangnya langsung terbagi ke dana siap pakai dan tabungan begitu masuk.',
   'onboarding.done': 'Semua beres',
 
   'balances.total': 'Total saldo',
@@ -322,18 +374,6 @@ const id = {
   'balances.emptyHint': 'Saldo masih kosong.',
   'balances.earningsLine': '+{amount} sudah dihasilkan',
 
-  'receive.title': 'Terima pembayaran',
-  'receive.caption':
-    'Di demo ini dompetmu berperan jadi pelanggan yang membayar kamu; Celengan langsung membagi uangnya begitu masuk.',
-  'receive.amountPlaceholder': 'Jumlah dalam USDC',
-  'receive.preview': '{spend} siap dipakai, {save} masuk tabungan',
-  'receive.button': 'Terima pembayaran',
-  'receive.quickAmounts': 'Pilih nominal',
-  'receive.realPaymentHint':
-    'Ini cuma simulasi pelanggan yang membayar kamu. Supaya benar-benar dibayar, bagikan tautan pembayaranmu.',
-  'receive.faucetWhy':
-    'Kamu butuh USDC testnet di dompetmu dulu sebelum bisa simulasikan pembayaran.',
-
   'rules.title': 'Aturan menabungmu',
   'rules.lockTitle': 'Kunci waktu',
   'rules.splitLabel': 'Porsi tabungan',
@@ -345,6 +385,12 @@ const id = {
   'rules.lockButton': 'Kunci tabungan',
   'rules.lockedStatus': 'Terkunci sampai {date}',
   'rules.noLock': 'Tabungan belum terkunci. Pasang tanggal untuk menjaga targetmu.',
+  'rules.yieldSourceTitle': 'Sumber imbal hasil',
+  'rules.yieldSourceCaption': 'Pilih protokol tempat tabungan barumu menghasilkan imbal hasil.',
+  'rules.yieldSourceDefindexName': 'DeFindex',
+  'rules.yieldSourceBlendName': 'Blend',
+  'rules.yieldSourceSoroswapName': 'Soroswap',
+  'rules.yieldSourceSwitchHint': 'Tarik tabunganmu sampai nol dulu sebelum ganti sumber.',
 
   'withdraw.title': 'Tarik dana',
   'withdraw.spendTab': 'Siap dipakai',
@@ -357,6 +403,8 @@ const id = {
     'Tabungan disimpan sebagai unit vault; USDC yang kamu terima sudah termasuk imbal hasil.',
 
   'yield.positionTitle': 'Posisi tabunganmu',
+  'yield.statusLabel': 'Tabungan mengalir ke',
+  'yield.historyLabel': 'Tabungan dari waktu ke waktu',
   'yield.principal': 'Pokok yang ditabung',
   'yield.currentValue': 'Nilai saat ini',
   'yield.earnings': 'Keuntungan',
@@ -365,14 +413,17 @@ const id = {
     'Diperkirakan dari riwayat pembayaranmu, dengan asumsi harga unit 1:1 di setiap setoran.',
   'yield.shares': 'Unit vault',
   'yield.sharePrice': 'Harga per unit',
+  'yield.blendRate': 'Rate pool',
   'yield.earningsCaption': 'Keuntungan adalah nilai saat ini dikurangi jumlah yang sudah kamu setor.',
   'yield.refresh': 'Segarkan',
   'yield.sourcesTitle': 'Dari mana imbal hasilmu berasal',
-  'yield.sourcesCaption':
-    'Tabunganmu saat ini disalurkan lewat DeFindex. Sumber lain masih ada di roadmap.',
+  'yield.sourcesCaption': 'Pilih sumbermu di Aturan.',
+  'yield.mainnetRefLabel': 'Ref mainnet:',
+  'yield.mainnetRefCaption': 'Ref mainnet menunjukkan rate pool mainnet asli sebagai perbandingan, bukan posisimu sendiri - yang selalu ada di testnet dan bisa jauh lebih rendah karena aktivitas testnet yang minim.',
   'yield.bestYield': 'Imbal hasil terbaik',
   'yield.badgeActive': 'Aktif',
   'yield.badgeSoon': 'Segera hadir',
+  'yield.badgeSelected': 'Sumbermu',
   'yield.apyLabel': 'APY',
   'yield.tvlLabel': 'TVL',
   'yield.sourceDefindexName': 'Vault USDC DeFindex',
@@ -387,6 +438,8 @@ const id = {
   'pay.signHint':
     'Dompetmu tanda tangan satu transaksi saja. Pembagian ke dana siap pakai dan tabungan berjalan otomatis di on-chain.',
   'pay.payingFrom': 'Membayar dari',
+  'pay.switchWallet': 'Ganti dompet',
+  'pay.needsFundsHint': 'Kamu butuh USDC testnet untuk membayar dari dompet ini.',
   'pay.button': 'Bayar sekarang',
   'pay.connectCta': 'Hubungkan dompet untuk membayar',
   'pay.connectCaption': 'Kamu bayar langsung dari dompet Stellar-mu sendiri. Tidak perlu akun.',
@@ -419,6 +472,7 @@ const id = {
   'activity.wdSave': 'Tarik {amount} dari tabungan',
   'activity.split': 'Porsi tabungan diubah jadi {pct}%',
   'activity.lock': 'Tabungan dikunci sampai {date}',
+  'activity.viewOnExplorer': 'Lihat transaksi ini di explorer',
 
   'settings.title': 'Pengaturan',
   'settings.preferences': 'Preferensi',
@@ -459,6 +513,7 @@ const id = {
   'success.withdrewSavings': 'Tabungan berhasil ditarik ke dompetmu',
   'success.splitSaved': 'Aturan menabung diperbarui',
   'success.lockSet': 'Tabungan dikunci',
+  'success.yieldTargetSaved': 'Sumber imbal hasil diperbarui',
 
   'errors.invalidAmount': 'Jumlahnya belum pas. Masukkan angka di atas nol.',
   'errors.invalidSplit': 'Porsi tabungan harus antara 0% dan 100%.',
@@ -468,6 +523,7 @@ const id = {
   'errors.lockNotExtended': 'Kunci hanya bisa diperpanjang, tidak bisa dipersingkat.',
   'errors.emptyWithdrawal': 'Tidak ada yang bisa ditarik.',
   'errors.lockTooFar': 'Tanggal kuncinya terlalu jauh di masa depan.',
+  'errors.switchTargetWithBalance': 'Tarik tabunganmu dulu sebelum ganti sumber imbal hasil.',
   'errors.paused': 'Kontrak sedang dijeda. Coba lagi nanti.',
   'errors.walletCancelled': 'Permintaan dibatalkan di dompetmu.',
   'errors.generic': 'Ada yang tidak beres. Coba lagi, ya.',
@@ -480,6 +536,13 @@ const id = {
   'common.retry': 'Coba lagi',
   'common.close': 'Tutup',
   'common.connectFirst': 'Hubungkan dompetmu dulu.',
+  'common.amountPlaceholder': 'Jumlah dalam USDC',
+  'common.quickAmounts': 'Pilih nominal',
+  'common.viewTx': 'Lihat transaksi',
+  'notFound.title': 'Halaman tidak ditemukan',
+  'notFound.body': 'Halaman yang kamu cari tidak ada, atau tautannya rusak.',
+  'notFound.goHome': 'Ke halaman utama',
+  'notFound.goApp': 'Buka aplikasi',
 } satisfies Record<MessageKey, string>
 
 const vi = {
@@ -487,18 +550,39 @@ const vi = {
   'landing.heroSubtitle':
     'Celengan tự động chia mỗi khoản thanh toán bạn nhận được: một phần luôn sẵn sàng để chi tiêu, phần còn lại vào thẳng kho tiết kiệm sinh lời trên Stellar.',
   'landing.cta': 'Mở ứng dụng',
-  'landing.feature1Title': 'Tự động chia khoản thanh toán',
-  'landing.feature1Body':
-    'Chỉ cần chọn tỷ lệ một lần. Mọi khoản thanh toán đến sẽ được chia giữa chi tiêu và tiết kiệm trước khi bạn kịp đụng vào.',
-  'landing.feature2Title': 'Tiết kiệm sinh lời cho bạn',
-  'landing.feature2Body':
-    'Tiền tiết kiệm của bạn được đưa vào kho DeFindex trên Stellar testnet và bắt đầu sinh lời ngay lập tức.',
-  'landing.feature3Title': 'Khóa tiết kiệm lại',
-  'landing.feature3Body':
-    'Đặt ngày khóa để giữ đúng cam kết với chính mình trong tương lai. Tiền tiết kiệm sẽ đứng yên cho đến ngày bạn chọn.',
-  'landing.feature4Title': 'Nhận tiền bằng một đường link',
-  'landing.feature4Body':
-    'Chia sẻ link thanh toán hoặc mã QR của bạn. Khách hàng thanh toán bằng USDC và một phần mỗi giao dịch sẽ vào thẳng khoản tiết kiệm.',
+  'landing.navHow': 'Cách hoạt động',
+  'landing.navProtocols': 'Giao thức',
+  'landing.navCompare': 'Vì sao chọn Celengan',
+  'landing.demoLabel': 'Ai đó vừa thanh toán cho bạn',
+  'landing.howTitle': 'Cách hoạt động',
+  'landing.howCaption': 'Từ thanh toán đến sinh lời, chỉ trong bốn bước tự động.',
+  'landing.step1Title': 'Kết nối ví của bạn',
+  'landing.step1Body': 'Liên kết bất kỳ ví Stellar nào trong vài giây. Không đăng ký, không lưu ký.',
+  'landing.step2Title': 'Nhận thanh toán',
+  'landing.step2Body': 'Chia sẻ link thanh toán của bạn, hoặc nhận USDC trực tiếp.',
+  'landing.step3Title': 'Tự động chia',
+  'landing.step3Body': 'Quy tắc chia của bạn gửi một phần vào chi tiêu, một phần vào tiết kiệm, ngay lập tức.',
+  'landing.step4Title': 'Sinh lời',
+  'landing.step4Body': 'Tiền tiết kiệm được đưa vào DeFindex, Blend, hoặc Soroswap và bắt đầu sinh lời ngay.',
+  'landing.protocolsTitle': 'Lợi nhuận thật, giao thức thật',
+  'landing.protocolsCaption':
+    'Tiền tiết kiệm của bạn được dẫn vào các giao thức on-chain đã kiểm toán trên Stellar - không phải hộp đen.',
+  'landing.compareTitle': 'Tiết kiệm tình cờ và tiết kiệm có chủ đích',
+  'landing.compareCaption': 'Khác biệt giữa hy vọng bạn sẽ tiết kiệm, và biết chắc bạn sẽ tiết kiệm.',
+  'landing.compareWithoutLabel': 'Không có Celengan',
+  'landing.compareWithoutBody':
+    'Tiền nằm một chỗ cho đến khi được tiêu hết. Việc tiết kiệm phụ thuộc vào việc bạn có nhớ hay không.',
+  'landing.compareWithLabel': 'Có Celengan',
+  'landing.compareWithBody':
+    'Mỗi khoản thanh toán tự chia ngay khi đến. Tiền tiết kiệm sinh lời trong khi bạn không để ý.',
+  'landing.finalCtaTitle': 'Chia khoản thanh toán đầu tiên của bạn',
+  'landing.finalCtaBody': 'Kết nối ví của bạn và xem nó diễn ra ngay lập tức.',
+  'landing.footerTagline': 'Tiết kiệm lập trình được từ mỗi khoản thanh toán, trên Stellar.',
+  'landing.footerProduct': 'Sản phẩm',
+  'landing.footerProtocols': 'Giao thức',
+  'landing.footerResources': 'Tài nguyên',
+  'landing.footerContract': 'Xem hợp đồng',
+  'landing.backToTop': 'Lên đầu trang',
   'landing.footer': 'Xây dựng trên Stellar testnet. Chỉ là tiền demo, không phải tiền thật.',
 
   'topbar.connect': 'Kết nối ví',
@@ -523,7 +607,6 @@ const vi = {
   'nav.dashboard': 'Tổng quan',
   'nav.activity': 'Hoạt động',
   'nav.yield': 'Lợi nhuận',
-  'nav.receive': 'Nhận tiền',
   'nav.withdraw': 'Rút tiền',
   'nav.rules': 'Quy tắc',
   'nav.faucet': 'Nhận USDC thử nghiệm',
@@ -535,7 +618,7 @@ const vi = {
   'shell.theme': 'Đổi giao diện',
   'shell.copyAddress': 'Sao chép địa chỉ',
 
-  'page.receiveCaption': 'Nhận một khoản thanh toán và xem nó được chia ngay khi đến.',
+  'page.paymentLinkCaption': 'Chia sẻ link để được thanh toán thật.',
   'page.withdrawCaption': 'Rút tiền từ khoản chi tiêu hoặc tiết kiệm.',
   'page.rulesCaption': 'Tùy chỉnh tỷ lệ tiết kiệm và thời gian khóa.',
   'page.settingsCaption': 'Ngôn ngữ, tiền tệ, giao diện và thông tin mạng.',
@@ -546,9 +629,9 @@ const vi = {
   'onboarding.step1Caption': 'Dùng Freighter hoặc bất kỳ ví Stellar nào để bắt đầu.',
   'onboarding.step2Title': 'Nhận tiền thử nghiệm',
   'onboarding.step2Caption': 'Nhận miễn phí USDC testnet từ faucet, cùng với XLM để trả phí giao dịch.',
-  'onboarding.step3Title': 'Nhận khoản thanh toán đầu tiên',
+  'onboarding.step3Title': 'Chia sẻ link thanh toán của bạn',
   'onboarding.step3Caption':
-    'Tự gửi cho mình một khoản thanh toán và xem nó được chia vào chi tiêu và tiết kiệm.',
+    'Gửi link của bạn để được thanh toán thật. Tiền sẽ tự chia vào chi tiêu và tiết kiệm ngay khi nhận được.',
   'onboarding.done': 'Đã hoàn tất',
 
   'balances.total': 'Tổng số dư',
@@ -562,18 +645,6 @@ const vi = {
   'balances.emptyHint': 'Chưa có số dư nào.',
   'balances.earningsLine': '+{amount} đã sinh lời tính đến nay',
 
-  'receive.title': 'Nhận thanh toán',
-  'receive.caption':
-    'Trong bản demo này, ví của bạn đóng vai khách hàng: nó sẽ trả tiền cho bạn, và Celengan sẽ chia khoản tiền đó ngay khi nhận được.',
-  'receive.amountPlaceholder': 'Số tiền bằng USDC',
-  'receive.preview': '{spend} vào chi tiêu, {save} vào tiết kiệm',
-  'receive.button': 'Nhận thanh toán',
-  'receive.quickAmounts': 'Số tiền nhanh',
-  'receive.realPaymentHint':
-    'Đây chỉ là mô phỏng khách hàng trả tiền cho bạn. Để nhận tiền thật, hãy chia sẻ link thanh toán của bạn.',
-  'receive.faucetWhy':
-    'Bạn cần có USDC testnet trong ví trước khi có thể mô phỏng một khoản thanh toán.',
-
   'rules.title': 'Quy tắc tiết kiệm của bạn',
   'rules.lockTitle': 'Khóa thời gian',
   'rules.splitLabel': 'Tỷ lệ tiết kiệm',
@@ -585,6 +656,12 @@ const vi = {
   'rules.lockButton': 'Khóa tiết kiệm',
   'rules.lockedStatus': 'Đã khóa đến {date}',
   'rules.noLock': 'Khoản tiết kiệm chưa bị khóa. Đặt một ngày để bảo vệ mục tiêu của bạn.',
+  'rules.yieldSourceTitle': 'Nguồn lợi nhuận',
+  'rules.yieldSourceCaption': 'Chọn giao thức mà khoản tiết kiệm mới của bạn sẽ sinh lời.',
+  'rules.yieldSourceDefindexName': 'DeFindex',
+  'rules.yieldSourceBlendName': 'Blend',
+  'rules.yieldSourceSoroswapName': 'Soroswap',
+  'rules.yieldSourceSwitchHint': 'Rút hết tiết kiệm về 0 trước khi đổi nguồn.',
 
   'withdraw.title': 'Rút tiền',
   'withdraw.spendTab': 'Chi tiêu',
@@ -597,6 +674,8 @@ const vi = {
     'Khoản tiết kiệm được giữ dưới dạng cổ phần trong kho. Số USDC bạn nhận về đã bao gồm cả phần lợi nhuận sinh ra.',
 
   'yield.positionTitle': 'Tình trạng tiết kiệm của bạn',
+  'yield.statusLabel': 'Tiết kiệm chảy vào',
+  'yield.historyLabel': 'Tiết kiệm theo thời gian',
   'yield.principal': 'Vốn gốc đã tiết kiệm',
   'yield.currentValue': 'Giá trị hiện tại',
   'yield.earnings': 'Lợi nhuận',
@@ -605,14 +684,17 @@ const vi = {
     'Được ước tính từ lịch sử thanh toán của bạn, giả định giá cổ phần là 1:1 tại mỗi lần gửi tiền.',
   'yield.shares': 'Cổ phần kho',
   'yield.sharePrice': 'Giá cổ phần',
+  'yield.blendRate': 'Tỷ lệ pool',
   'yield.earningsCaption': 'Lợi nhuận là giá trị hiện tại trừ đi số tiền bạn đã bỏ vào.',
   'yield.refresh': 'Làm mới',
   'yield.sourcesTitle': 'Lợi nhuận của bạn đến từ đâu',
-  'yield.sourcesCaption':
-    'Hiện tại, khoản tiết kiệm của bạn được dẫn qua DeFindex. Sẽ có thêm nhiều nguồn khác trong thời gian tới.',
+  'yield.sourcesCaption': 'Chọn nguồn của bạn trong Quy tắc.',
+  'yield.mainnetRefLabel': 'Tham chiếu mainnet:',
+  'yield.mainnetRefCaption': 'Tham chiếu mainnet cho biết lãi suất thực tế của một pool mainnet đang hoạt động để so sánh, không phải vị thế của bạn - vị thế luôn nằm trên testnet và có thể thấp hơn nhiều do hoạt động testnet còn hạn chế.',
   'yield.bestYield': 'Lợi nhuận tốt nhất',
   'yield.badgeActive': 'Đang hoạt động',
   'yield.badgeSoon': 'Sắp ra mắt',
+  'yield.badgeSelected': 'Nguồn của bạn',
   'yield.apyLabel': 'APY',
   'yield.tvlLabel': 'TVL',
   'yield.sourceDefindexName': 'Kho USDC của DeFindex',
@@ -627,6 +709,8 @@ const vi = {
   'pay.signHint':
     'Ví của bạn chỉ cần ký một giao dịch duy nhất. Việc chia thành chi tiêu và tiết kiệm diễn ra tự động trên blockchain.',
   'pay.payingFrom': 'Thanh toán từ',
+  'pay.switchWallet': 'Đổi ví',
+  'pay.needsFundsHint': 'Bạn cần USDC testnet để thanh toán từ ví này.',
   'pay.button': 'Thanh toán ngay',
   'pay.connectCta': 'Kết nối ví để thanh toán',
   'pay.connectCaption': 'Bạn thanh toán trực tiếp từ ví Stellar của mình. Không cần tạo tài khoản.',
@@ -659,6 +743,7 @@ const vi = {
   'activity.wdSave': 'Đã rút {amount} từ khoản tiết kiệm',
   'activity.split': 'Đã đặt tỷ lệ tiết kiệm thành {pct}%',
   'activity.lock': 'Đã khóa tiết kiệm đến {date}',
+  'activity.viewOnExplorer': 'Xem giao dịch này trên explorer',
 
   'settings.title': 'Cài đặt',
   'settings.preferences': 'Tùy chọn',
@@ -699,6 +784,7 @@ const vi = {
   'success.withdrewSavings': 'Đã rút tiền tiết kiệm về ví của bạn',
   'success.splitSaved': 'Đã cập nhật quy tắc tiết kiệm',
   'success.lockSet': 'Đã khóa tiết kiệm',
+  'success.yieldTargetSaved': 'Đã cập nhật nguồn lợi nhuận',
 
   'errors.invalidAmount': 'Số tiền này có vẻ không đúng. Hãy nhập một số lớn hơn 0.',
   'errors.invalidSplit': 'Tỷ lệ chia phải nằm trong khoảng từ 0% đến 100%.',
@@ -708,6 +794,7 @@ const vi = {
   'errors.lockNotExtended': 'Thời gian khóa chỉ có thể kéo dài thêm, không thể rút ngắn.',
   'errors.emptyWithdrawal': 'Không có gì để rút.',
   'errors.lockTooFar': 'Ngày khóa đó ở quá xa trong tương lai.',
+  'errors.switchTargetWithBalance': 'Hãy rút tiết kiệm trước khi đổi nguồn lợi nhuận.',
   'errors.paused': 'Hợp đồng hiện đang tạm dừng. Vui lòng thử lại sau.',
   'errors.walletCancelled': 'Yêu cầu đã bị hủy trong ví của bạn.',
   'errors.generic': 'Đã có lỗi xảy ra. Vui lòng thử lại.',
@@ -720,6 +807,13 @@ const vi = {
   'common.retry': 'Thử lại',
   'common.close': 'Đóng',
   'common.connectFirst': 'Hãy kết nối ví trước.',
+  'common.amountPlaceholder': 'Số tiền bằng USDC',
+  'common.quickAmounts': 'Số tiền nhanh',
+  'common.viewTx': 'Xem giao dịch',
+  'notFound.title': 'Không tìm thấy trang',
+  'notFound.body': 'Trang bạn đang tìm không tồn tại, hoặc đường link đã bị hỏng.',
+  'notFound.goHome': 'Về trang chủ',
+  'notFound.goApp': 'Mở ứng dụng',
 } satisfies Record<MessageKey, string>
 
 const fil = {
@@ -727,18 +821,39 @@ const fil = {
   'landing.heroSubtitle':
     'Hinahati ng Celengan ang bawat payment na natatanggap mo: may bahaging pwede mong gastusin agad, at may bahaging diretso sa isang savings vault sa Stellar na kumikita ng yield.',
   'landing.cta': 'Buksan ang app',
-  'landing.feature1Title': 'Auto-split na payments',
-  'landing.feature1Body':
-    'Pumili ng percentage, isang beses lang. Awtomatikong nahahati ang bawat papasok na payment sa spending at savings bago mo pa ito magalaw.',
-  'landing.feature2Title': 'Savings na kumikita',
-  'landing.feature2Body':
-    'Napupunta ang savings mo sa isang DeFindex vault sa Stellar testnet at agad itong kumikita.',
-  'landing.feature3Title': 'I-lock mo na',
-  'landing.feature3Body':
-    'Mag-set ng lock date para hindi ka matukso sa hinaharap. Hindi magagalaw ang savings hangga\'t hindi dumarating ang petsang pinili mo.',
-  'landing.feature4Title': 'Tumanggap ng bayad gamit ang link',
-  'landing.feature4Body':
-    'I-share ang payment link o QR code mo. Magbabayad ang customers gamit ang USDC at diretso sa savings ang bahagi ng bawat benta.',
+  'landing.navHow': 'Paano gumagana',
+  'landing.navProtocols': 'Mga protocol',
+  'landing.navCompare': 'Bakit Celengan',
+  'landing.demoLabel': 'May nagbayad lang sa iyo',
+  'landing.howTitle': 'Paano ito gumagana',
+  'landing.howCaption': 'Mula sa payment hanggang sa yield, sa apat na awtomatikong hakbang.',
+  'landing.step1Title': 'I-connect ang wallet mo',
+  'landing.step1Body': 'I-link ang kahit anong Stellar wallet sa ilang segundo lang. Walang sign-up, walang custody.',
+  'landing.step2Title': 'Tumanggap ng bayad',
+  'landing.step2Body': 'I-share ang payment link mo, o tumanggap ng USDC nang direkta.',
+  'landing.step3Title': 'Awtomatikong mahahati',
+  'landing.step3Body': 'Agad ipinapadala ng split rule mo ang bahagi sa spending at bahagi sa savings.',
+  'landing.step4Title': 'Kumikita',
+  'landing.step4Body': 'Napupunta ang savings mo sa DeFindex, Blend, o Soroswap at agad itong kumikita.',
+  'landing.protocolsTitle': 'Totoong yield, totoong mga protocol',
+  'landing.protocolsCaption':
+    'Napupunta ang savings mo sa mga audited, on-chain na protocol sa Stellar - hindi black box.',
+  'landing.compareTitle': 'Di-sinasadyang pag-iipon vs. sinasadyang pag-iipon',
+  'landing.compareCaption': 'Ang pagkakaiba ng umaasang naka-ipon ka, at siguradong naka-ipon ka.',
+  'landing.compareWithoutLabel': 'Kung Walang Celengan',
+  'landing.compareWithoutBody':
+    'Naiipon lang ang pera sa isang lugar hangga\'t nagagastos. Nakadepende sa pag-alala mo ang pag-iipon.',
+  'landing.compareWithLabel': 'Kung May Celengan',
+  'landing.compareWithBody':
+    'Awtomatikong nahahati ang bawat payment pagdating. Kumikita ang savings mo kahit hindi mo pinapansin.',
+  'landing.finalCtaTitle': 'Hatiin ang unang payment mo',
+  'landing.finalCtaBody': 'I-connect ang wallet mo at panoorin itong mangyari real-time.',
+  'landing.footerTagline': 'Programmable savings sa bawat payment, sa Stellar.',
+  'landing.footerProduct': 'Produkto',
+  'landing.footerProtocols': 'Mga Protocol',
+  'landing.footerResources': 'Mga Resource',
+  'landing.footerContract': 'Tingnan ang contract',
+  'landing.backToTop': 'Bumalik sa taas',
   'landing.footer': 'Gawa gamit ang Stellar testnet. Demo funds lang, walang totoong pera.',
 
   'topbar.connect': 'I-connect ang wallet',
@@ -763,7 +878,6 @@ const fil = {
   'nav.dashboard': 'Dashboard',
   'nav.activity': 'Activity',
   'nav.yield': 'Yield',
-  'nav.receive': 'Tumanggap',
   'nav.withdraw': 'Withdraw',
   'nav.rules': 'Rules',
   'nav.faucet': 'Kumuha ng test USDC',
@@ -775,7 +889,7 @@ const fil = {
   'shell.theme': 'Palitan ang theme',
   'shell.copyAddress': 'Kopyahin ang address',
 
-  'page.receiveCaption': 'Tumanggap ng bayad at panoorin itong awtomatikong mahati pagdating.',
+  'page.paymentLinkCaption': 'I-share ang link at magbayad talaga.',
   'page.withdrawCaption': 'Maglipat ng pera mula sa spending o savings.',
   'page.rulesCaption': 'I-adjust ang savings split at time lock mo.',
   'page.settingsCaption': 'Wika, currency, theme, at detalye ng network.',
@@ -786,9 +900,9 @@ const fil = {
   'onboarding.step1Caption': 'Gamitin ang Freighter o kahit anong Stellar wallet para makapagsimula.',
   'onboarding.step2Title': 'Kumuha ng test funds',
   'onboarding.step2Caption': 'Kumuha ng libreng testnet USDC mula sa faucet, plus XLM para sa fees.',
-  'onboarding.step3Title': 'Tumanggap ng unang payment mo',
+  'onboarding.step3Title': 'I-share ang payment link mo',
   'onboarding.step3Caption':
-    'Magpadala ka sa sarili mong payment at panoorin itong mahati sa spending at savings.',
+    'Ipadala ang link mo para makatanggap ng totoong bayad. Agad itong mahahati sa spending at savings pagdating.',
   'onboarding.done': 'Tapos na',
 
   'balances.total': 'Kabuuang balance',
@@ -802,17 +916,6 @@ const fil = {
   'balances.emptyHint': 'Wala pang balance.',
   'balances.earningsLine': '+{amount} kinita na sa ngayon',
 
-  'receive.title': 'Tumanggap ng bayad',
-  'receive.caption':
-    'Sa demo na ito, ang wallet mo ang gaganap na customer: sya ang magbabayad sa iyo, at hahatiin agad ng Celengan ang pera sa sandaling dumating ito.',
-  'receive.amountPlaceholder': 'Halaga sa USDC',
-  'receive.preview': '{spend} sa spending, {save} sa savings',
-  'receive.button': 'Tumanggap ng bayad',
-  'receive.quickAmounts': 'Mabilisang halaga',
-  'receive.realPaymentHint':
-    'Simulation lang ito ng customer na nagbabayad sa iyo. Para makatanggap ng totoong bayad, i-share na lang ang payment link mo.',
-  'receive.faucetWhy': 'Kailangan mo ng testnet USDC sa wallet mo bago mo ma-simulate ang isang payment.',
-
   'rules.title': 'Mga Patakaran sa Savings Mo',
   'rules.lockTitle': 'Time Lock',
   'rules.splitLabel': 'Savings split',
@@ -824,6 +927,12 @@ const fil = {
   'rules.lockButton': 'I-lock ang Savings',
   'rules.lockedStatus': 'Naka-lock hanggang {date}',
   'rules.noLock': 'Naka-unlock ang savings mo. Mag-set ng petsa para maprotektahan ang goal mo.',
+  'rules.yieldSourceTitle': 'Yield source',
+  'rules.yieldSourceCaption': 'Piliin kung saang protocol kikita ang future savings mo.',
+  'rules.yieldSourceDefindexName': 'DeFindex',
+  'rules.yieldSourceBlendName': 'Blend',
+  'rules.yieldSourceSoroswapName': 'Soroswap',
+  'rules.yieldSourceSwitchHint': 'I-withdraw muna ang savings mo hanggang zero bago mag-switch.',
 
   'withdraw.title': 'Withdraw',
   'withdraw.spendTab': 'Pwedeng Gastusin',
@@ -836,6 +945,8 @@ const fil = {
     'Naka-hold ang savings mo bilang vault shares; kasama na sa USDC na matatanggap mo ang anumang yield na kinita.',
 
   'yield.positionTitle': 'Savings position mo',
+  'yield.statusLabel': 'Dumadaloy ang savings sa',
+  'yield.historyLabel': 'Savings sa paglipas ng panahon',
   'yield.principal': 'Naipong Principal',
   'yield.currentValue': 'Kasalukuyang Value',
   'yield.earnings': 'Kinita',
@@ -844,14 +955,17 @@ const fil = {
     'Tinatantya batay sa payment history mo, sa pag-aakalang 1:1 ang share price sa bawat deposito.',
   'yield.shares': 'Vault shares',
   'yield.sharePrice': 'Share price',
+  'yield.blendRate': 'Pool rate',
   'yield.earningsCaption': 'Ang earnings ay ang kasalukuyang value mo minus ang inilagay mong halaga.',
   'yield.refresh': 'I-refresh',
   'yield.sourcesTitle': 'Saan galing ang yield mo',
-  'yield.sourcesCaption':
-    'Sa ngayon, dumadaan ang savings mo sa DeFindex. May karagdagang sources pa sa roadmap.',
+  'yield.sourcesCaption': 'Piliin ang source mo sa Rules.',
+  'yield.mainnetRefLabel': 'Mainnet ref:',
+  'yield.mainnetRefCaption': 'Ipinapakita ng mainnet ref ang totoong rate ng isang live na pool sa mainnet bilang reference lang, hindi ang position mo - laging nasa testnet iyon at pwedeng mas mababa dahil kaunti ang aktibidad sa testnet.',
   'yield.bestYield': 'Pinakamataas na yield',
   'yield.badgeActive': 'Aktibo',
   'yield.badgeSoon': 'Malapit na',
+  'yield.badgeSelected': 'Source mo',
   'yield.apyLabel': 'APY',
   'yield.tvlLabel': 'TVL',
   'yield.sourceDefindexName': 'DeFindex USDC vault',
@@ -866,6 +980,8 @@ const fil = {
   'pay.signHint':
     'Isang transaction lang ang pipirmahan ng wallet mo. Awtomatikong nangyayari on-chain ang paghahati sa spending at savings.',
   'pay.payingFrom': 'Nagbabayad mula sa',
+  'pay.switchWallet': 'Palitan ang wallet',
+  'pay.needsFundsHint': 'Kailangan mo ng testnet USDC para magbayad gamit ang wallet na ito.',
   'pay.button': 'Bayaran na',
   'pay.connectCta': 'I-connect ang wallet para makabayad',
   'pay.connectCaption': 'Direktang magbabayad ka mula sa sarili mong Stellar wallet. Hindi na kailangan ng account.',
@@ -898,6 +1014,7 @@ const fil = {
   'activity.wdSave': 'Nag-withdraw ng {amount} mula sa savings',
   'activity.split': 'Na-set ang savings split sa {pct}%',
   'activity.lock': 'Naka-lock ang savings hanggang {date}',
+  'activity.viewOnExplorer': 'Tingnan ang transaksyon na ito sa explorer',
 
   'settings.title': 'Settings',
   'settings.preferences': 'Mga Preference',
@@ -938,6 +1055,7 @@ const fil = {
   'success.withdrewSavings': 'Na-withdraw na ang savings sa wallet mo',
   'success.splitSaved': 'Na-update ang saving rule',
   'success.lockSet': 'Naka-lock na ang savings',
+  'success.yieldTargetSaved': 'Na-update na ang yield source',
 
   'errors.invalidAmount': 'Mukhang mali ang halagang iyon. Maglagay ng numerong higit sa zero.',
   'errors.invalidSplit': 'Dapat nasa pagitan ng 0% at 100% ang split.',
@@ -947,6 +1065,7 @@ const fil = {
   'errors.lockNotExtended': 'Ang lock ay pwede lang pahabain, hindi maaaring paikliin.',
   'errors.emptyWithdrawal': 'Walang pwedeng i-withdraw.',
   'errors.lockTooFar': 'Masyadong malayo sa hinaharap ang lock date na iyon.',
+  'errors.switchTargetWithBalance': 'I-withdraw muna ang savings mo bago mag-switch ng yield source.',
   'errors.paused': 'Naka-pause muna ang contract ngayon. Subukan ulit mamaya.',
   'errors.walletCancelled': 'Kinansela ang request sa wallet mo.',
   'errors.generic': 'May nagkamali. Subukan ulit.',
@@ -959,6 +1078,13 @@ const fil = {
   'common.retry': 'Subukan ulit',
   'common.close': 'Isara',
   'common.connectFirst': 'I-connect muna ang wallet mo.',
+  'common.amountPlaceholder': 'Halaga sa USDC',
+  'common.quickAmounts': 'Mabilisang halaga',
+  'common.viewTx': 'Tingnan ang transaksyon',
+  'notFound.title': 'Hindi nahanap ang page',
+  'notFound.body': 'Wala ang page na hinahanap mo, o sira na ang link.',
+  'notFound.goHome': 'Pumunta sa homepage',
+  'notFound.goApp': 'Buksan ang app',
 } satisfies Record<MessageKey, string>
 
 const messages: Record<Locale, Record<MessageKey, string>> = { en, id, vi, fil }

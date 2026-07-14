@@ -5,6 +5,7 @@ export type ActivityItem = {
   id: string
   kind: 'pay' | 'wd_spend' | 'wd_save' | 'split' | 'lock'
   at: Date
+  txHash: string
   from?: string
   amount?: bigint
   saved?: bigint
@@ -36,7 +37,7 @@ function toItem(event: rpc.Api.EventResponse, user: string): ActivityItem | null
   if (!isKind(kind)) return null
   if (scValToNative(event.topic[1]) !== user) return null
 
-  const base = { id: event.id, at: new Date(event.ledgerClosedAt) }
+  const base = { id: event.id, at: new Date(event.ledgerClosedAt), txHash: event.txHash }
   const value: unknown = scValToNative(event.value)
   switch (kind) {
     case 'pay': {

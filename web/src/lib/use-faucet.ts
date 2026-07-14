@@ -18,9 +18,20 @@ export function useFaucet(): {
 
   const runFaucet = useCallback(async () => {
     await runAction('faucet', 'faucet.success', async () => {
-      await requestTestUsdc(requireWalletBridge())
+      let result: { hash: string }
+      try {
+        result = await requestTestUsdc(requireWalletBridge())
+      } catch (e) {
+        // an "already funded" rejection is itself proof the wallet has test funds, so the
+        // onboarding checklist should still tick this step off instead of looping forever
+        if (address && e instanceof Error && e.message === 'faucet_maybe_funded') {
+          localStorage.setItem(`celengan:fauceted:${address}`, '1')
+        }
+        throw e
+      }
       // flag before the refresh so the onboarding checklist ticks on the refresh render
       if (address) localStorage.setItem(`celengan:fauceted:${address}`, '1')
+      return result
     })
   }, [address, runAction])
 

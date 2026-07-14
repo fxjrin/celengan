@@ -17,3 +17,8 @@ export function usdcToInput(amount: bigint): string {
 export function usdcToNumber(amount: bigint): number {
   return Number(amount) / 1e7
 }
+
+// truncates a hex string (tx hash, address) for compact display: abcd1234...wxyz9876
+export function shortHex(value: string): string {
+  return value.length <= 12 ? value : `${value.slice(0, 6)}...${value.slice(-6)}`
+}

@@ -11,7 +11,7 @@ type OnboardingChecklistProps = {
   received: boolean
   faucetBusy: boolean
   onFaucet: () => void
-  onGoToReceive: () => void
+  onGoToPaymentLink: () => void
 }
 
 type StepProps = {
@@ -45,7 +45,7 @@ export function OnboardingChecklist({
   received,
   faucetBusy,
   onFaucet,
-  onGoToReceive,
+  onGoToPaymentLink,
 }: OnboardingChecklistProps) {
   const t = useT()
 
@@ -82,8 +82,8 @@ export function OnboardingChecklist({
             caption={t('onboarding.step3Caption')}
             doneLabel={t('onboarding.done')}
             action={
-              <Button variant="outline" size="sm" onClick={onGoToReceive}>
-                {t('receive.title')}
+              <Button variant="outline" size="sm" onClick={onGoToPaymentLink}>
+                {t('nav.paymentLink')}
               </Button>
             }
           />

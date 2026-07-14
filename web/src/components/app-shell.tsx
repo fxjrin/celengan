@@ -4,7 +4,6 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useTheme } from 'next-themes'
 import {
   ActivityIcon,
-  ArrowDownLeftIcon,
   ArrowUpRightIcon,
   CoinsIcon,
   ExternalLinkIcon,
@@ -130,10 +129,6 @@ function SidebarContent({ rail = false, onNavigate }: SidebarContentProps) {
           <span className={label}>{t('nav.yield')}</span>
         </NavLink>
         <SectionLabel rail={rail}>{t('nav.action')}</SectionLabel>
-        <NavLink to="/app/receive" onClick={onNavigate} className={navClass}>
-          <ArrowDownLeftIcon className="size-[18px] shrink-0" />
-          <span className={label}>{t('nav.receive')}</span>
-        </NavLink>
         <NavLink to="/app/withdraw" onClick={onNavigate} className={navClass}>
           <ArrowUpRightIcon className="size-[18px] shrink-0" />
           <span className={label}>{t('nav.withdraw')}</span>

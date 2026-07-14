@@ -9,6 +9,7 @@ const CONTRACT_ERROR_KEYS: Record<number, MessageKey> = {
   6: 'errors.lockNotExtended',
   7: 'errors.emptyWithdrawal',
   8: 'errors.lockTooFar',
+  9: 'errors.switchTargetWithBalance',
   1000: 'errors.paused',
 }
 

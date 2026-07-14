@@ -8,7 +8,7 @@ import type { WalletBridge } from '@/lib/wallet-bridge'
 const FAUCET_URL = '/faucet'
 const FRIENDBOT_URL = 'https://friendbot.stellar.org/?addr='
 
-export async function requestTestUsdc(bridge: WalletBridge): Promise<void> {
+export async function requestTestUsdc(bridge: WalletBridge): Promise<{ hash: string }> {
   await fetch(FRIENDBOT_URL + bridge.address).catch(() => undefined)
 
   const res = await fetch(`${FAUCET_URL}?userId=${bridge.address}`)
@@ -23,4 +23,5 @@ export async function requestTestUsdc(bridge: WalletBridge): Promise<void> {
   if (sent.status === 'ERROR') {
     throw new Error('faucet_maybe_funded') // usually a duplicate claim on an already funded wallet
   }
+  return { hash: sent.hash }
 }

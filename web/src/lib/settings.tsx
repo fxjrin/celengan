@@ -25,10 +25,6 @@ const SettingsContext = createContext<SettingsContextValue | null>(null)
 function initialLocale(): Locale {
   const stored = localStorage.getItem(LOCALE_KEY)
   if (stored === 'en' || stored === 'id' || stored === 'vi' || stored === 'fil') return stored
-  const lang = navigator.language
-  if (lang.startsWith('id')) return 'id'
-  if (lang.startsWith('vi')) return 'vi'
-  if (lang.startsWith('fil') || lang.startsWith('tl')) return 'fil'
   return 'en'
 }
 
@@ -44,7 +40,7 @@ export function secondaryCurrencyFor(primary: PrimaryCurrency, locale: Locale): 
 function initialCurrency(): PrimaryCurrency {
   const stored = localStorage.getItem(CURRENCY_KEY)
   if (stored === 'idr' || stored === 'usdc' || stored === 'vnd' || stored === 'php') return stored
-  return 'idr'
+  return 'usdc'
 }
 
 export function SettingsProvider({ children }: { children: ReactNode }) {

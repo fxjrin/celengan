@@ -53,9 +53,9 @@ export function WithdrawCard({ account }: WithdrawCardProps) {
   const handleWithdrawSavings = async () => {
     const shares = parseAmount(savingsValue)
     if (shares === null || !address) return
-    const ok = await runAction('savings', 'success.withdrewSavings', async () => {
-      await celengan.withdrawSavings(address, shares)
-    })
+    const ok = await runAction('savings', 'success.withdrewSavings', () =>
+      celengan.withdrawSavings(address, shares),
+    )
     if (ok) setSavingsValue('')
   }
 
@@ -80,7 +80,7 @@ export function WithdrawCard({ account }: WithdrawCardProps) {
                 />
                 <Input
                   value={spendValue}
-                  placeholder={t('receive.amountPlaceholder')}
+                  placeholder={t('common.amountPlaceholder')}
                   inputMode="decimal"
                   className="pl-12 tabular-nums"
                   disabled={anyBusy}

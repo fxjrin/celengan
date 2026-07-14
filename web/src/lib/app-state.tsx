@@ -11,7 +11,9 @@ import {
 import { toast } from 'sonner'
 import { fetchActivity, type ActivityItem } from '@/lib/activity'
 import { celengan } from '@/lib/celengan'
+import { explorerTxUrl } from '@/lib/config'
 import { errorKey } from '@/lib/errors'
+import { shortHex } from '@/lib/format'
 import { useT, type MessageKey } from '@/lib/i18n'
 import { FALLBACK_RATES, getFxRates, type FxRates } from '@/lib/rates'
 import type { CelenganAccount } from '@/lib/types'
@@ -27,7 +29,11 @@ type AppStateValue = {
   activityLoading: boolean
   busy: string | null
   refresh: () => Promise<void>
-  runAction: (key: string, successKey: MessageKey, fn: () => Promise<void>) => Promise<boolean>
+  runAction: <T extends { hash: string }>(
+    key: string,
+    successKey: MessageKey,
+    fn: () => Promise<T>,
+  ) => Promise<T | null>
 }
 
 const AppStateContext = createContext<AppStateValue | null>(null)
@@ -88,20 +94,33 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   }, [load])
 
   const runAction = useCallback(
-    async (key: string, successKey: MessageKey, fn: () => Promise<void>): Promise<boolean> => {
+    async <T extends { hash: string }>(
+      key: string,
+      successKey: MessageKey,
+      fn: () => Promise<T>,
+    ): Promise<T | null> => {
       if (!address) {
         toast.error(t('common.connectFirst'))
-        return false
+        return null
       }
       setBusy(key)
       try {
-        await fn()
+        const result = await fn()
         await load(address, false)
-        toast.success(t(successKey))
-        return true
+        const hash = result.hash
+        toast.success(t(successKey), {
+          description: hash ? shortHex(hash) : undefined,
+          action: hash
+            ? {
+                label: t('common.viewTx'),
+                onClick: () => window.open(explorerTxUrl(hash), '_blank', 'noopener,noreferrer'),
+              }
+            : undefined,
+        })
+        return result
       } catch (e) {
         toast.error(t(errorKey(e)))
-        return false
+        return null
       } finally {
         setBusy(null)
       }

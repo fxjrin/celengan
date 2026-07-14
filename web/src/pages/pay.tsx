@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { StrKey } from 'celengan'
-import { CheckIcon, CopyIcon } from 'lucide-react'
+import { CheckIcon, CopyIcon, ExternalLinkIcon, LogOutIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import { AddressAvatar } from '@/components/brand/address-avatar'
 import { FloatingDeco } from '@/components/brand/floating-deco'
@@ -13,11 +13,14 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Input } from '@/components/ui/input'
 import { useAppState } from '@/lib/app-state'
 import { celengan } from '@/lib/celengan'
+import { explorerTxUrl } from '@/lib/config'
 import { errorKey } from '@/lib/errors'
-import { parseUsdc } from '@/lib/format'
+import { parseUsdc, shortHex } from '@/lib/format'
 import { formatMoney, useT } from '@/lib/i18n'
 import { useSettings } from '@/lib/settings'
+import { useFaucet } from '@/lib/use-faucet'
 import { useScrollLock } from '@/lib/use-scroll-lock'
+import { getUsdcStatus, type UsdcStatus } from '@/lib/usdc-status'
 import { useWallet } from '@/lib/wallet'
 
 const QUICK_AMOUNTS = ['25', '50', '100']
@@ -50,7 +53,7 @@ function AddressChip({ address }: { address: string }) {
 
 function PayCard({ recipient }: { recipient: string }) {
   const t = useT()
-  const { address, connecting, connect } = useWallet()
+  const { address, connecting, connect, disconnect } = useWallet()
   const { rates, busy, runAction } = useAppState()
   const { locale } = useSettings()
   const [searchParams] = useSearchParams()
@@ -64,9 +67,13 @@ function PayCard({ recipient }: { recipient: string }) {
     }
   })
   const [splitPct, setSplitPct] = useState<number | null>(null)
-  const [paid, setPaid] = useState<bigint | null>(null)
+  const [paid, setPaid] = useState<{ amount: bigint; hash: string } | null>(null)
+  const [usdcStatus, setUsdcStatus] = useState<UsdcStatus | null>(null)
+  const [checkingUsdc, setCheckingUsdc] = useState(false)
+  const { faucetBusy, runFaucet } = useFaucet()
   const anyBusy = busy !== null
   const displayName = name !== '' ? name : shortAddress(recipient)
+  const needsFunds = usdcStatus !== null && (!usdcStatus.hasTrustline || usdcStatus.balance === 0)
 
   useEffect(() => {
     let cancelled = false
@@ -81,6 +88,23 @@ function PayCard({ recipient }: { recipient: string }) {
     }
   }, [recipient])
 
+  useEffect(() => {
+    if (!address) {
+      setUsdcStatus(null)
+      return
+    }
+    let cancelled = false
+    setCheckingUsdc(true)
+    getUsdcStatus(address).then((status) => {
+      if (cancelled) return
+      setUsdcStatus(status)
+      setCheckingUsdc(false)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [address])
+
   const handleConnect = async () => {
     try {
       await connect()
@@ -89,6 +113,11 @@ function PayCard({ recipient }: { recipient: string }) {
       if (key === 'errors.walletCancelled') return // user closed the modal on purpose
       toast.error(t(key))
     }
+  }
+
+  const handleFund = async () => {
+    await runFaucet()
+    if (address) setUsdcStatus(await getUsdcStatus(address))
   }
 
   const handlePay = async () => {
@@ -101,10 +130,10 @@ function PayCard({ recipient }: { recipient: string }) {
       return
     }
     if (!address) return
-    const ok = await runAction('paylink', 'success.linkPaid', () =>
+    const result = await runAction('paylink', 'success.linkPaid', () =>
       celengan.pay(address, recipient, parsed),
     )
-    if (ok) setPaid(parsed)
+    if (result) setPaid({ amount: parsed, hash: result.hash })
   }
 
   if (paid !== null) {
@@ -117,11 +146,20 @@ function PayCard({ recipient }: { recipient: string }) {
           <p className="text-xl font-semibold tracking-tight">{t('pay.successTitle')}</p>
           <p className="flex items-center gap-2 text-2xl font-semibold tracking-tight tabular-nums">
             <TokenIcon token="usdc" size={36} />
-            {formatMoney(paid, 'usdc', rates, locale)}
+            {formatMoney(paid.amount, 'usdc', rates, locale)}
           </p>
           <p className="text-sm text-muted-foreground">
             {t('pay.successBody', { name: displayName })}
           </p>
+          <a
+            href={explorerTxUrl(paid.hash)}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-full border bg-muted/50 px-3 py-1 font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
+          >
+            {shortHex(paid.hash)}
+            <ExternalLinkIcon className="size-3" />
+          </a>
           <div className="mt-4 flex flex-col items-center gap-2">
             <Button variant="outline" onClick={() => setPaid(null)}>
               {t('pay.payAgain')}
@@ -158,7 +196,7 @@ function PayCard({ recipient }: { recipient: string }) {
           />
           <Input
             value={value}
-            placeholder={t('receive.amountPlaceholder')}
+            placeholder={t('common.amountPlaceholder')}
             inputMode="decimal"
             className="h-14 pl-16 text-lg tabular-nums"
             disabled={anyBusy}
@@ -166,7 +204,7 @@ function PayCard({ recipient }: { recipient: string }) {
           />
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">{t('receive.quickAmounts')}</span>
+          <span className="text-xs text-muted-foreground">{t('common.quickAmounts')}</span>
           {QUICK_AMOUNTS.map((quick) => (
             <Button
               key={quick}
@@ -189,18 +227,45 @@ function PayCard({ recipient }: { recipient: string }) {
       <CardFooter className="flex-col items-stretch gap-3">
         {address ? (
           <>
-            <div className="flex min-w-0 items-center gap-2">
-              <AddressAvatar address={address} size={24} className="rounded-md" />
-              <span className="shrink-0 text-xs text-muted-foreground">
-                {t('pay.payingFrom')}
-              </span>
-              <span className="min-w-0 truncate font-mono text-xs">{shortAddress(address)}</span>
+            <div className="flex min-w-0 items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2">
+                <AddressAvatar address={address} size={24} className="rounded-md" />
+                <span className="shrink-0 text-xs text-muted-foreground">
+                  {t('pay.payingFrom')}
+                </span>
+                <span className="min-w-0 truncate font-mono text-xs">
+                  {shortAddress(address)}
+                </span>
+              </div>
+              <button
+                type="button"
+                aria-label={t('pay.switchWallet')}
+                title={t('pay.switchWallet')}
+                className="shrink-0 rounded-full p-1.5 text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                onClick={() => void disconnect()}
+              >
+                <LogOutIcon className="size-3.5" />
+              </button>
             </div>
+            {needsFunds && (
+              <div className="flex items-center justify-between gap-2 rounded-xl bg-accent px-3 py-2 text-accent-foreground">
+                <p className="text-xs">{t('pay.needsFundsHint')}</p>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="shrink-0 bg-card"
+                  disabled={faucetBusy}
+                  onClick={() => void handleFund()}
+                >
+                  {faucetBusy ? `${t('common.loading')}...` : t('faucet.button')}
+                </Button>
+              </div>
+            )}
             <Button
               size="lg"
               className="w-full"
               onClick={() => void handlePay()}
-              disabled={anyBusy || value.trim() === ''}
+              disabled={anyBusy || value.trim() === '' || needsFunds || checkingUsdc}
             >
               {busy === 'paylink' ? `${t('common.loading')}...` : t('pay.button')}
             </Button>

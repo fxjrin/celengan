@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import { NETWORK_PASSPHRASE } from '@/lib/config'
+import { CyphrasModule } from '@/lib/cyphras-module'
 import { setWalletBridge } from '@/lib/wallet-bridge'
 
 const ADDRESS_KEY = 'celengan:address'
@@ -33,7 +34,10 @@ function loadKit(): Promise<Kit> {
       import('@creit-tech/stellar-wallets-kit'),
       import('@creit-tech/stellar-wallets-kit/modules/utils'),
     ])
-    StellarWalletsKit.init({ modules: defaultModules(), network: Networks.TESTNET })
+    StellarWalletsKit.init({
+      modules: [...defaultModules(), new CyphrasModule()],
+      network: Networks.TESTNET,
+    })
     return StellarWalletsKit
   })()
   return kitPromise
