@@ -14,6 +14,7 @@ import { ReceivePage } from '@/pages/receive'
 import { RulesPage } from '@/pages/rules'
 import { SettingsPage } from '@/pages/settings'
 import { WithdrawPage } from '@/pages/withdraw'
+import { YieldPage } from '@/pages/yield'
 
 export function App() {
   return (
@@ -34,6 +35,7 @@ export function App() {
                 <Route path="/app" element={<AppShell />}>
                   <Route index element={<Dashboard />} />
                   <Route path="activity" element={<ActivityPage />} />
+                  <Route path="yield" element={<YieldPage />} />
                   <Route path="receive" element={<ReceivePage />} />
                   <Route path="withdraw" element={<WithdrawPage />} />
                   <Route path="rules" element={<RulesPage />} />

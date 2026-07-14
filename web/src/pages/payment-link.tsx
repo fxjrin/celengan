@@ -48,7 +48,7 @@ export function PaymentLinkPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-md space-y-5">
+    <section className="space-y-5">
       <PageHeader title={t('paylink.title')} caption={t('paylink.caption')} />
       <Card className="rounded-2xl shadow-none">
         <CardContent className="space-y-5">
@@ -102,6 +102,6 @@ export function PaymentLinkPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </section>
   )
 }

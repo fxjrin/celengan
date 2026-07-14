@@ -226,16 +226,26 @@ function PiggyBlob({ uid }: DecoProps) {
           <feDropShadow dx="0" dy="5" stdDeviation="5" floodColor="#8a6c00" floodOpacity="0.32" />
         </filter>
       </defs>
-      <g filter={`url(#${sh})`}>
-        <rect x="6" y="6" width="52" height="52" rx="17" fill={`url(#${body})`} />
-        <g fill="#26201a" opacity="0.95">
-          <circle cx="32" cy="20.5" r="3.2" />
-          <path d="M20 42a12 12 0 0 1 24 0Z" />
-          <ellipse cx="44.3" cy="37.8" rx="2.6" ry="2.2" />
-        </g>
-        <rect x="27" y="32.5" width="10.5" height="2.8" rx="1.4" fill="#a87c08" />
-        <ellipse cx="18" cy="14" rx="9" ry="4.2" fill="#fff" opacity="0.45" transform="rotate(-30 18 14)" />
+      {/* same piggy silhouette as the brand mark, cast in the balloon gold gradient */}
+      <g filter={`url(#${sh})`} fill={`url(#${body})`}>
+        <rect x="17.3" y="52" width="8" height="9.3" rx="2.9" />
+        <rect x="37.3" y="52" width="8" height="9.3" rx="2.9" />
+        <path d="M16 28C15.1 20.7 19.3 15.3 24 20C26 23.3 23.3 28.7 16 28Z" />
+        <ellipse cx="32" cy="40" rx="20" ry="14" />
+        <circle cx="10.7" cy="38" r="7" />
       </g>
+      <circle cx="8.1" cy="35.9" r="1.1" fill="#26201a" opacity="0.85" />
+      <circle cx="8.1" cy="40.1" r="1.1" fill="#26201a" opacity="0.85" />
+      <rect
+        x="25.3"
+        y="26.4"
+        width="14.7"
+        height="4"
+        rx="2"
+        fill="#a87c08"
+        transform="rotate(-8 32.7 28.4)"
+      />
+      <ellipse cx="18" cy="14" rx="9" ry="4.2" fill="#fff" opacity="0.45" transform="rotate(-30 18 14)" />
     </svg>
   )
 }

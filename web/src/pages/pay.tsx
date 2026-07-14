@@ -39,11 +39,11 @@ function AddressChip({ address }: { address: string }) {
     <button
       type="button"
       aria-label={t('shell.copyAddress')}
-      className="inline-flex items-center gap-1.5 rounded-full border bg-muted/50 px-3 py-1 font-mono text-xs text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+      className="inline-flex items-center gap-2 rounded-full border bg-muted/50 px-3 py-1 font-mono text-xs text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
       onClick={() => void copy()}
     >
       {shortAddress(address)}
-      <CopyIcon className="size-3" />
+      <CopyIcon className="size-4" />
     </button>
   )
 }
@@ -147,6 +147,7 @@ function PayCard({ recipient }: { recipient: string }) {
         <div className="mx-auto mt-1">
           <AddressChip address={recipient} />
         </div>
+        <p className="mx-auto max-w-xs text-xs text-muted-foreground">{t('pay.signHint')}</p>
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="relative">

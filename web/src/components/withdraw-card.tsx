@@ -129,8 +129,8 @@ export function WithdrawCard({ account }: WithdrawCardProps) {
               {busy === 'savings' ? loadingLabel : t('withdraw.button')}
             </Button>
             {locked && (
-              <p className="flex items-center gap-1.5 text-xs font-medium text-accent-foreground">
-                <LockIcon className="size-3 shrink-0" />
+              <p className="flex items-center gap-2 text-xs font-medium text-accent-foreground">
+                <LockIcon className="size-4 shrink-0" />
                 {t('withdraw.lockedReason', { date: formatDate(account.lockUntil, locale) })}
               </p>
             )}

@@ -79,14 +79,14 @@ export function ActivityList({ items, loading }: ActivityListProps) {
           >
             <span className="relative shrink-0">
               {externalPayer ? (
-                <AddressAvatar address={item.from ?? ''} size={40} className="rounded-full" />
+                <AddressAvatar address={item.from ?? ''} size={36} className="rounded-full" />
               ) : TOKEN_KINDS.includes(item.kind) ? (
                 // token first so the currency is recognizable at a glance
-                <span className="flex size-10 items-center justify-center rounded-full bg-muted">
-                  <TokenIcon token="usdc" size={24} />
+                <span className="flex size-9 items-center justify-center rounded-xl bg-muted">
+                  <TokenIcon token="usdc" size={20} />
                 </span>
               ) : (
-                <span className="flex size-10 items-center justify-center rounded-full bg-muted">
+                <span className="flex size-9 items-center justify-center rounded-xl bg-muted">
                   <Icon className="size-4 text-muted-foreground" />
                 </span>
               )}

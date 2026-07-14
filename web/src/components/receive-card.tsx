@@ -115,12 +115,13 @@ export function ReceiveCard({ account, showFaucetRow, onFaucet }: ReceiveCardPro
       <CardFooter className="flex-col items-stretch gap-1">
         {showFaucetRow && (
           <div className="flex items-center justify-between gap-2">
-            <p className="text-xs text-muted-foreground">{t('faucet.caption')}</p>
+            <p className="text-xs text-muted-foreground">{t('receive.faucetWhy')}</p>
             <Button variant="ghost" size="sm" disabled={anyBusy} onClick={onFaucet}>
               {busy === 'faucet' ? `${t('common.loading')}...` : t('faucet.button')}
             </Button>
           </div>
         )}
+        <p className="px-2 text-xs text-muted-foreground">{t('receive.realPaymentHint')}</p>
         <Button
           asChild
           variant="ghost"

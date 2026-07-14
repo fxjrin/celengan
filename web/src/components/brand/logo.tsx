@@ -2,8 +2,9 @@ import { useId } from 'react'
 import { cn } from '@/lib/utils'
 
 /**
- * Brand mark: an amber coin dropping into an abstract celengan (piggy bank)
- * on a glossy Stellar-yellow tile matching the FloatingDeco balloon style.
+ * Brand mark: a classic side-view celengan (piggy bank) silhouette, snout
+ * left, coin dropping toward the slot on its back, on a glossy Stellar-yellow
+ * tile matching the FloatingDeco balloon style.
  */
 export function LogoMark({ size = 24 }: { size?: number }) {
   // strip useId wrapper chars; they break url(#...) gradient references
@@ -33,7 +34,7 @@ export function LogoMark({ size = 24 }: { size?: number }) {
           <stop offset="100%" stopColor="#000000" stopOpacity="0.2" />
         </linearGradient>
         {/* deep amber ramp so the coin separates from the yellow tile */}
-        <radialGradient id={coin} gradientUnits="userSpaceOnUse" cx="22.8" cy="11.2" r="7">
+        <radialGradient id={coin} gradientUnits="userSpaceOnUse" cx="26.5" cy="11" r="7">
           <stop offset="0%" stopColor="#e7b93c" />
           <stop offset="55%" stopColor="#c78f1e" />
           <stop offset="100%" stopColor="#9a6a10" />
@@ -51,13 +52,34 @@ export function LogoMark({ size = 24 }: { size?: number }) {
         transform="rotate(-28 14 10)"
       />
       <g fill="#26201a">
-        <path d="M11 34a13 13 0 0 1 26 0Z" />
-        <ellipse cx="37.3" cy="29.5" rx="2.8" ry="2.4" />
+        <rect x="13" y="39" width="6" height="7" rx="2.2" />
+        <rect x="28" y="39" width="6" height="7" rx="2.2" />
+        <path d="M12 21C11.3 15.5 14.5 11.5 18 15C19.5 17.5 17.5 21.5 12 21Z" />
+        <ellipse cx="24" cy="30" rx="15" ry="10.5" />
+        {/* snout sits above body center so it reads as upturned */}
+        <circle cx="8" cy="28.5" r="5.3" />
       </g>
+      {/* userSpaceOnUse lets the knockouts sample the tile gradient in place so they read as cuts */}
+      <circle cx="6.1" cy="26.9" r="0.85" fill={`url(#${tile})`} />
+      <circle cx="6.1" cy="30.1" r="0.85" fill={`url(#${tile})`} />
+      <rect
+        x="19"
+        y="19.8"
+        width="11"
+        height="3"
+        rx="1.5"
+        fill={`url(#${tile})`}
+        transform="rotate(-8 24.5 21.3)"
+      />
       {/* amber coin above the slot: the story is a coin dropping into the celengan */}
-      <circle cx="24" cy="12.5" r="3.5" fill={`url(#${coin})`} />
-      {/* userSpaceOnUse lets the slot sample the tile gradient in place so it reads as a cut */}
-      <rect x="18.5" y="23.5" width="11" height="3" rx="1.5" fill={`url(#${tile})`} />
+      <ellipse
+        cx="26.5"
+        cy="11"
+        rx="3.6"
+        ry="3.1"
+        fill={`url(#${coin})`}
+        transform="rotate(-15 26.5 11)"
+      />
     </svg>
   )
 }

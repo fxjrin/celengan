@@ -1,6 +1,11 @@
 import type { ComponentType } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowDownLeftIcon, ArrowUpRightIcon, SlidersHorizontalIcon } from 'lucide-react'
+import {
+  ArrowDownLeftIcon,
+  ArrowUpRightIcon,
+  SlidersHorizontalIcon,
+  TrendingUpIcon,
+} from 'lucide-react'
 import { ActivityCard } from '@/components/activity-card'
 import { BalanceHero } from '@/components/balance-hero'
 import { ConnectPrompt } from '@/components/connect-prompt'
@@ -38,6 +43,12 @@ const QUICK_ACTIONS: QuickAction[] = [
     title: 'nav.rules',
     caption: 'page.rulesCaption',
   },
+  {
+    to: '/app/yield',
+    icon: TrendingUpIcon,
+    title: 'nav.yield',
+    caption: 'page.yieldCaption',
+  },
 ]
 
 export function Dashboard() {
@@ -64,7 +75,7 @@ export function Dashboard() {
           </Button>
         </div>
       ) : (
-        <BalanceHero account={account} loading={loading} rate={rate} />
+        <BalanceHero account={account} activity={activity} loading={loading} rate={rate} />
       )}
       {loading && <Skeleton className="h-40 w-full rounded-2xl" />}
       {account !== null && (
@@ -79,14 +90,17 @@ export function Dashboard() {
               onGoToReceive={() => void navigate('/app/receive')}
             />
           )}
-          <section aria-label={t('dashboard.quickActions')} className="grid gap-3 sm:grid-cols-3">
+          <section
+            aria-label={t('dashboard.quickActions')}
+            className="grid grid-cols-2 gap-3 sm:grid-cols-4"
+          >
             {QUICK_ACTIONS.map((action) => (
               <Link
                 key={action.to}
                 to={action.to}
                 className="rounded-2xl border bg-card p-4 outline-none transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md active:translate-y-0 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
               >
-                <span className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary-ink">
+                <span className="flex size-9 items-center justify-center rounded-xl bg-muted text-muted-foreground">
                   <action.icon className="size-4" />
                 </span>
                 <p className="mt-3 text-sm font-medium">{t(action.title)}</p>

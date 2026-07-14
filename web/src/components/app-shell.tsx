@@ -16,6 +16,7 @@ import {
   SettingsIcon,
   SlidersHorizontalIcon,
   SunIcon,
+  TrendingUpIcon,
   WalletIcon,
 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -117,28 +118,32 @@ function SidebarContent({ rail = false, onNavigate }: SidebarContentProps) {
       <nav className="no-scrollbar min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
         <SectionLabel rail={rail}>{t('nav.menu')}</SectionLabel>
         <NavLink to="/app" end onClick={onNavigate} className={navClass}>
-          <LandmarkIcon className="size-4 shrink-0" />
+          <LandmarkIcon className="size-[18px] shrink-0" />
           <span className={label}>{t('nav.dashboard')}</span>
         </NavLink>
         <NavLink to="/app/activity" onClick={onNavigate} className={navClass}>
-          <ActivityIcon className="size-4 shrink-0" />
+          <ActivityIcon className="size-[18px] shrink-0" />
           <span className={label}>{t('nav.activity')}</span>
+        </NavLink>
+        <NavLink to="/app/yield" onClick={onNavigate} className={navClass}>
+          <TrendingUpIcon className="size-[18px] shrink-0" />
+          <span className={label}>{t('nav.yield')}</span>
         </NavLink>
         <SectionLabel rail={rail}>{t('nav.action')}</SectionLabel>
         <NavLink to="/app/receive" onClick={onNavigate} className={navClass}>
-          <ArrowDownLeftIcon className="size-4 shrink-0" />
+          <ArrowDownLeftIcon className="size-[18px] shrink-0" />
           <span className={label}>{t('nav.receive')}</span>
         </NavLink>
         <NavLink to="/app/withdraw" onClick={onNavigate} className={navClass}>
-          <ArrowUpRightIcon className="size-4 shrink-0" />
+          <ArrowUpRightIcon className="size-[18px] shrink-0" />
           <span className={label}>{t('nav.withdraw')}</span>
         </NavLink>
         <NavLink to="/app/rules" onClick={onNavigate} className={navClass}>
-          <SlidersHorizontalIcon className="size-4 shrink-0" />
+          <SlidersHorizontalIcon className="size-[18px] shrink-0" />
           <span className={label}>{t('nav.rules')}</span>
         </NavLink>
         <NavLink to="/app/link" onClick={onNavigate} className={navClass}>
-          <Link2Icon className="size-4 shrink-0" />
+          <Link2Icon className="size-[18px] shrink-0" />
           <span className={label}>{t('nav.paymentLink')}</span>
         </NavLink>
         <button
@@ -148,9 +153,9 @@ function SidebarContent({ rail = false, onNavigate }: SidebarContentProps) {
           onClick={() => void runFaucet()}
         >
           {faucetBusy ? (
-            <Loader2Icon className="size-4 shrink-0 animate-spin" />
+            <Loader2Icon className="size-[18px] shrink-0 animate-spin" />
           ) : (
-            <CoinsIcon className="size-4 shrink-0" />
+            <CoinsIcon className="size-[18px] shrink-0" />
           )}
           <span className={label}>
             {faucetBusy ? `${t('common.loading')}...` : t('nav.faucet')}
@@ -158,7 +163,7 @@ function SidebarContent({ rail = false, onNavigate }: SidebarContentProps) {
         </button>
         <SectionLabel rail={rail}>{t('nav.protocol')}</SectionLabel>
         <NavLink to="/app/settings" onClick={onNavigate} className={navClass}>
-          <SettingsIcon className="size-4 shrink-0" />
+          <SettingsIcon className="size-[18px] shrink-0" />
           <span className={label}>{t('settings.title')}</span>
         </NavLink>
         <a
@@ -167,7 +172,7 @@ function SidebarContent({ rail = false, onNavigate }: SidebarContentProps) {
           rel="noreferrer"
           className={cn(ITEM, ITEM_IDLE)}
         >
-          <ExternalLinkIcon className="size-4 shrink-0" />
+          <ExternalLinkIcon className="size-[18px] shrink-0" />
           <span className={label}>{t('nav.viewContract')}</span>
         </a>
       </nav>
@@ -178,7 +183,7 @@ function SidebarContent({ rail = false, onNavigate }: SidebarContentProps) {
             className={cn(ITEM, 'text-destructive hover:bg-destructive/10 hover:text-destructive')}
             onClick={() => void disconnect()}
           >
-            <LogOutIcon className="size-4 shrink-0" />
+            <LogOutIcon className="size-[18px] shrink-0" />
             <span className={label}>{t('nav.disconnect')}</span>
           </button>
         ) : (
@@ -191,7 +196,7 @@ function SidebarContent({ rail = false, onNavigate }: SidebarContentProps) {
             disabled={connecting}
             onClick={() => void handleConnect()}
           >
-            <WalletIcon className="size-4 shrink-0" />
+            <WalletIcon className="size-[18px] shrink-0" />
             <span className={label}>
               {connecting ? `${t('topbar.connecting')}...` : t('topbar.connect')}
             </span>

@@ -25,10 +25,10 @@ export function ActivityCard() {
           <CardAction>
             <Link
               to="/app/activity"
-              className="inline-flex items-center gap-1 text-sm text-primary-ink underline-offset-4 hover:underline"
+              className="inline-flex items-center gap-2 text-sm text-primary-ink underline-offset-4 hover:underline"
             >
               {t('activity.viewAll')}
-              <ArrowRightIcon className="size-3.5" />
+              <ArrowRightIcon className="size-4" />
             </Link>
           </CardAction>
         )}

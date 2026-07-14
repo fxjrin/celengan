@@ -55,7 +55,7 @@ export function SettingsPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-md space-y-5">
+    <section className="space-y-5">
       <PageHeader title={t('settings.title')} caption={t('page.settingsCaption')} />
       <Card className="rounded-2xl shadow-none">
         <CardHeader>
@@ -94,6 +94,7 @@ export function SettingsPage() {
               </SelectContent>
             </Select>
           </SettingRow>
+          <p className="text-xs text-muted-foreground">{t('settings.preferencesHint')}</p>
           <SettingRow label={t('settings.theme')} htmlFor="settings-theme">
             <Select
               value={theme ?? 'system'}
@@ -116,6 +117,7 @@ export function SettingsPage() {
       <Card className="rounded-2xl shadow-none">
         <CardHeader>
           <CardTitle>{t('settings.network')}</CardTitle>
+          <CardDescription>{t('settings.networkTestnetHint')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
           <div className="flex items-center justify-between gap-4">
@@ -140,10 +142,10 @@ export function SettingsPage() {
             href={EXPLORER_CONTRACT_URL}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1 text-primary-ink underline-offset-4 hover:underline"
+            className="inline-flex items-center gap-2 text-primary-ink underline-offset-4 hover:underline"
           >
             {t('settings.viewExplorer')}
-            <ExternalLinkIcon className="size-3.5" />
+            <ExternalLinkIcon className="size-4" />
           </a>
         </CardContent>
       </Card>
@@ -156,6 +158,6 @@ export function SettingsPage() {
           <p className="text-xs text-muted-foreground">{t('settings.byline')}</p>
         </CardContent>
       </Card>
-    </div>
+    </section>
   )
 }

@@ -41,6 +41,7 @@ const en = {
   'nav.protocol': 'Protocol',
   'nav.dashboard': 'Dashboard',
   'nav.activity': 'Activity',
+  'nav.yield': 'Yield',
   'nav.receive': 'Receive',
   'nav.withdraw': 'Withdraw',
   'nav.rules': 'Rules',
@@ -57,6 +58,7 @@ const en = {
   'page.withdrawCaption': 'Move money out of spending or savings.',
   'page.rulesCaption': 'Tune your savings split and time lock.',
   'page.settingsCaption': 'Language, currency, theme, and network details.',
+  'page.yieldCaption': 'See where your savings earn, and how much.',
 
   'onboarding.title': 'Get set up in three steps',
   'onboarding.step1Title': 'Connect your wallet',
@@ -74,6 +76,9 @@ const en = {
   'balances.earningCaption': 'Earning yield in the vault',
   'balances.lockedUntil': 'Locked until {date}',
   'balances.rateCaption': 'Estimated at Rp {rate} per USDC',
+  'balances.pocketsHint': 'Spending you can withdraw anytime - savings grow in a yield vault.',
+  'balances.emptyHint': 'No balance yet.',
+  'balances.earningsLine': '+{amount} earned so far',
 
   'receive.title': 'Receive a payment',
   'receive.caption':
@@ -82,6 +87,9 @@ const en = {
   'receive.preview': '{spend} to spending, {save} to savings',
   'receive.button': 'Receive payment',
   'receive.quickAmounts': 'Quick amounts',
+  'receive.realPaymentHint':
+    'This simulates a customer paying you. To get paid for real, share your payment link instead.',
+  'receive.faucetWhy': 'You need testnet USDC in your wallet before you can simulate a payment.',
 
   'rules.title': 'Your saving rules',
   'rules.lockTitle': 'Time lock',
@@ -89,7 +97,8 @@ const en = {
   'rules.splitSentence': '{pct}% of every payment goes to savings',
   'rules.saveButton': 'Save rule',
   'rules.lockLabel': 'Lock savings until',
-  'rules.lockCaption': 'A lock can only be extended, never shortened. Pick your date carefully.',
+  'rules.lockCaption':
+    'A lock can only be extended, never shortened, and the contract caps how far into the future you can set it. Pick your date carefully.',
   'rules.lockButton': 'Lock savings',
   'rules.lockedStatus': 'Locked until {date}',
   'rules.noLock': 'Savings are unlocked. Set a date to protect your goal.',
@@ -104,8 +113,36 @@ const en = {
   'withdraw.sharesHint':
     'Savings are held as vault shares; the USDC you receive includes any yield earned.',
 
+  'yield.positionTitle': 'Your savings position',
+  'yield.principal': 'Principal saved',
+  'yield.currentValue': 'Current value',
+  'yield.earnings': 'Earnings',
+  'yield.estimate': 'Estimate',
+  'yield.estimateHint':
+    'Estimated from your payment history, assuming a 1:1 share price at each deposit.',
+  'yield.shares': 'Vault shares',
+  'yield.sharePrice': 'Share price',
+  'yield.earningsCaption': 'Earnings are your current value minus what you have put in.',
+  'yield.refresh': 'Refresh',
+  'yield.sourcesTitle': 'Where your yield comes from',
+  'yield.sourcesCaption':
+    'Your savings currently route through DeFindex. More sources are on the roadmap.',
+  'yield.bestYield': 'Best yield',
+  'yield.badgeActive': 'Active',
+  'yield.badgeSoon': 'Coming soon',
+  'yield.apyLabel': 'APY',
+  'yield.tvlLabel': 'TVL',
+  'yield.sourceDefindexName': 'DeFindex USDC vault',
+  'yield.sourceDefindexRoute': 'Routes into the Blend USDC pool',
+  'yield.sourceBlendName': 'Blend USDC pool',
+  'yield.sourceBlendRoute': 'Lend USDC directly on Blend',
+  'yield.sourceSoroswapName': 'Soroswap USDC LP',
+  'yield.sourceSoroswapRoute': 'Provide USDC liquidity on Soroswap',
+
   'pay.title': 'Pay {name}',
   'pay.splitInfo': '{pct}% of this payment goes straight to their savings',
+  'pay.signHint':
+    'Your wallet signs a single transaction. The split into spending and savings happens automatically on-chain.',
   'pay.payingFrom': 'Paying from',
   'pay.button': 'Pay now',
   'pay.connectCta': 'Connect wallet to pay',
@@ -151,8 +188,12 @@ const en = {
   'settings.currency': 'Display currency',
   'settings.currencyIdr': 'Rupiah (IDR)',
   'settings.currencyUsdc': 'USDC',
+  'settings.preferencesHint':
+    'Language and currency only change how amounts are displayed. They do not affect your wallet or the blockchain.',
   'settings.network': 'Network',
   'settings.networkTestnet': 'Stellar Testnet',
+  'settings.networkTestnetHint':
+    'This app runs on Stellar testnet. Funds here are for testing only and have no real value.',
   'settings.contract': 'Contract',
   'settings.viewExplorer': 'View on explorer',
   'settings.copy': 'Copy',
@@ -162,7 +203,6 @@ const en = {
   'settings.langEn': 'English',
   'settings.langId': 'Bahasa Indonesia',
 
-  'faucet.caption': 'Get 1,000 testnet USDC and some XLM for fees, free.',
   'faucet.button': 'Get test funds',
   'faucet.success': 'Test funds are on the way to your wallet',
 
@@ -237,6 +277,7 @@ const id = {
   'nav.protocol': 'Protokol',
   'nav.dashboard': 'Dasbor',
   'nav.activity': 'Aktivitas',
+  'nav.yield': 'Imbal hasil',
   'nav.receive': 'Terima',
   'nav.withdraw': 'Tarik dana',
   'nav.rules': 'Aturan',
@@ -253,6 +294,7 @@ const id = {
   'page.withdrawCaption': 'Tarik danamu dari kantong siap pakai atau tabungan.',
   'page.rulesCaption': 'Atur porsi tabungan dan kunci waktumu.',
   'page.settingsCaption': 'Bahasa, mata uang, tema, dan detail jaringan.',
+  'page.yieldCaption': 'Lihat dari mana tabunganmu menghasilkan, dan berapa banyak.',
 
   'onboarding.title': 'Siap dalam tiga langkah',
   'onboarding.step1Title': 'Hubungkan dompetmu',
@@ -270,6 +312,10 @@ const id = {
   'balances.earningCaption': 'Menghasilkan imbal hasil di vault',
   'balances.lockedUntil': 'Terkunci sampai {date}',
   'balances.rateCaption': 'Perkiraan kurs Rp {rate} per USDC',
+  'balances.pocketsHint':
+    'Dana siap pakai bisa kamu tarik kapan saja - tabungan tumbuh di brankas berimbal hasil.',
+  'balances.emptyHint': 'Saldo masih kosong.',
+  'balances.earningsLine': '+{amount} sudah dihasilkan',
 
   'receive.title': 'Terima pembayaran',
   'receive.caption':
@@ -278,6 +324,10 @@ const id = {
   'receive.preview': '{spend} siap dipakai, {save} masuk tabungan',
   'receive.button': 'Terima pembayaran',
   'receive.quickAmounts': 'Pilih nominal',
+  'receive.realPaymentHint':
+    'Ini cuma simulasi pelanggan yang membayar kamu. Supaya benar-benar dibayar, bagikan tautan pembayaranmu.',
+  'receive.faucetWhy':
+    'Kamu butuh USDC testnet di dompetmu dulu sebelum bisa simulasikan pembayaran.',
 
   'rules.title': 'Aturan menabungmu',
   'rules.lockTitle': 'Kunci waktu',
@@ -286,7 +336,7 @@ const id = {
   'rules.saveButton': 'Simpan aturan',
   'rules.lockLabel': 'Kunci tabungan sampai',
   'rules.lockCaption':
-    'Kunci hanya bisa diperpanjang, tidak bisa dipersingkat. Pilih tanggalnya baik-baik.',
+    'Kunci hanya bisa diperpanjang, tidak bisa dipersingkat, dan kontrak membatasi seberapa jauh tanggalnya bisa dipasang. Pilih tanggalnya baik-baik.',
   'rules.lockButton': 'Kunci tabungan',
   'rules.lockedStatus': 'Terkunci sampai {date}',
   'rules.noLock': 'Tabungan belum terkunci. Pasang tanggal untuk menjaga targetmu.',
@@ -301,8 +351,36 @@ const id = {
   'withdraw.sharesHint':
     'Tabungan disimpan sebagai unit vault; USDC yang kamu terima sudah termasuk imbal hasil.',
 
+  'yield.positionTitle': 'Posisi tabunganmu',
+  'yield.principal': 'Pokok yang ditabung',
+  'yield.currentValue': 'Nilai saat ini',
+  'yield.earnings': 'Keuntungan',
+  'yield.estimate': 'Estimasi',
+  'yield.estimateHint':
+    'Diperkirakan dari riwayat pembayaranmu, dengan asumsi harga unit 1:1 di setiap setoran.',
+  'yield.shares': 'Unit vault',
+  'yield.sharePrice': 'Harga per unit',
+  'yield.earningsCaption': 'Keuntungan adalah nilai saat ini dikurangi jumlah yang sudah kamu setor.',
+  'yield.refresh': 'Segarkan',
+  'yield.sourcesTitle': 'Dari mana imbal hasilmu berasal',
+  'yield.sourcesCaption':
+    'Tabunganmu saat ini disalurkan lewat DeFindex. Sumber lain masih ada di roadmap.',
+  'yield.bestYield': 'Imbal hasil terbaik',
+  'yield.badgeActive': 'Aktif',
+  'yield.badgeSoon': 'Segera hadir',
+  'yield.apyLabel': 'APY',
+  'yield.tvlLabel': 'TVL',
+  'yield.sourceDefindexName': 'Vault USDC DeFindex',
+  'yield.sourceDefindexRoute': 'Disalurkan ke pool USDC Blend',
+  'yield.sourceBlendName': 'Pool USDC Blend',
+  'yield.sourceBlendRoute': 'Pinjamkan USDC langsung di Blend',
+  'yield.sourceSoroswapName': 'LP USDC Soroswap',
+  'yield.sourceSoroswapRoute': 'Sediakan likuiditas USDC di Soroswap',
+
   'pay.title': 'Bayar {name}',
   'pay.splitInfo': '{pct}% dari pembayaran ini langsung masuk ke tabungannya',
+  'pay.signHint':
+    'Dompetmu tanda tangan satu transaksi saja. Pembagian ke dana siap pakai dan tabungan berjalan otomatis di on-chain.',
   'pay.payingFrom': 'Membayar dari',
   'pay.button': 'Bayar sekarang',
   'pay.connectCta': 'Hubungkan dompet untuk membayar',
@@ -348,8 +426,12 @@ const id = {
   'settings.currency': 'Mata uang tampilan',
   'settings.currencyIdr': 'Rupiah (IDR)',
   'settings.currencyUsdc': 'USDC',
+  'settings.preferencesHint':
+    'Bahasa dan mata uang cuma mengubah tampilan angkanya. Dompet dan blockchain-mu tidak terpengaruh.',
   'settings.network': 'Jaringan',
   'settings.networkTestnet': 'Stellar Testnet',
+  'settings.networkTestnetHint':
+    'Aplikasi ini jalan di Stellar testnet. Dana di sini cuma buat uji coba dan tidak bernilai sungguhan.',
   'settings.contract': 'Kontrak',
   'settings.viewExplorer': 'Lihat di explorer',
   'settings.copy': 'Salin',
@@ -359,7 +441,6 @@ const id = {
   'settings.langEn': 'English',
   'settings.langId': 'Bahasa Indonesia',
 
-  'faucet.caption': 'Dapatkan 1.000 USDC testnet dan sedikit XLM untuk biaya, gratis.',
   'faucet.button': 'Ambil dana uji',
   'faucet.success': 'Dana uji sedang meluncur ke dompetmu',
 

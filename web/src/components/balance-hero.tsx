@@ -1,18 +1,24 @@
-import { LockIcon } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { ArrowRightIcon, LockIcon } from 'lucide-react'
 import { TokenIcon } from '@/components/brand/token-icon'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { NumberTicker } from '@/components/ui/number-ticker'
 import { Skeleton } from '@/components/ui/skeleton'
+import type { ActivityItem } from '@/lib/activity'
 import { usdcToNumber } from '@/lib/format'
 import { formatDate, formatMoney, useT } from '@/lib/i18n'
 import { useSettings } from '@/lib/settings'
 import type { CelenganAccount } from '@/lib/types'
+import { cn } from '@/lib/utils'
+import { computeSavingsPosition, getSharePrice } from '@/lib/yield'
 
 const MIN_SEGMENT_PCT = 4 // keep tiny pockets visible on the bar
 
 type BalanceHeroProps = {
   account: CelenganAccount | null
+  activity: ActivityItem[]
   loading: boolean
   rate: number
 }
@@ -26,11 +32,22 @@ function segmentWidths(spend: number, save: number): [number, number] {
   return [spendPct, 100 - spendPct]
 }
 
-export function BalanceHero({ account, loading, rate }: BalanceHeroProps) {
+export function BalanceHero({ account, activity, loading, rate }: BalanceHeroProps) {
   const t = useT()
   const { locale, primaryCurrency } = useSettings()
   const secondaryCurrency = primaryCurrency === 'idr' ? 'usdc' : 'idr'
   const intl = locale === 'id' ? 'id-ID' : 'en-US'
+  const [sharePrice, setSharePrice] = useState<bigint | null>(null)
+
+  useEffect(() => {
+    let active = true
+    void getSharePrice().then((price) => {
+      if (active) setSharePrice(price)
+    })
+    return () => {
+      active = false
+    }
+  }, [])
 
   const primary = (amount: bigint): string => formatMoney(amount, primaryCurrency, rate, locale)
   const secondary = (amount: bigint): string =>
@@ -54,11 +71,15 @@ export function BalanceHero({ account, loading, rate }: BalanceHeroProps) {
   }
 
   const total = account.spend + account.shares // shares valued 1:1 for the MVP
+  const empty = total <= 0n
   const locked = Number(account.lockUntil) * 1000 > Date.now()
   const [spendPct, savePct] = segmentWidths(
     usdcToNumber(account.spend),
     usdcToNumber(account.shares),
   )
+  const position =
+    sharePrice !== null ? computeSavingsPosition(activity, account.shares, sharePrice) : null
+  const earning = position !== null && position.earnings > 0n
 
   return (
     <Card className="rounded-2xl shadow-none">
@@ -136,18 +157,39 @@ export function BalanceHero({ account, loading, rate }: BalanceHeroProps) {
               <div className="rounded-full bg-gold" style={{ width: `${savePct}%` }} />
             )}
           </div>
-          <div className="mt-2 flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
-            {locked && (
-              <Badge variant="secondary" className="gap-1 bg-accent text-xs text-accent-foreground">
-                <LockIcon className="size-3" />
-                {t('balances.lockedUntil', { date: formatDate(account.lockUntil, locale) })}
-              </Badge>
-            )}
-            <p className="flex items-center gap-1.5 text-xs text-accent-foreground">
-              <span className="size-1.5 rounded-full bg-gold" />
-              {t('balances.earningCaption')}
+          <p className="mt-2 text-xs text-muted-foreground">{t('balances.pocketsHint')}</p>
+          {empty ? (
+            <p className="mt-1 text-xs text-muted-foreground">
+              {t('balances.emptyHint')}{' '}
+              <Link to="/app/receive" className="inline-flex items-center gap-2 text-primary-ink hover:underline">
+                {t('receive.title')}
+                <ArrowRightIcon className="size-4" />
+              </Link>
             </p>
-          </div>
+          ) : (
+            <div className="mt-1 flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
+              {locked && (
+                <Badge variant="secondary" className="gap-1 bg-accent text-xs text-accent-foreground">
+                  <LockIcon className="size-3" />
+                  {t('balances.lockedUntil', { date: formatDate(account.lockUntil, locale) })}
+                </Badge>
+              )}
+              {account.shares > 0n && (
+                <Link
+                  to="/app/yield"
+                  className={cn(
+                    'flex items-center gap-1.5 text-xs hover:underline',
+                    earning ? 'font-medium text-gold-ink' : 'text-accent-foreground',
+                  )}
+                >
+                  <span className="size-1.5 rounded-full bg-gold" />
+                  {earning && position
+                    ? t('balances.earningsLine', { amount: primary(position.earnings) })
+                    : t('balances.earningCaption')}
+                </Link>
+              )}
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
