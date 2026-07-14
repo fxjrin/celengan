@@ -1,5 +1,4 @@
-import type { ComponentType } from 'react'
-import { ArrowLeftRightIcon, CoinsIcon, LandmarkIcon } from 'lucide-react'
+import { ExternalLinkIcon } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -16,7 +15,12 @@ type YieldSourcesCardProps = {
 
 type SourceRow = {
   key: string
-  icon: ComponentType<{ className?: string }>
+  logo: string
+  // set only for logos that are a transparent, single-color glyph with no
+  // background of their own (Soroswap's icon); real backgrounded marks
+  // (DeFindex, Blend) fill the circle edge-to-edge instead
+  logoBackdrop?: string
+  website: string
   name: MessageKey
   route: MessageKey
   badge: 'active' | 'soon'
@@ -33,6 +37,23 @@ function formatApy(value: number | null, locale: string): string {
   }).format(value)
 }
 
+function ProtocolLogo({ source }: { source: SourceRow }) {
+  return (
+    <span
+      className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted"
+      style={source.logoBackdrop ? { backgroundColor: source.logoBackdrop } : undefined}
+    >
+      <img
+        src={source.logo}
+        alt=""
+        className={
+          source.logoBackdrop ? 'h-[58%] w-[58%] object-contain' : 'h-full w-full object-cover'
+        }
+      />
+    </span>
+  )
+}
+
 export function YieldSourcesCard({ blendApy, tvl, loading, rates }: YieldSourcesCardProps) {
   const t = useT()
   const { locale, primaryCurrency } = useSettings()
@@ -41,7 +62,8 @@ export function YieldSourcesCard({ blendApy, tvl, loading, rates }: YieldSources
   const sources: SourceRow[] = [
     {
       key: 'defindex',
-      icon: LandmarkIcon,
+      logo: '/logos/defindex-icon.webp',
+      website: 'https://defindex.io',
       name: 'yield.sourceDefindexName',
       route: 'yield.sourceDefindexRoute',
       badge: 'active',
@@ -50,7 +72,8 @@ export function YieldSourcesCard({ blendApy, tvl, loading, rates }: YieldSources
     },
     {
       key: 'blend',
-      icon: CoinsIcon,
+      logo: '/logos/blend.svg',
+      website: 'https://blend.capital',
       name: 'yield.sourceBlendName',
       route: 'yield.sourceBlendRoute',
       badge: 'soon',
@@ -59,7 +82,9 @@ export function YieldSourcesCard({ blendApy, tvl, loading, rates }: YieldSources
     },
     {
       key: 'soroswap',
-      icon: ArrowLeftRightIcon,
+      logo: '/logos/soroswap-icon.svg',
+      logoBackdrop: '#8866dd',
+      website: 'https://soroswap.finance',
       name: 'yield.sourceSoroswapName',
       route: 'yield.sourceSoroswapRoute',
       badge: 'soon',
@@ -80,55 +105,66 @@ export function YieldSourcesCard({ blendApy, tvl, loading, rates }: YieldSources
       </CardHeader>
       <CardContent>
         {loading ? (
-          <div className="space-y-3">
-            <Skeleton className="h-14 w-full" />
-            <Skeleton className="h-14 w-full" />
-            <Skeleton className="h-14 w-full" />
+          <div className="grid gap-3 sm:grid-cols-3">
+            <Skeleton className="h-32 w-full rounded-2xl" />
+            <Skeleton className="h-32 w-full rounded-2xl" />
+            <Skeleton className="h-32 w-full rounded-2xl" />
           </div>
         ) : (
-          <ul className="-mx-2 space-y-1">
+          <div className="grid gap-3 sm:grid-cols-3">
             {sources.map((source) => {
-              const Icon = source.icon
               const isBest = bestApy !== null && source.apy === bestApy
               return (
-                <li
+                <a
                   key={source.key}
-                  className="flex items-center gap-3 rounded-xl px-2 py-2.5 text-sm"
+                  href={source.website}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group flex flex-col gap-4 rounded-2xl border bg-card p-4 outline-none transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                 >
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted">
-                    <Icon className="size-4 text-muted-foreground" />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="flex flex-wrap items-center gap-1.5 font-medium">
-                      {t(source.name)}
-                      <Badge variant={source.badge === 'active' ? 'default' : 'outline'}>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex min-w-0 items-center gap-2.5">
+                      <ProtocolLogo source={source} />
+                      <div className="min-w-0">
+                        <p className="flex items-center gap-1 text-sm font-medium">
+                          <span className="truncate">{t(source.name)}</span>
+                          <ExternalLinkIcon className="size-3 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+                        </p>
+                        <p className="truncate text-xs text-muted-foreground">{t(source.route)}</p>
+                      </div>
+                    </div>
+                    <div className="flex shrink-0 flex-col items-end gap-1">
+                      <Badge
+                        variant={source.badge === 'active' ? 'default' : 'outline'}
+                        className="text-[10px]"
+                      >
                         {t(source.badge === 'active' ? 'yield.badgeActive' : 'yield.badgeSoon')}
                       </Badge>
                       {isBest && (
-                        <Badge variant="secondary" className="bg-gold/15 text-gold-ink">
+                        <Badge variant="secondary" className="bg-gold/15 text-[10px] text-gold-ink">
                           {t('yield.bestYield')}
                         </Badge>
                       )}
-                    </p>
-                    <p className="text-xs text-muted-foreground">{t(source.route)}</p>
+                    </div>
                   </div>
-                  <div className="shrink-0 text-right">
-                    <p className="font-semibold tabular-nums">
-                      {formatApy(source.apy, intl)}{' '}
-                      <span className="text-xs font-normal text-muted-foreground">
-                        {t('yield.apyLabel')}
-                      </span>
+                  <div>
+                    <p className="text-2xl font-semibold tracking-tight tabular-nums">
+                      {formatApy(source.apy, intl)}
                     </p>
-                    {source.tvl !== null && (
-                      <p className="text-xs text-muted-foreground tabular-nums">
-                        {formatMoney(source.tvl, primaryCurrency, rates, locale)} {t('yield.tvlLabel')}
-                      </p>
-                    )}
+                    <p className="text-xs text-muted-foreground">
+                      {t('yield.apyLabel')}
+                      {source.tvl !== null && (
+                        <>
+                          {' - '}
+                          {formatMoney(source.tvl, primaryCurrency, rates, locale)} {t('yield.tvlLabel')}
+                        </>
+                      )}
+                    </p>
                   </div>
-                </li>
+                </a>
               )
             })}
-          </ul>
+          </div>
         )}
         <p className="mt-3 text-xs text-muted-foreground">{t('yield.sourcesCaption')}</p>
       </CardContent>
