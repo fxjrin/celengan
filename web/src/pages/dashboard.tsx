@@ -1,9 +1,9 @@
 import type { ComponentType } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
-  ArrowDownLeftIcon,
   ArrowRightIcon,
   ArrowUpRightIcon,
+  Link2Icon,
   SlidersHorizontalIcon,
   TrendingUpIcon,
 } from 'lucide-react'
@@ -94,21 +94,21 @@ export function Dashboard() {
               received={received}
               faucetBusy={faucetBusy}
               onFaucet={() => void runFaucet()}
-              onGoToReceive={() => void navigate('/app/receive')}
+              onGoToPaymentLink={() => void navigate('/app/link')}
             />
           )}
           <section aria-label={t('dashboard.quickActions')} className="space-y-3">
             <Link
-              to="/app/receive"
+              to="/app/link"
               className="flex items-center gap-4 rounded-2xl border border-primary/30 bg-primary/10 p-4 outline-none transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md active:translate-y-0 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
             >
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-ink">
-                <ArrowDownLeftIcon className="size-5" />
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+                <Link2Icon className="size-5" />
               </span>
               <span className="min-w-0 flex-1">
-                <p className="text-base font-semibold">{t('nav.receive')}</p>
+                <p className="text-base font-semibold">{t('nav.paymentLink')}</p>
                 <p className="mt-0.5 text-sm text-muted-foreground">
-                  {t('page.receiveCaption')}
+                  {t('page.paymentLinkCaption')}
                 </p>
               </span>
               <ArrowRightIcon className="size-4 shrink-0 text-muted-foreground" />
@@ -139,10 +139,13 @@ export function Dashboard() {
           <YieldSourcesCard
             blendApy={yieldData.blendApy}
             tvl={yieldTvl}
+            blendTvl={yieldData.blendTvl}
             soroswapApy={yieldData.soroswapStats.apy}
             soroswapTvl={yieldData.soroswapStats.tvl}
+            mainnetApy={yieldData.mainnetApy}
             loading={yieldLoading}
             rates={rates}
+            selectedTarget={account?.yieldTarget}
           />
           <ActivityCard />
         </>

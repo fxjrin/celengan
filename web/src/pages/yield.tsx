@@ -40,16 +40,24 @@ export function YieldPage() {
         account={account}
         activity={activity}
         sharePrice={data.sharePrice}
+        blendBRate={data.blendBRate}
+        soroswapPool={{
+          reserveUsdc: data.soroswapStats.reserveUsdc,
+          totalSupply: data.soroswapStats.totalSupply,
+        }}
         loading={accountStatus === 'loading'}
         rates={rates}
       />
       <YieldSourcesCard
         blendApy={data.blendApy}
         tvl={tvl}
+        blendTvl={data.blendTvl}
         soroswapApy={data.soroswapStats.apy}
         soroswapTvl={data.soroswapStats.tvl}
+        mainnetApy={data.mainnetApy}
         loading={loading}
         rates={rates}
+        selectedTarget={account?.yieldTarget}
       />
     </section>
   )

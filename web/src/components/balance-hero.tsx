@@ -13,7 +13,13 @@ import type { FxRates } from '@/lib/rates'
 import { secondaryCurrencyFor, useSettings } from '@/lib/settings'
 import type { CelenganAccount } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { computeSavingsPosition, getSharePrice } from '@/lib/yield'
+import {
+  computeSavingsPosition,
+  getBlendPoolInfo,
+  getSharePrice,
+  getSoroswapStats,
+  valueOfShares,
+} from '@/lib/yield'
 
 const MIN_SEGMENT_PCT = 4 // keep tiny pockets visible on the bar
 const ONE_USDC = 10_000_000n
@@ -40,16 +46,32 @@ export function BalanceHero({ account, activity, loading, rates }: BalanceHeroPr
   const secondaryCurrency = secondaryCurrencyFor(primaryCurrency, locale)
   const intl = intlLocale(locale)
   const [sharePrice, setSharePrice] = useState<bigint | null>(null)
+  const [blendBRate, setBlendBRate] = useState<bigint | null>(null)
+  const [soroswapPool, setSoroswapPool] = useState<{
+    reserveUsdc: bigint | null
+    totalSupply: bigint | null
+  }>({ reserveUsdc: null, totalSupply: null })
+  const yieldTarget = account?.yieldTarget ?? 'defindex'
 
   useEffect(() => {
     let active = true
-    void getSharePrice().then((price) => {
-      if (active) setSharePrice(price)
-    })
+    if (yieldTarget === 'blend') {
+      void getBlendPoolInfo().then((info) => {
+        if (active) setBlendBRate(info.bRate)
+      })
+    } else if (yieldTarget === 'soroswap') {
+      void getSoroswapStats().then((stats) => {
+        if (active) setSoroswapPool({ reserveUsdc: stats.reserveUsdc, totalSupply: stats.totalSupply })
+      })
+    } else {
+      void getSharePrice().then((price) => {
+        if (active) setSharePrice(price)
+      })
+    }
     return () => {
       active = false
     }
-  }, [])
+  }, [yieldTarget])
 
   const primary = (amount: bigint): string => formatMoney(amount, primaryCurrency, rates, locale)
   const secondary = (amount: bigint): string =>
@@ -79,9 +101,15 @@ export function BalanceHero({ account, activity, loading, rates }: BalanceHeroPr
     usdcToNumber(account.spend),
     usdcToNumber(account.shares),
   )
-  const position =
-    sharePrice !== null ? computeSavingsPosition(activity, account.shares, sharePrice) : null
-  const earning = position !== null && position.earnings > 0n
+  const currentValue = valueOfShares(
+    account.shares,
+    account.yieldTarget,
+    sharePrice,
+    blendBRate,
+    soroswapPool,
+  )
+  const position = currentValue !== null ? computeSavingsPosition(activity, currentValue) : null
+  const earning = position !== null && position.earnings !== null && position.earnings > 0n
 
   return (
     <Card className="rounded-2xl shadow-none">
@@ -181,8 +209,8 @@ export function BalanceHero({ account, activity, loading, rates }: BalanceHeroPr
           {empty ? (
             <p className="mt-1 text-xs text-muted-foreground">
               {t('balances.emptyHint')}{' '}
-              <Link to="/app/receive" className="inline-flex items-center gap-2 text-primary-ink hover:underline">
-                {t('receive.title')}
+              <Link to="/app/link" className="inline-flex items-center gap-2 text-primary-ink hover:underline">
+                {t('nav.paymentLink')}
                 <ArrowRightIcon className="size-4" />
               </Link>
             </p>
@@ -203,7 +231,7 @@ export function BalanceHero({ account, activity, loading, rates }: BalanceHeroPr
                   )}
                 >
                   <span className="size-1.5 rounded-full bg-gold" />
-                  {earning && position
+                  {earning && position?.earnings != null
                     ? t('balances.earningsLine', { amount: primary(position.earnings) })
                     : t('balances.earningCaption')}
                 </Link>
