@@ -57,7 +57,7 @@ export function LogoWordmark({ className }: { className?: string }) {
   return (
     <span className={cn('inline-flex items-center gap-2', className)}>
       <LogoMark size={22} />
-      <span className="text-lg font-semibold tracking-tight">celengan</span>
+      <span className="text-lg font-semibold tracking-tight">Celengan</span>
     </span>
   )
 }

@@ -29,13 +29,13 @@ type ActivityListProps = {
 const TOKEN_KINDS: readonly ActivityItem['kind'][] = ['pay', 'wd_spend', 'wd_save']
 
 export function ActivityList({ items, loading }: ActivityListProps) {
-  const { rate } = useAppState()
+  const { rates } = useAppState()
   const { locale, primaryCurrency } = useSettings()
   const { address } = useWallet()
   const t = useT()
 
   const money = (amount: bigint | undefined): string =>
-    formatMoney(amount ?? 0n, primaryCurrency, rate, locale)
+    formatMoney(amount ?? 0n, primaryCurrency, rates, locale)
 
   const label = (item: ActivityItem): string => {
     switch (item.kind) {

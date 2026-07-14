@@ -13,7 +13,7 @@ import { fetchActivity, type ActivityItem } from '@/lib/activity'
 import { celengan } from '@/lib/celengan'
 import { errorKey } from '@/lib/errors'
 import { useT, type MessageKey } from '@/lib/i18n'
-import { FALLBACK_IDR_RATE, getUsdIdrRate } from '@/lib/rates'
+import { FALLBACK_RATES, getFxRates, type FxRates } from '@/lib/rates'
 import type { CelenganAccount } from '@/lib/types'
 import { useWallet } from '@/lib/wallet'
 
@@ -22,7 +22,7 @@ type AccountStatus = 'disconnected' | 'loading' | 'ready' | 'error'
 type AppStateValue = {
   account: CelenganAccount | null
   accountStatus: AccountStatus
-  rate: number
+  rates: FxRates
   activity: ActivityItem[]
   activityLoading: boolean
   busy: string | null
@@ -37,14 +37,14 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const t = useT()
   const [account, setAccount] = useState<CelenganAccount | null>(null)
   const [accountStatus, setAccountStatus] = useState<AccountStatus>('disconnected')
-  const [rate, setRate] = useState(FALLBACK_IDR_RATE)
+  const [rates, setRates] = useState<FxRates>(FALLBACK_RATES)
   const [activity, setActivity] = useState<ActivityItem[]>([])
   const [activityLoading, setActivityLoading] = useState(false)
   const [busy, setBusy] = useState<string | null>(null)
   const addressRef = useRef(address)
 
   useEffect(() => {
-    void getUsdIdrRate().then(setRate)
+    void getFxRates().then(setRates)
   }, [])
 
   const load = useCallback(async (addr: string, initial: boolean) => {
@@ -113,14 +113,14 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     () => ({
       account,
       accountStatus,
-      rate,
+      rates,
       activity,
       activityLoading,
       busy,
       refresh,
       runAction,
     }),
-    [account, accountStatus, rate, activity, activityLoading, busy, refresh, runAction],
+    [account, accountStatus, rates, activity, activityLoading, busy, refresh, runAction],
   )
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>

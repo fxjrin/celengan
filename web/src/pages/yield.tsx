@@ -50,7 +50,7 @@ function useYieldData() {
 
 export function YieldPage() {
   const { address } = useWallet()
-  const { account, accountStatus, activity, rate } = useAppState()
+  const { account, accountStatus, activity, rates } = useAppState()
   const { data, loading, refresh } = useYieldData()
   const t = useT()
 
@@ -80,9 +80,9 @@ export function YieldPage() {
         activity={activity}
         sharePrice={data.sharePrice}
         loading={accountStatus === 'loading'}
-        rate={rate}
+        rates={rates}
       />
-      <YieldSourcesCard blendApy={data.blendApy} tvl={tvl} loading={loading} rate={rate} />
+      <YieldSourcesCard blendApy={data.blendApy} tvl={tvl} loading={loading} rates={rates} />
     </section>
   )
 }

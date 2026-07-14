@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { usdcToInput } from '@/lib/format'
 import { formatMoney, useT } from '@/lib/i18n'
-import { useSettings } from '@/lib/settings'
+import type { FxRates } from '@/lib/rates'
+import { secondaryCurrencyFor, useSettings } from '@/lib/settings'
 import { computeSavingsPosition } from '@/lib/yield'
 import type { ActivityItem } from '@/lib/activity'
 import type { CelenganAccount } from '@/lib/types'
@@ -14,7 +15,7 @@ type YieldPositionCardProps = {
   activity: ActivityItem[]
   sharePrice: bigint | null
   loading: boolean
-  rate: number
+  rates: FxRates
 }
 
 function Stat({
@@ -59,15 +60,15 @@ export function YieldPositionCard({
   activity,
   sharePrice,
   loading,
-  rate,
+  rates,
 }: YieldPositionCardProps) {
   const t = useT()
   const { locale, primaryCurrency } = useSettings()
-  const secondaryCurrency = primaryCurrency === 'idr' ? 'usdc' : 'idr'
+  const secondaryCurrency = secondaryCurrencyFor(primaryCurrency, locale)
 
-  const primary = (amount: bigint): string => formatMoney(amount, primaryCurrency, rate, locale)
+  const primary = (amount: bigint): string => formatMoney(amount, primaryCurrency, rates, locale)
   const secondary = (amount: bigint): string =>
-    formatMoney(amount, secondaryCurrency, rate, locale)
+    formatMoney(amount, secondaryCurrency, rates, locale)
 
   if (loading || account === null) {
     return (

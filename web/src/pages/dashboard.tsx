@@ -53,7 +53,7 @@ const SECONDARY_ACTIONS: SecondaryAction[] = [
 
 export function Dashboard() {
   const { address } = useWallet()
-  const { account, accountStatus, rate, activity, refresh } = useAppState()
+  const { account, accountStatus, rates, activity, refresh } = useAppState()
   const { faucetBusy, runFaucet } = useFaucet()
   const navigate = useNavigate()
   const t = useT()
@@ -75,7 +75,7 @@ export function Dashboard() {
           </Button>
         </div>
       ) : (
-        <BalanceHero account={account} activity={activity} loading={loading} rate={rate} />
+        <BalanceHero account={account} activity={activity} loading={loading} rates={rates} />
       )}
       {loading && <Skeleton className="h-40 w-full rounded-2xl" />}
       {account !== null && (

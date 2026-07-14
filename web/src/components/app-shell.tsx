@@ -113,7 +113,7 @@ function SidebarContent({ rail = false, onNavigate }: SidebarContentProps) {
       {/* px tuned so the mark sits centered in the 40px rail column */}
       <div className="flex items-center gap-2 px-[9px] pt-1 pb-2">
         <LogoMark size={22} />
-        <span className={cn('text-lg font-semibold tracking-tight', label)}>celengan</span>
+        <span className={cn('text-lg font-semibold tracking-tight', label)}>Celengan</span>
       </div>
       <nav className="no-scrollbar min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
         <SectionLabel rail={rail}>{t('nav.menu')}</SectionLabel>

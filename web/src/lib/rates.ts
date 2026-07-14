@@ -1,17 +1,26 @@
-export const FALLBACK_IDR_RATE = 16300
+export type FxRates = { idr: number; vnd: number; php: number }
 
-let cached: Promise<number> | null = null
+export const FALLBACK_RATES: FxRates = { idr: 16300, vnd: 25400, php: 57 }
 
-async function fetchRate(): Promise<number> {
+let cached: Promise<FxRates> | null = null
+
+function pick(rates: Record<string, number> | undefined, code: string, fallback: number): number {
+  const value = rates?.[code]
+  return typeof value === 'number' && value > 0 ? value : fallback
+}
+
+async function fetchRates(): Promise<FxRates> {
   const res = await fetch('https://open.er-api.com/v6/latest/USD')
   if (!res.ok) throw new Error(`Rate fetch failed: ${res.status}`)
   const data = (await res.json()) as { rates?: Record<string, number> }
-  const idr = data.rates?.IDR
-  if (typeof idr !== 'number' || idr <= 0) throw new Error('IDR rate missing')
-  return idr
+  return {
+    idr: pick(data.rates, 'IDR', FALLBACK_RATES.idr),
+    vnd: pick(data.rates, 'VND', FALLBACK_RATES.vnd),
+    php: pick(data.rates, 'PHP', FALLBACK_RATES.php),
+  }
 }
 
-export function getUsdIdrRate(): Promise<number> {
-  cached ??= fetchRate().catch(() => FALLBACK_IDR_RATE)
+export function getFxRates(): Promise<FxRates> {
+  cached ??= fetchRates().catch(() => FALLBACK_RATES)
   return cached
 }

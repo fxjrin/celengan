@@ -8,19 +8,21 @@ import { NumberTicker } from '@/components/ui/number-ticker'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { ActivityItem } from '@/lib/activity'
 import { usdcToNumber } from '@/lib/format'
-import { formatDate, formatMoney, useT } from '@/lib/i18n'
-import { useSettings } from '@/lib/settings'
+import { currencyAffix, formatDate, formatMoney, intlLocale, useT } from '@/lib/i18n'
+import type { FxRates } from '@/lib/rates'
+import { secondaryCurrencyFor, useSettings } from '@/lib/settings'
 import type { CelenganAccount } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { computeSavingsPosition, getSharePrice } from '@/lib/yield'
 
 const MIN_SEGMENT_PCT = 4 // keep tiny pockets visible on the bar
+const ONE_USDC = 10_000_000n
 
 type BalanceHeroProps = {
   account: CelenganAccount | null
   activity: ActivityItem[]
   loading: boolean
-  rate: number
+  rates: FxRates
 }
 
 function segmentWidths(spend: number, save: number): [number, number] {
@@ -32,11 +34,11 @@ function segmentWidths(spend: number, save: number): [number, number] {
   return [spendPct, 100 - spendPct]
 }
 
-export function BalanceHero({ account, activity, loading, rate }: BalanceHeroProps) {
+export function BalanceHero({ account, activity, loading, rates }: BalanceHeroProps) {
   const t = useT()
   const { locale, primaryCurrency } = useSettings()
-  const secondaryCurrency = primaryCurrency === 'idr' ? 'usdc' : 'idr'
-  const intl = locale === 'id' ? 'id-ID' : 'en-US'
+  const secondaryCurrency = secondaryCurrencyFor(primaryCurrency, locale)
+  const intl = intlLocale(locale)
   const [sharePrice, setSharePrice] = useState<bigint | null>(null)
 
   useEffect(() => {
@@ -49,9 +51,9 @@ export function BalanceHero({ account, activity, loading, rate }: BalanceHeroPro
     }
   }, [])
 
-  const primary = (amount: bigint): string => formatMoney(amount, primaryCurrency, rate, locale)
+  const primary = (amount: bigint): string => formatMoney(amount, primaryCurrency, rates, locale)
   const secondary = (amount: bigint): string =>
-    formatMoney(amount, secondaryCurrency, rate, locale)
+    formatMoney(amount, secondaryCurrency, rates, locale)
 
   if (loading || account === null) {
     return (
@@ -85,19 +87,8 @@ export function BalanceHero({ account, activity, loading, rate }: BalanceHeroPro
     <Card className="rounded-2xl shadow-none">
       <CardContent>
         <p className="text-sm text-muted-foreground">{t('balances.total')}</p>
-        <div className="mt-1 flex items-baseline gap-2">
-          {primaryCurrency === 'idr' ? (
-            <>
-              <span className="text-lg text-muted-foreground">Rp</span>
-              <NumberTicker
-                value={usdcToNumber(total) * rate}
-                decimalPlaces={0}
-                locale={intl}
-                delay={0.3}
-                className="text-4xl font-semibold tracking-tight text-foreground tabular-nums"
-              />
-            </>
-          ) : (
+        <div className="mt-1 flex items-end gap-1.5">
+          {primaryCurrency === 'usdc' ? (
             <>
               <NumberTicker
                 value={usdcToNumber(total)}
@@ -106,20 +97,47 @@ export function BalanceHero({ account, activity, loading, rate }: BalanceHeroPro
                 delay={0.3}
                 className="text-4xl font-semibold tracking-tight text-foreground tabular-nums"
               />
-              <span className="inline-flex items-center gap-2 text-lg text-muted-foreground">
+              <span className="mb-1 inline-flex items-center gap-2 text-lg text-muted-foreground">
                 <TokenIcon token="usdc" size={34} />
                 USDC
               </span>
             </>
+          ) : (
+            (() => {
+              const { symbol, position } = currencyAffix(primaryCurrency, locale)
+              const affix = (
+                <span className="mb-1.5 text-2xl font-medium text-muted-foreground">{symbol}</span>
+              )
+              const ticker = (
+                <NumberTicker
+                  value={usdcToNumber(total) * rates[primaryCurrency]}
+                  decimalPlaces={0}
+                  locale={intl}
+                  delay={0.3}
+                  className="text-4xl font-semibold tracking-tight text-foreground tabular-nums"
+                />
+              )
+              return position === 'prefix' ? (
+                <>
+                  {affix}
+                  {ticker}
+                </>
+              ) : (
+                <>
+                  {ticker}
+                  {affix}
+                </>
+              )
+            })()
           )}
         </div>
         <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground tabular-nums">
           {secondaryCurrency === 'usdc' && <TokenIcon token="usdc" size={18} />}~{' '}
           {secondary(total)}
         </p>
-        {primaryCurrency === 'idr' && (
+        {primaryCurrency !== 'usdc' && (
           <p className="mt-1 text-xs text-muted-foreground">
-            {t('balances.rateCaption', { rate: Math.round(rate).toLocaleString(intl) })}
+            {t('balances.rateCaption', { amount: formatMoney(ONE_USDC, primaryCurrency, rates, locale) })}
           </p>
         )}
         <div className="mt-6">

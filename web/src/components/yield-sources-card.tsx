@@ -3,14 +3,15 @@ import { ArrowLeftRightIcon, CoinsIcon, LandmarkIcon } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { formatMoney, useT, type MessageKey } from '@/lib/i18n'
+import { formatMoney, intlLocale, useT, type MessageKey } from '@/lib/i18n'
+import type { FxRates } from '@/lib/rates'
 import { useSettings } from '@/lib/settings'
 
 type YieldSourcesCardProps = {
   blendApy: number | null
   tvl: bigint | null
   loading: boolean
-  rate: number
+  rates: FxRates
 }
 
 type SourceRow = {
@@ -32,10 +33,10 @@ function formatApy(value: number | null, locale: string): string {
   }).format(value)
 }
 
-export function YieldSourcesCard({ blendApy, tvl, loading, rate }: YieldSourcesCardProps) {
+export function YieldSourcesCard({ blendApy, tvl, loading, rates }: YieldSourcesCardProps) {
   const t = useT()
   const { locale, primaryCurrency } = useSettings()
-  const intl = locale === 'id' ? 'id-ID' : 'en-US'
+  const intl = intlLocale(locale)
 
   const sources: SourceRow[] = [
     {
@@ -120,7 +121,7 @@ export function YieldSourcesCard({ blendApy, tvl, loading, rate }: YieldSourcesC
                     </p>
                     {source.tvl !== null && (
                       <p className="text-xs text-muted-foreground tabular-nums">
-                        {formatMoney(source.tvl, primaryCurrency, rate, locale)} {t('yield.tvlLabel')}
+                        {formatMoney(source.tvl, primaryCurrency, rates, locale)} {t('yield.tvlLabel')}
                       </p>
                     )}
                   </div>

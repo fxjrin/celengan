@@ -51,7 +51,7 @@ function AddressChip({ address }: { address: string }) {
 function PayCard({ recipient }: { recipient: string }) {
   const t = useT()
   const { address, connecting, connect } = useWallet()
-  const { rate, busy, runAction } = useAppState()
+  const { rates, busy, runAction } = useAppState()
   const { locale } = useSettings()
   const [searchParams] = useSearchParams()
   const name = (searchParams.get('name') ?? '').trim().slice(0, MAX_NAME_LENGTH)
@@ -117,7 +117,7 @@ function PayCard({ recipient }: { recipient: string }) {
           <p className="text-xl font-semibold tracking-tight">{t('pay.successTitle')}</p>
           <p className="flex items-center gap-2 text-2xl font-semibold tracking-tight tabular-nums">
             <TokenIcon token="usdc" size={36} />
-            {formatMoney(paid, 'usdc', rate, locale)}
+            {formatMoney(paid, 'usdc', rates, locale)}
           </p>
           <p className="text-sm text-muted-foreground">
             {t('pay.successBody', { name: displayName })}

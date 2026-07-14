@@ -33,7 +33,7 @@ type ReceiveCardProps = {
 export function ReceiveCard({ account, showFaucetRow, onFaucet }: ReceiveCardProps) {
   const t = useT()
   const { address } = useWallet()
-  const { rate, busy, runAction } = useAppState()
+  const { rates, busy, runAction } = useAppState()
   const { locale } = useSettings()
   const [value, setValue] = useState('')
   const anyBusy = busy !== null
@@ -50,8 +50,8 @@ export function ReceiveCard({ account, showFaucetRow, onFaucet }: ReceiveCardPro
   const amount = previewAmount()
   const saved = (amount * BigInt(account.splitBps)) / 10_000n
   const preview = t('receive.preview', {
-    spend: formatMoney(amount - saved, 'usdc', rate, locale),
-    save: formatMoney(saved, 'usdc', rate, locale),
+    spend: formatMoney(amount - saved, 'usdc', rates, locale),
+    save: formatMoney(saved, 'usdc', rates, locale),
   })
 
   const handleSubmit = async () => {
