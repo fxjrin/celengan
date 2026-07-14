@@ -43,7 +43,14 @@ export function YieldPage() {
         loading={accountStatus === 'loading'}
         rates={rates}
       />
-      <YieldSourcesCard blendApy={data.blendApy} tvl={tvl} loading={loading} rates={rates} />
+      <YieldSourcesCard
+        blendApy={data.blendApy}
+        tvl={tvl}
+        soroswapApy={data.soroswapStats.apy}
+        soroswapTvl={data.soroswapStats.tvl}
+        loading={loading}
+        rates={rates}
+      />
     </section>
   )
 }

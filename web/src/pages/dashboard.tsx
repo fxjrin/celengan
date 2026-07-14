@@ -139,6 +139,8 @@ export function Dashboard() {
           <YieldSourcesCard
             blendApy={yieldData.blendApy}
             tvl={yieldTvl}
+            soroswapApy={yieldData.soroswapStats.apy}
+            soroswapTvl={yieldData.soroswapStats.tvl}
             loading={yieldLoading}
             rates={rates}
           />

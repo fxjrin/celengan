@@ -9,6 +9,8 @@ import { useSettings } from '@/lib/settings'
 type YieldSourcesCardProps = {
   blendApy: number | null
   tvl: bigint | null
+  soroswapApy: number | null
+  soroswapTvl: bigint | null
   loading: boolean
   rates: FxRates
 }
@@ -54,7 +56,14 @@ function ProtocolLogo({ source }: { source: SourceRow }) {
   )
 }
 
-export function YieldSourcesCard({ blendApy, tvl, loading, rates }: YieldSourcesCardProps) {
+export function YieldSourcesCard({
+  blendApy,
+  tvl,
+  soroswapApy,
+  soroswapTvl,
+  loading,
+  rates,
+}: YieldSourcesCardProps) {
   const t = useT()
   const { locale, primaryCurrency } = useSettings()
   const intl = intlLocale(locale)
@@ -88,8 +97,8 @@ export function YieldSourcesCard({ blendApy, tvl, loading, rates }: YieldSources
       name: 'yield.sourceSoroswapName',
       route: 'yield.sourceSoroswapRoute',
       badge: 'soon',
-      apy: null,
-      tvl: null,
+      apy: soroswapApy,
+      tvl: soroswapTvl,
     },
   ]
 

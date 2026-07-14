@@ -26,6 +26,11 @@ const UTIL_TAIL = 500_000n // 1.0 - 0.95, the width of the third rate-curve tier
 // (stellar contract data read, DataKey::Config -> { pool: "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF", ... }).
 const BLEND_POOL_ID = 'CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF'
 
+// Soroswap's testnet factory (CDP3HMUH6SMS3S7NPGNDJLULCOXXEPSHY4JKUKMBNQMATHDHWXRRJTBY, from
+// soroswap/core's public/testnet.contracts.json) resolves this address for get_pair(USDC_ID,
+// native XLM SAC). Hardcoded here since a pair contract's address is immutable once created.
+const SOROSWAP_USDC_XLM_PAIR_ID = 'CBR76WMT6J733CCVBP23M2EL5QGP5HXLPEFNFZGZ7IB6QHOJAHP7YM3V'
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
 }
@@ -219,6 +224,40 @@ export async function getBlendSupplyApy(): Promise<number | null> {
     return Math.exp(supplyApr) - 1
   } catch {
     return null
+  }
+}
+
+export type SoroswapStats = {
+  apy: number | null
+  tvl: bigint | null
+}
+
+function isReserveTuple(value: unknown): value is [bigint, bigint] {
+  return Array.isArray(value) && typeof value[0] === 'bigint' && typeof value[1] === 'bigint'
+}
+
+/**
+ * Live stats for the Soroswap testnet USDC/XLM pool.
+ *
+ * tvl is the USDC-side reserve alone, not doubled: a constant-product pool's two sides are
+ * only worth the same in USD if priced at a real market rate, and this app has no XLM/USD
+ * oracle to confirm that holds for this testnet pool, so doubling would be a guess dressed up
+ * as data. apy is always null: the pair contract keeps no cumulative volume or price history
+ * (no Uniswap-V2-style TWAP accumulator - checked its storage), and Soroswap's hosted API
+ * /pools response (checked live against its OpenAPI schema) has no apr/apy field either. LP
+ * yield without real fee-accrual history isn't a number this app can source honestly.
+ */
+export async function getSoroswapStats(): Promise<SoroswapStats> {
+  try {
+    const [token0Raw, reservesRaw] = await Promise.all([
+      simulateReadCall(SOROSWAP_USDC_XLM_PAIR_ID, 'token_0', []),
+      simulateReadCall(SOROSWAP_USDC_XLM_PAIR_ID, 'get_reserves', []),
+    ])
+    if (!isReserveTuple(reservesRaw)) return { apy: null, tvl: null }
+    const tvl = token0Raw === USDC_ID ? reservesRaw[0] : reservesRaw[1]
+    return { apy: null, tvl }
+  } catch {
+    return { apy: null, tvl: null }
   }
 }
 
