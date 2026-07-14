@@ -93,6 +93,7 @@ export function BalanceHero({ account, activity, loading, rate }: BalanceHeroPro
                 value={usdcToNumber(total) * rate}
                 decimalPlaces={0}
                 locale={intl}
+                delay={0.3}
                 className="text-4xl font-semibold tracking-tight text-foreground tabular-nums"
               />
             </>
@@ -102,6 +103,7 @@ export function BalanceHero({ account, activity, loading, rate }: BalanceHeroPro
                 value={usdcToNumber(total)}
                 decimalPlaces={2}
                 locale={intl}
+                delay={0.3}
                 className="text-4xl font-semibold tracking-tight text-foreground tabular-nums"
               />
               <span className="inline-flex items-center gap-2 text-lg text-muted-foreground">
