@@ -23,11 +23,14 @@ type Cell = {
   char: string
 }
 
-const ROLL_MS = 450
+const ROLL_MS = 550
 const STAGGER_MS = 30
-const MAX_STAGGER_STEPS = 9 // caps settle time under ~0.8s even for many-digit values
+const MAX_STAGGER_STEPS = 6 // caps settle time under ~0.9s even for many-digit values
 const FADE_MS = 150
 const DIGITS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+// three laps so a roll can always travel a full 0-9 sweep before landing,
+// however close the start and target digits are (including landing on itself)
+const DIGITS_LOOP = [...DIGITS, ...DIGITS, ...DIGITS]
 
 function usePrefersReducedMotion(): boolean {
   const [reduced, setReduced] = useState(
@@ -103,6 +106,9 @@ export function NumberTicker({
   )
   const [exiting, setExiting] = useState<Cell[]>([])
   const exitTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // bumped every time cells move to a freshly resolved value, so every digit
+  // column re-sweeps even when its own digit happens not to change
+  const [revision, setRevision] = useState(0)
 
   useEffect(() => {
     const el = containerRef.current
@@ -136,6 +142,7 @@ export function NumberTicker({
         }
         return next
       })
+      setRevision((r) => r + 1)
     }, delay * 1000)
 
     return () => clearTimeout(timer)
@@ -163,14 +170,22 @@ export function NumberTicker({
           <ExitingCell key={`x${cell.id}`} cell={cell} />
         ))}
         {cells.map((cell) => (
-          <TickerCell key={cell.id} cell={cell} reducedMotion={reducedMotion} />
+          <TickerCell key={cell.id} cell={cell} reducedMotion={reducedMotion} revision={revision} />
         ))}
       </span>
     </span>
   )
 }
 
-function TickerCell({ cell, reducedMotion }: { cell: Cell; reducedMotion: boolean }) {
+function TickerCell({
+  cell,
+  reducedMotion,
+  revision,
+}: {
+  cell: Cell
+  reducedMotion: boolean
+  revision: number
+}) {
   const [visible, setVisible] = useState(reducedMotion)
 
   useEffect(() => {
@@ -192,7 +207,12 @@ function TickerCell({ cell, reducedMotion }: { cell: Cell; reducedMotion: boolea
       {digit === null ? (
         cell.char
       ) : (
-        <DigitColumn digit={digit} delayMs={staggerDelay(cell.id)} reducedMotion={reducedMotion} />
+        <DigitColumn
+          digit={digit}
+          delayMs={staggerDelay(cell.id)}
+          reducedMotion={reducedMotion}
+          revision={revision}
+        />
       )}
     </span>
   )
@@ -220,27 +240,77 @@ function DigitColumn({
   digit,
   delayMs,
   reducedMotion,
+  revision,
 }: {
   digit: number
   delayMs: number
   reducedMotion: boolean
+  revision: number
 }) {
   const stripRef = useRef<HTMLSpanElement>(null)
-  const prevDigit = useRef(digit)
+  const prevRevision = useRef(revision)
+  // the digit this column is currently resting on, once any in-flight roll settles
+  const restingDigit = useRef(digit)
+  const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // place the very first paint at rest, outside of any transition
+  useLayoutEffect(() => {
+    const el = stripRef.current
+    if (!el) return
+    el.style.transitionProperty = "none"
+    el.style.transform = `translateY(${-digit}em)`
+    void el.offsetHeight
+    el.style.transitionProperty = "transform, filter"
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useLayoutEffect(() => {
     const el = stripRef.current
-    const changed = prevDigit.current !== digit
-    prevDigit.current = digit
-    if (!el || reducedMotion || !changed) return
-    // snap blur to its peak before the transform transition starts, then ease it back to 0
-    // so the roll reads as motion rather than a hard cut to the next digit
-    el.style.transitionProperty = "none"
-    el.style.filter = "blur(3px)"
-    void el.offsetHeight // force a reflow so the browser commits the snap before the eased transition
-    el.style.transitionProperty = "transform, filter"
-    el.style.filter = "blur(0px)"
-  }, [digit, reducedMotion])
+    const shouldSpin = prevRevision.current !== revision && !reducedMotion
+    prevRevision.current = revision
+    if (resetTimer.current) {
+      clearTimeout(resetTimer.current)
+      resetTimer.current = null
+    }
+    if (!el) return
+    if (!shouldSpin) {
+      // no roll this pass (unchanged revision, or motion is reduced) - just
+      // keep the resting position in sync with the current digit
+      if (restingDigit.current !== digit) {
+        el.style.transitionProperty = "none"
+        el.style.transform = `translateY(${-digit}em)`
+        void el.offsetHeight
+        el.style.transitionProperty = "transform, filter"
+      }
+      restingDigit.current = digit
+      return
+    }
+    // always land at least one full lap past the resting digit, so every
+    // column visibly sweeps through 0-9 even when landing on itself or on
+    // the very next digit, instead of taking the shortest single-row hop
+    const from = restingDigit.current
+    const offset = (digit - from + 10) % 10
+    const target = from + 10 + offset
+    el.style.filter = "blur(1.5px)"
+    el.style.transform = `translateY(${-target}em)`
+    resetTimer.current = setTimeout(() => {
+      const strip = stripRef.current
+      restingDigit.current = digit
+      if (!strip) return
+      // rewind the extra laps silently so the strip never needs more than
+      // three laps of rows, and the next roll has the same headroom again
+      strip.style.transitionProperty = "none"
+      strip.style.transform = `translateY(${-digit}em)`
+      void strip.offsetHeight
+      strip.style.transitionProperty = "transform, filter"
+    }, delayMs + ROLL_MS + 40)
+  }, [revision, digit, reducedMotion, delayMs])
+
+  useEffect(() => {
+    return () => {
+      if (resetTimer.current) clearTimeout(resetTimer.current)
+    }
+  }, [])
 
   return (
     <span className="relative inline-block h-[1em] w-[1ch] overflow-hidden">
@@ -248,15 +318,14 @@ function DigitColumn({
         ref={stripRef}
         className="absolute inset-x-0 top-0 flex flex-col"
         style={{
-          transform: `translateY(${-digit}em)`,
           transitionProperty: "transform, filter",
           transitionDuration: reducedMotion ? "0ms" : `${ROLL_MS}ms`,
           transitionDelay: reducedMotion ? "0ms" : `${delayMs}ms`,
           transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
         }}
       >
-        {DIGITS.map((d) => (
-          <span key={d} className="h-[1em] text-center leading-[1em]">
+        {DIGITS_LOOP.map((d, i) => (
+          <span key={i} className="h-[1em] text-center leading-[1em]">
             {d}
           </span>
         ))}
