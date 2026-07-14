@@ -2,6 +2,7 @@ import type { ComponentType } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowDownLeftIcon,
+  ArrowRightIcon,
   ArrowUpRightIcon,
   SlidersHorizontalIcon,
   TrendingUpIcon,
@@ -12,42 +13,41 @@ import { ConnectPrompt } from '@/components/connect-prompt'
 import { OnboardingChecklist } from '@/components/onboarding-checklist'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
 import { useAppState } from '@/lib/app-state'
 import { useT, type MessageKey } from '@/lib/i18n'
 import { faucetedFlag, useFaucet } from '@/lib/use-faucet'
 import { useWallet } from '@/lib/wallet'
 
-type QuickAction = {
+type SecondaryAction = {
   to: string
   icon: ComponentType<{ className?: string }>
   title: MessageKey
   caption: MessageKey
+  tint: string
 }
 
-const QUICK_ACTIONS: QuickAction[] = [
-  {
-    to: '/app/receive',
-    icon: ArrowDownLeftIcon,
-    title: 'nav.receive',
-    caption: 'page.receiveCaption',
-  },
+const SECONDARY_ACTIONS: SecondaryAction[] = [
   {
     to: '/app/withdraw',
     icon: ArrowUpRightIcon,
     title: 'nav.withdraw',
     caption: 'page.withdrawCaption',
+    tint: 'bg-secondary/15 text-secondary',
   },
   {
     to: '/app/rules',
     icon: SlidersHorizontalIcon,
     title: 'nav.rules',
     caption: 'page.rulesCaption',
+    tint: 'bg-accent text-accent-foreground',
   },
   {
     to: '/app/yield',
     icon: TrendingUpIcon,
     title: 'nav.yield',
     caption: 'page.yieldCaption',
+    tint: 'bg-gold/15 text-gold-ink',
   },
 ]
 
@@ -90,23 +90,44 @@ export function Dashboard() {
               onGoToReceive={() => void navigate('/app/receive')}
             />
           )}
-          <section
-            aria-label={t('dashboard.quickActions')}
-            className="grid grid-cols-2 gap-3 sm:grid-cols-4"
-          >
-            {QUICK_ACTIONS.map((action) => (
-              <Link
-                key={action.to}
-                to={action.to}
-                className="rounded-2xl border bg-card p-4 outline-none transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md active:translate-y-0 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-              >
-                <span className="flex size-9 items-center justify-center rounded-xl bg-muted text-muted-foreground">
-                  <action.icon className="size-4" />
-                </span>
-                <p className="mt-3 text-sm font-medium">{t(action.title)}</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">{t(action.caption)}</p>
-              </Link>
-            ))}
+          <section aria-label={t('dashboard.quickActions')} className="space-y-3">
+            <Link
+              to="/app/receive"
+              className="flex items-center gap-4 rounded-2xl border border-primary/30 bg-primary/10 p-4 outline-none transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md active:translate-y-0 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+            >
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-ink">
+                <ArrowDownLeftIcon className="size-5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <p className="text-base font-semibold">{t('nav.receive')}</p>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  {t('page.receiveCaption')}
+                </p>
+              </span>
+              <ArrowRightIcon className="size-4 shrink-0 text-muted-foreground" />
+            </Link>
+            <div className="grid grid-cols-3 gap-3">
+              {SECONDARY_ACTIONS.map((action) => (
+                <Link
+                  key={action.to}
+                  to={action.to}
+                  className="rounded-2xl border bg-card p-3.5 outline-none transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md active:translate-y-0 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                >
+                  <span
+                    className={cn(
+                      'flex size-9 items-center justify-center rounded-xl',
+                      action.tint,
+                    )}
+                  >
+                    <action.icon className="size-4" />
+                  </span>
+                  <p className="mt-3 text-sm font-medium">{t(action.title)}</p>
+                  <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
+                    {t(action.caption)}
+                  </p>
+                </Link>
+              ))}
+            </div>
           </section>
           <ActivityCard />
         </>

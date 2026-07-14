@@ -291,8 +291,14 @@ function DigitColumn({
     const from = restingDigit.current
     const offset = (digit - from + 10) % 10
     const target = from + 10 + offset
+    // snap blur to its peak before the transition starts, then ease both the
+    // roll and the blur back to sharp together so it never gets stuck hazy
+    el.style.transitionProperty = "none"
     el.style.filter = "blur(1.5px)"
+    void el.offsetHeight
+    el.style.transitionProperty = "transform, filter"
     el.style.transform = `translateY(${-target}em)`
+    el.style.filter = "blur(0px)"
     resetTimer.current = setTimeout(() => {
       const strip = stripRef.current
       restingDigit.current = digit
