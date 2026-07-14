@@ -105,13 +105,13 @@ export function YieldSourcesCard({ blendApy, tvl, loading, rates }: YieldSources
       </CardHeader>
       <CardContent>
         {loading ? (
-          <div className="grid gap-3 sm:grid-cols-3">
-            <Skeleton className="h-32 w-full rounded-2xl" />
-            <Skeleton className="h-32 w-full rounded-2xl" />
-            <Skeleton className="h-32 w-full rounded-2xl" />
+          <div className="flex gap-3 overflow-x-auto pb-1">
+            <Skeleton className="h-36 w-64 shrink-0 rounded-2xl" />
+            <Skeleton className="h-36 w-64 shrink-0 rounded-2xl" />
+            <Skeleton className="h-36 w-64 shrink-0 rounded-2xl" />
           </div>
         ) : (
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="no-scrollbar -mx-1 flex snap-x gap-3 overflow-x-auto px-1 pb-1">
             {sources.map((source) => {
               const isBest = bestApy !== null && source.apy === bestApy
               return (
@@ -120,32 +120,30 @@ export function YieldSourcesCard({ blendApy, tvl, loading, rates }: YieldSources
                   href={source.website}
                   target="_blank"
                   rel="noreferrer"
-                  className="group flex flex-col gap-4 rounded-2xl border bg-card p-4 outline-none transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                  className="group flex w-64 shrink-0 snap-start flex-col gap-3 rounded-2xl border bg-card p-4 outline-none transition-[transform,box-shadow,border-color] duration-150 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex min-w-0 items-center gap-2.5">
-                      <ProtocolLogo source={source} />
-                      <div className="min-w-0">
-                        <p className="flex items-center gap-1 text-sm font-medium">
-                          <span className="truncate">{t(source.name)}</span>
-                          <ExternalLinkIcon className="size-3 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
-                        </p>
-                        <p className="truncate text-xs text-muted-foreground">{t(source.route)}</p>
-                      </div>
+                  <div className="flex items-center gap-2.5">
+                    <ProtocolLogo source={source} />
+                    <div className="min-w-0">
+                      <p className="flex items-center gap-1 text-sm font-medium">
+                        <span className="truncate">{t(source.name)}</span>
+                        <ExternalLinkIcon className="size-3 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+                      </p>
+                      <p className="truncate text-xs text-muted-foreground">{t(source.route)}</p>
                     </div>
-                    <div className="flex shrink-0 flex-col items-end gap-1">
-                      <Badge
-                        variant={source.badge === 'active' ? 'default' : 'outline'}
-                        className="text-[10px]"
-                      >
-                        {t(source.badge === 'active' ? 'yield.badgeActive' : 'yield.badgeSoon')}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-1">
+                    <Badge
+                      variant={source.badge === 'active' ? 'default' : 'outline'}
+                      className="text-[10px]"
+                    >
+                      {t(source.badge === 'active' ? 'yield.badgeActive' : 'yield.badgeSoon')}
+                    </Badge>
+                    {isBest && (
+                      <Badge variant="secondary" className="bg-gold/15 text-[10px] text-gold-ink">
+                        {t('yield.bestYield')}
                       </Badge>
-                      {isBest && (
-                        <Badge variant="secondary" className="bg-gold/15 text-[10px] text-gold-ink">
-                          {t('yield.bestYield')}
-                        </Badge>
-                      )}
-                    </div>
+                    )}
                   </div>
                   <div>
                     <p className="text-2xl font-semibold tracking-tight tabular-nums">

@@ -13,10 +13,12 @@ import { ConnectPrompt } from '@/components/connect-prompt'
 import { OnboardingChecklist } from '@/components/onboarding-checklist'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { YieldSourcesCard } from '@/components/yield-sources-card'
 import { cn } from '@/lib/utils'
 import { useAppState } from '@/lib/app-state'
 import { useT, type MessageKey } from '@/lib/i18n'
 import { faucetedFlag, useFaucet } from '@/lib/use-faucet'
+import { useYieldData } from '@/lib/use-yield-data'
 import { useWallet } from '@/lib/wallet'
 
 type SecondaryAction = {
@@ -55,6 +57,7 @@ export function Dashboard() {
   const { address } = useWallet()
   const { account, accountStatus, rates, activity, refresh } = useAppState()
   const { faucetBusy, runFaucet } = useFaucet()
+  const { data: yieldData, loading: yieldLoading } = useYieldData()
   const navigate = useNavigate()
   const t = useT()
 
@@ -64,6 +67,10 @@ export function Dashboard() {
   const funded = faucetedFlag(address) || activity.length > 0
   const received = activity.some((item) => item.kind === 'pay')
   const onboarding = !(funded && received)
+  const yieldTvl =
+    yieldData.vaultStats.idle !== null && yieldData.vaultStats.invested !== null
+      ? yieldData.vaultStats.idle + yieldData.vaultStats.invested
+      : null
 
   return (
     <div key={address} className="space-y-5">
@@ -129,6 +136,12 @@ export function Dashboard() {
               ))}
             </div>
           </section>
+          <YieldSourcesCard
+            blendApy={yieldData.blendApy}
+            tvl={yieldTvl}
+            loading={yieldLoading}
+            rates={rates}
+          />
           <ActivityCard />
         </>
       )}
