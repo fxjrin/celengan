@@ -104,15 +104,15 @@ export function BalanceHero({ account, activity, loading, rate }: BalanceHeroPro
                 locale={intl}
                 className="text-4xl font-semibold tracking-tight text-foreground tabular-nums"
               />
-              <span className="inline-flex items-center gap-1.5 text-lg text-muted-foreground">
-                <TokenIcon token="usdc" size={28} />
+              <span className="inline-flex items-center gap-2 text-lg text-muted-foreground">
+                <TokenIcon token="usdc" size={34} />
                 USDC
               </span>
             </>
           )}
         </div>
         <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground tabular-nums">
-          {secondaryCurrency === 'usdc' && <TokenIcon token="usdc" size={16} />}~{' '}
+          {secondaryCurrency === 'usdc' && <TokenIcon token="usdc" size={18} />}~{' '}
           {secondary(total)}
         </p>
         {primaryCurrency === 'idr' && (
@@ -128,7 +128,7 @@ export function BalanceHero({ account, activity, loading, rate }: BalanceHeroPro
                 {t('balances.spendable')}
               </p>
               <p className="mt-1 flex items-center gap-1.5 text-lg font-semibold tracking-tight tabular-nums">
-                <TokenIcon token="usdc" size={20} />
+                <TokenIcon token="usdc" size={24} />
                 {primary(account.spend)}
               </p>
               <p className="text-xs text-muted-foreground tabular-nums">
@@ -141,7 +141,7 @@ export function BalanceHero({ account, activity, loading, rate }: BalanceHeroPro
                 <span className="size-2 rounded-full bg-gold" />
               </p>
               <p className="mt-1 flex items-center justify-end gap-1.5 text-lg font-semibold tracking-tight tabular-nums">
-                <TokenIcon token="usdc" size={20} />
+                <TokenIcon token="usdc" size={24} />
                 {primary(account.shares)}
               </p>
               <p className="text-xs text-muted-foreground tabular-nums">

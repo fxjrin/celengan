@@ -46,7 +46,7 @@ function Stat({
           (tone === 'gold' ? 'text-gold-ink' : tone === 'muted' ? 'text-muted-foreground' : '')
         }
       >
-        <TokenIcon token="usdc" size={20} />
+        <TokenIcon token="usdc" size={24} />
         {amount}
       </p>
       <p className="text-xs text-muted-foreground tabular-nums">{secondary}</p>

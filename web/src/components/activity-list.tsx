@@ -83,7 +83,7 @@ export function ActivityList({ items, loading }: ActivityListProps) {
               ) : TOKEN_KINDS.includes(item.kind) ? (
                 // token first so the currency is recognizable at a glance
                 <span className="flex size-9 items-center justify-center rounded-xl bg-muted">
-                  <TokenIcon token="usdc" size={20} />
+                  <TokenIcon token="usdc" size={24} />
                 </span>
               ) : (
                 <span className="flex size-9 items-center justify-center rounded-xl bg-muted">
@@ -93,7 +93,7 @@ export function ActivityList({ items, loading }: ActivityListProps) {
               {TOKEN_KINDS.includes(item.kind) &&
                 (externalPayer ? (
                   <span className="absolute -right-1 -bottom-1 flex rounded-full ring-2 ring-card">
-                    <TokenIcon token="usdc" size={16} />
+                    <TokenIcon token="usdc" size={18} />
                   </span>
                 ) : (
                   <span className="absolute -right-0.5 -bottom-0.5 flex size-4 items-center justify-center rounded-full bg-card ring-2 ring-card">

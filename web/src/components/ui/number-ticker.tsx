@@ -49,6 +49,24 @@ function formatValue(value: number, locale: string, decimalPlaces: number): stri
   }).format(value)
 }
 
+// Zero-padded to the same integer-digit count as `target` so every column
+// already exists at mount and rolls into place, instead of most digits
+// appearing as brand-new columns that only fade in (the roll was invisible
+// whenever the starting value had fewer digits than the real balance).
+function formatPadded(
+  value: number,
+  target: number,
+  locale: string,
+  decimalPlaces: number,
+): string {
+  const targetDigits = Math.max(1, Math.trunc(Math.abs(target)).toString().length)
+  return new Intl.NumberFormat(locale, {
+    minimumIntegerDigits: targetDigits,
+    minimumFractionDigits: decimalPlaces,
+    maximumFractionDigits: decimalPlaces,
+  }).format(value)
+}
+
 function toCells(formatted: string): Cell[] {
   const chars = Array.from(formatted)
   const lastIndex = chars.length - 1
@@ -77,7 +95,11 @@ export function NumberTicker({
   const containerRef = useRef<HTMLSpanElement>(null)
   const [inView, setInView] = useState(false)
   const [cells, setCells] = useState<Cell[]>(() =>
-    toCells(formatValue(reducedMotion ? target : initial, locale, decimalPlaces))
+    toCells(
+      reducedMotion
+        ? formatValue(target, locale, decimalPlaces)
+        : formatPadded(initial, target, locale, decimalPlaces),
+    )
   )
   const [exiting, setExiting] = useState<Cell[]>([])
   const exitTimer = useRef<ReturnType<typeof setTimeout> | null>(null)

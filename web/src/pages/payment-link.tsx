@@ -67,7 +67,7 @@ export function PaymentLinkPage() {
               <div className="relative">
                 <TokenIcon
                   token="usdc"
-                  size={22}
+                  size={26}
                   className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
                 />
                 <Input
@@ -75,7 +75,7 @@ export function PaymentLinkPage() {
                   value={amount}
                   placeholder={t('paylink.amountPlaceholder')}
                   inputMode="decimal"
-                  className="pl-11 tabular-nums"
+                  className="pl-12 tabular-nums"
                   onChange={(e) => setAmount(e.target.value)}
                 />
               </div>

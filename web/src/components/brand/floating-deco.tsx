@@ -211,40 +211,32 @@ function CoinStack({ uid }: DecoProps) {
   )
 }
 
-function PiggyBlob({ uid }: DecoProps) {
+function LoopBlob({ uid }: DecoProps) {
   const body = `${uid}-body`
   const sh = `${uid}-sh`
   return (
     <svg viewBox="0 0 64 64" width="100%" height="100%" overflow="visible" aria-hidden="true">
       <defs>
-        <radialGradient id={body} cx="32%" cy="26%" r="85%">
+        <linearGradient id={body} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#ffe98a" />
           <stop offset="55%" stopColor="#f4c81c" />
           <stop offset="100%" stopColor="#c79400" />
-        </radialGradient>
+        </linearGradient>
         <filter id={sh} {...SHADOW}>
           <feDropShadow dx="0" dy="5" stdDeviation="5" floodColor="#8a6c00" floodOpacity="0.32" />
         </filter>
       </defs>
-      {/* same piggy silhouette as the brand mark, cast in the balloon gold gradient */}
-      <g filter={`url(#${sh})`} fill={`url(#${body})`}>
-        <rect x="17.3" y="52" width="8" height="9.3" rx="2.9" />
-        <rect x="37.3" y="52" width="8" height="9.3" rx="2.9" />
-        <path d="M16 28C15.1 20.7 19.3 15.3 24 20C26 23.3 23.3 28.7 16 28Z" />
-        <ellipse cx="32" cy="40" rx="20" ry="14" />
-        <circle cx="10.7" cy="38" r="7" />
+      {/* the brand mark's twin arcs, rescaled from the 48-box logo to this 64-box deco */}
+      <g
+        filter={`url(#${sh})`}
+        fill="none"
+        stroke={`url(#${body})`}
+        strokeWidth="8.7"
+        strokeLinecap="round"
+      >
+        <path d="M16,28 A13.33,13.33 0 0 1 42.67,28" />
+        <path d="M21.33,36 A13.33,13.33 0 0 0 48,36" />
       </g>
-      <circle cx="8.1" cy="35.9" r="1.1" fill="#26201a" opacity="0.85" />
-      <circle cx="8.1" cy="40.1" r="1.1" fill="#26201a" opacity="0.85" />
-      <rect
-        x="25.3"
-        y="26.4"
-        width="14.7"
-        height="4"
-        rx="2"
-        fill="#a87c08"
-        transform="rotate(-8 32.7 28.4)"
-      />
       <ellipse cx="18" cy="14" rx="9" ry="4.2" fill="#fff" opacity="0.45" transform="rotate(-30 18 14)" />
     </svg>
   )
@@ -350,7 +342,7 @@ type Placement = {
 const PLACEMENTS: Placement[] = [
   { obj: RpCoin, side: 'left', top: '12%', left: '6%', size: 96, rotate: -12, depth: 22, duration: 7, delay: 0 },
   { obj: Sparkle, side: 'left', top: '34%', left: '14%', size: 44, rotate: 8, depth: 28, duration: 5.5, delay: 0.8 },
-  { obj: PiggyBlob, side: 'left', top: '52%', left: '4%', size: 110, rotate: 6, depth: 12, duration: 8, delay: 0.4 },
+  { obj: LoopBlob, side: 'left', top: '52%', left: '4%', size: 110, rotate: 6, depth: 12, duration: 8, delay: 0.4 },
   { obj: CoinStack, side: 'left', top: '76%', left: '12%', size: 76, rotate: -8, depth: 18, duration: 6.5, delay: 1.2 },
   { obj: UsdcCoin, side: 'left', top: '90%', left: '5%', size: 46, rotate: 10, depth: 24, duration: 6.2, delay: 0.7 },
   { obj: HeartBlob, side: 'right', top: '10%', right: '10%', size: 72, rotate: 10, depth: 20, duration: 7.5, delay: 0.6 },

@@ -8,7 +8,7 @@ type TokenIconProps = {
   className?: string
 }
 
-export function TokenIcon({ token, size = 20, className }: TokenIconProps) {
+export function TokenIcon({ token, size = 24, className }: TokenIconProps) {
   if (token === 'xlm') {
     // white disc keeps the black Stellar mark visible on dark backgrounds
     return (

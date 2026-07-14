@@ -75,14 +75,14 @@ export function WithdrawCard({ account }: WithdrawCardProps) {
               <div className="relative flex-1">
                 <TokenIcon
                   token="usdc"
-                  size={22}
+                  size={26}
                   className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
                 />
                 <Input
                   value={spendValue}
                   placeholder={t('receive.amountPlaceholder')}
                   inputMode="decimal"
-                  className="pl-11 tabular-nums"
+                  className="pl-12 tabular-nums"
                   disabled={anyBusy}
                   onChange={(e) => setSpendValue(e.target.value)}
                 />

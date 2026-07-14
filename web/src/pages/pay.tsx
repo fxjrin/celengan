@@ -116,7 +116,7 @@ function PayCard({ recipient }: { recipient: string }) {
           </span>
           <p className="text-xl font-semibold tracking-tight">{t('pay.successTitle')}</p>
           <p className="flex items-center gap-2 text-2xl font-semibold tracking-tight tabular-nums">
-            <TokenIcon token="usdc" size={32} />
+            <TokenIcon token="usdc" size={36} />
             {formatMoney(paid, 'usdc', rate, locale)}
           </p>
           <p className="text-sm text-muted-foreground">
@@ -153,14 +153,14 @@ function PayCard({ recipient }: { recipient: string }) {
         <div className="relative">
           <TokenIcon
             token="usdc"
-            size={32}
+            size={36}
             className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
           />
           <Input
             value={value}
             placeholder={t('receive.amountPlaceholder')}
             inputMode="decimal"
-            className="h-12 pl-14 text-lg tabular-nums"
+            className="h-14 pl-16 text-lg tabular-nums"
             disabled={anyBusy}
             onChange={(e) => setValue(e.target.value)}
           />
