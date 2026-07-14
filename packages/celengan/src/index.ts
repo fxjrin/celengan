@@ -34,7 +34,7 @@ if (typeof window !== "undefined") {
 export const networks = {
   testnet: {
     networkPassphrase: "Test SDF Network ; September 2015",
-    contractId: "CBF2XQAEPAXQ5XX3T4HOFYGNQ37KP5CF5K2TQMF5DPLC6YLIWUMS77AX",
+    contractId: "CCCIVH3WBPYE6X4XR3Y7TLPRN44XU5Q4BUSD6RT7DWXWEOFLXDC3DFMV",
   }
 } as const
 
@@ -46,7 +46,8 @@ export const Errors = {
   5: {message:"SavingsLocked"},
   6: {message:"LockNotExtended"},
   7: {message:"EmptyWithdrawal"},
-  8: {message:"LockTooLong"}
+  8: {message:"LockTooLong"},
+  9: {message:"SwitchTargetWithBalance"}
 }
 
 
@@ -55,7 +56,10 @@ export interface Account {
   shares: i128;
   spend: i128;
   split_bps: u32;
+  yield_target: YieldTarget;
 }
+
+export type YieldTarget = {tag: "Defindex", values: void} | {tag: "Blend", values: void} | {tag: "Soroswap", values: void};
 
 export const OwnableError = {
   2100: {message:"OwnerNotSet"},
@@ -80,7 +84,7 @@ export interface Client {
   /**
    * Construct and simulate a pay transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    * Pays `to` through the splitter: the savings share of `amount` goes to
-   * the vault, the rest is credited to the spendable balance.
+   * `to`'s chosen yield source, the rest is credited to the spendable balance.
    */
   pay: ({from, to, amount}: {from: string, to: string, amount: i128}, options?: MethodOptions) => Promise<AssembledTransaction<null>>
 
@@ -131,13 +135,32 @@ export interface Client {
   account_of: ({user}: {user: string}, options?: MethodOptions) => Promise<AssembledTransaction<Account>>
 
   /**
+   * Construct and simulate a blend_pool transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   */
+  blend_pool: (options?: MethodOptions) => Promise<AssembledTransaction<string>>
+
+  /**
+   * Construct and simulate a soroswap_pair transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   */
+  soroswap_pair: (options?: MethodOptions) => Promise<AssembledTransaction<string>>
+
+  /**
    * Construct and simulate a withdraw_spend transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
   withdraw_spend: ({user, amount}: {user: string, amount: i128}, options?: MethodOptions) => Promise<AssembledTransaction<null>>
 
   /**
+   * Construct and simulate a set_yield_target transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   * Switches which protocol `user`'s future savings earn yield in. Only
+   * allowed at a zero balance, since the sources' shares are not
+   * interchangeable and withdrawing first keeps the accounting simple.
+   */
+  set_yield_target: ({user, target}: {user: string, target: YieldTarget}, options?: MethodOptions) => Promise<AssembledTransaction<null>>
+
+  /**
    * Construct and simulate a withdraw_savings transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
-   * Redeems vault shares and sends the resulting USDC to the user.
+   * Redeems savings shares from `user`'s yield source and sends the
+   * resulting USDC to them.
    */
   withdraw_savings: ({user, shares}: {user: string, shares: i128}, options?: MethodOptions) => Promise<AssembledTransaction<i128>>
 
@@ -145,7 +168,7 @@ export interface Client {
 export class Client extends ContractClient {
   static async deploy<T = Client>(
         /** Constructor/Initialization Args for the contract's `__constructor` method */
-        {owner, usdc, vault}: {owner: string, usdc: string, vault: string},
+        {owner, usdc, vault, blend_pool, soroswap_router, soroswap_factory, soroswap_pair, xlm}: {owner: string, usdc: string, vault: string, blend_pool: string, soroswap_router: string, soroswap_factory: string, soroswap_pair: string, xlm: string},
     /** Options for initializing a Client as well as for calling a method, with extras specific to deploying. */
     options: MethodOptions &
       Omit<ContractClientOptions, "contractId"> & {
@@ -157,25 +180,29 @@ export class Client extends ContractClient {
         format?: "hex" | "base64";
       }
   ): Promise<AssembledTransaction<T>> {
-    return ContractClient.deploy({owner, usdc, vault}, options)
+    return ContractClient.deploy({owner, usdc, vault, blend_pool, soroswap_router, soroswap_factory, soroswap_pair, xlm}, options)
   }
   constructor(public readonly options: ContractClientOptions) {
     super(
-      new ContractSpec([ "AAAAAAAAAH9QYXlzIGB0b2AgdGhyb3VnaCB0aGUgc3BsaXR0ZXI6IHRoZSBzYXZpbmdzIHNoYXJlIG9mIGBhbW91bnRgIGdvZXMgdG8KdGhlIHZhdWx0LCB0aGUgcmVzdCBpcyBjcmVkaXRlZCB0byB0aGUgc3BlbmRhYmxlIGJhbGFuY2UuAAAAAANwYXkAAAAAAwAAAAAAAAAEZnJvbQAAABMAAAAAAAAAAnRvAAAAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAAA",
-        "AAAABAAAAAAAAAAAAAAABUVycm9yAAAAAAAACAAAAAAAAAANSW52YWxpZEFtb3VudAAAAAAAAAEAAAAAAAAADEludmFsaWRTcGxpdAAAAAIAAAAAAAAAEUluc3VmZmljaWVudFNwZW5kAAAAAAAAAwAAAAAAAAASSW5zdWZmaWNpZW50U2hhcmVzAAAAAAAEAAAAAAAAAA1TYXZpbmdzTG9ja2VkAAAAAAAABQAAAAAAAAAPTG9ja05vdEV4dGVuZGVkAAAAAAYAAAAAAAAAD0VtcHR5V2l0aGRyYXdhbAAAAAAHAAAAAAAAAAtMb2NrVG9vTG9uZwAAAAAI",
+      new ContractSpec([ "AAAAAAAAAJBQYXlzIGB0b2AgdGhyb3VnaCB0aGUgc3BsaXR0ZXI6IHRoZSBzYXZpbmdzIHNoYXJlIG9mIGBhbW91bnRgIGdvZXMgdG8KYHRvYCdzIGNob3NlbiB5aWVsZCBzb3VyY2UsIHRoZSByZXN0IGlzIGNyZWRpdGVkIHRvIHRoZSBzcGVuZGFibGUgYmFsYW5jZS4AAAADcGF5AAAAAAMAAAAAAAAABGZyb20AAAATAAAAAAAAAAJ0bwAAAAAAEwAAAAAAAAAGYW1vdW50AAAAAAALAAAAAA==",
+        "AAAABAAAAAAAAAAAAAAABUVycm9yAAAAAAAACQAAAAAAAAANSW52YWxpZEFtb3VudAAAAAAAAAEAAAAAAAAADEludmFsaWRTcGxpdAAAAAIAAAAAAAAAEUluc3VmZmljaWVudFNwZW5kAAAAAAAAAwAAAAAAAAASSW5zdWZmaWNpZW50U2hhcmVzAAAAAAAEAAAAAAAAAA1TYXZpbmdzTG9ja2VkAAAAAAAABQAAAAAAAAAPTG9ja05vdEV4dGVuZGVkAAAAAAYAAAAAAAAAD0VtcHR5V2l0aGRyYXdhbAAAAAAHAAAAAAAAAAtMb2NrVG9vTG9uZwAAAAAIAAAAAAAAABdTd2l0Y2hUYXJnZXRXaXRoQmFsYW5jZQAAAAAJ",
         "AAAAAAAAAAAAAAAEdXNkYwAAAAAAAAABAAAAEw==",
         "AAAAAAAAAAAAAAAFb3duZXIAAAAAAAAAAAAAAQAAA+gAAAAT",
         "AAAAAAAAAAAAAAAFcGF1c2UAAAAAAAAAAAAAAA==",
         "AAAAAAAAAAAAAAAFdmF1bHQAAAAAAAAAAAAAAQAAABM=",
-        "AAAAAQAAAAAAAAAAAAAAB0FjY291bnQAAAAABAAAAAAAAAAKbG9ja191bnRpbAAAAAAABgAAAAAAAAAGc2hhcmVzAAAAAAALAAAAAAAAAAVzcGVuZAAAAAAAAAsAAAAAAAAACXNwbGl0X2JwcwAAAAAAAAQ=",
+        "AAAAAQAAAAAAAAAAAAAAB0FjY291bnQAAAAABQAAAAAAAAAKbG9ja191bnRpbAAAAAAABgAAAAAAAAAGc2hhcmVzAAAAAAALAAAAAAAAAAVzcGVuZAAAAAAAAAsAAAAAAAAACXNwbGl0X2JwcwAAAAAAAAQAAAAAAAAADHlpZWxkX3RhcmdldAAAB9AAAAALWWllbGRUYXJnZXQA",
         "AAAAAAAAAAAAAAAGcGF1c2VkAAAAAAAAAAAAAQAAAAE=",
         "AAAAAAAAAAAAAAAHdW5wYXVzZQAAAAAAAAAAAA==",
         "AAAAAAAAAEVMb2NrcyBzYXZpbmdzIHdpdGhkcmF3YWxzIHVudGlsIGB1bnRpbGA7IGEgbG9jayBjYW4gb25seSBiZSBleHRlbmRlZC4AAAAAAAAIc2V0X2xvY2sAAAACAAAAAAAAAAR1c2VyAAAAEwAAAAAAAAAFdW50aWwAAAAAAAAGAAAAAA==",
         "AAAAAAAAAAAAAAAJc2V0X3NwbGl0AAAAAAAAAgAAAAAAAAAEdXNlcgAAABMAAAAAAAAAA2JwcwAAAAAEAAAAAA==",
+        "AAAAAgAAAAAAAAAAAAAAC1lpZWxkVGFyZ2V0AAAAAAMAAAAAAAAAAAAAAAhEZWZpbmRleAAAAAAAAAAAAAAABUJsZW5kAAAAAAAAAAAAAAAAAAAIU29yb3N3YXA=",
         "AAAAAAAAAAAAAAAKYWNjb3VudF9vZgAAAAAAAQAAAAAAAAAEdXNlcgAAABMAAAABAAAH0AAAAAdBY2NvdW50AA==",
-        "AAAAAAAAAAAAAAANX19jb25zdHJ1Y3RvcgAAAAAAAAMAAAAAAAAABW93bmVyAAAAAAAAEwAAAAAAAAAEdXNkYwAAABMAAAAAAAAABXZhdWx0AAAAAAAAEwAAAAA=",
+        "AAAAAAAAAAAAAAAKYmxlbmRfcG9vbAAAAAAAAAAAAAEAAAAT",
+        "AAAAAAAAAAAAAAANX19jb25zdHJ1Y3RvcgAAAAAAAAgAAAAAAAAABW93bmVyAAAAAAAAEwAAAAAAAAAEdXNkYwAAABMAAAAAAAAABXZhdWx0AAAAAAAAEwAAAAAAAAAKYmxlbmRfcG9vbAAAAAAAEwAAAAAAAAAPc29yb3N3YXBfcm91dGVyAAAAABMAAAAAAAAAEHNvcm9zd2FwX2ZhY3RvcnkAAAATAAAAAAAAAA1zb3Jvc3dhcF9wYWlyAAAAAAAAEwAAAAAAAAADeGxtAAAAABMAAAAA",
+        "AAAAAAAAAAAAAAANc29yb3N3YXBfcGFpcgAAAAAAAAAAAAABAAAAEw==",
         "AAAAAAAAAAAAAAAOd2l0aGRyYXdfc3BlbmQAAAAAAAIAAAAAAAAABHVzZXIAAAATAAAAAAAAAAZhbW91bnQAAAAAAAsAAAAA",
-        "AAAAAAAAAD5SZWRlZW1zIHZhdWx0IHNoYXJlcyBhbmQgc2VuZHMgdGhlIHJlc3VsdGluZyBVU0RDIHRvIHRoZSB1c2VyLgAAAAAAEHdpdGhkcmF3X3NhdmluZ3MAAAACAAAAAAAAAAR1c2VyAAAAEwAAAAAAAAAGc2hhcmVzAAAAAAALAAAAAQAAAAs=",
+        "AAAAAAAAAMNTd2l0Y2hlcyB3aGljaCBwcm90b2NvbCBgdXNlcmAncyBmdXR1cmUgc2F2aW5ncyBlYXJuIHlpZWxkIGluLiBPbmx5CmFsbG93ZWQgYXQgYSB6ZXJvIGJhbGFuY2UsIHNpbmNlIHRoZSBzb3VyY2VzJyBzaGFyZXMgYXJlIG5vdAppbnRlcmNoYW5nZWFibGUgYW5kIHdpdGhkcmF3aW5nIGZpcnN0IGtlZXBzIHRoZSBhY2NvdW50aW5nIHNpbXBsZS4AAAAAEHNldF95aWVsZF90YXJnZXQAAAACAAAAAAAAAAR1c2VyAAAAEwAAAAAAAAAGdGFyZ2V0AAAAAAfQAAAAC1lpZWxkVGFyZ2V0AAAAAAA=",
+        "AAAAAAAAAFdSZWRlZW1zIHNhdmluZ3Mgc2hhcmVzIGZyb20gYHVzZXJgJ3MgeWllbGQgc291cmNlIGFuZCBzZW5kcyB0aGUKcmVzdWx0aW5nIFVTREMgdG8gdGhlbS4AAAAAEHdpdGhkcmF3X3NhdmluZ3MAAAACAAAAAAAAAAR1c2VyAAAAEwAAAAAAAAAGc2hhcmVzAAAAAAALAAAAAQAAAAs=",
         "AAAABAAAAAAAAAAAAAAADE93bmFibGVFcnJvcgAAAAMAAAAAAAAAC093bmVyTm90U2V0AAAACDQAAAAAAAAAElRyYW5zZmVySW5Qcm9ncmVzcwAAAAAINQAAAAAAAAAPT3duZXJBbHJlYWR5U2V0AAAACDY=",
         "AAAABQAAACpFdmVudCBlbWl0dGVkIHdoZW4gdGhlIGNvbnRyYWN0IGlzIHBhdXNlZC4AAAAAAAAAAAAGUGF1c2VkAAAAAAABAAAABnBhdXNlZAAAAAAAAAAAAAI=",
         "AAAABQAAACxFdmVudCBlbWl0dGVkIHdoZW4gdGhlIGNvbnRyYWN0IGlzIHVucGF1c2VkLgAAAAAAAAAIVW5wYXVzZWQAAAABAAAACHVucGF1c2VkAAAAAAAAAAI=",
@@ -194,7 +221,10 @@ export class Client extends ContractClient {
         set_lock: this.txFromJSON<null>,
         set_split: this.txFromJSON<null>,
         account_of: this.txFromJSON<Account>,
+        blend_pool: this.txFromJSON<string>,
+        soroswap_pair: this.txFromJSON<string>,
         withdraw_spend: this.txFromJSON<null>,
+        set_yield_target: this.txFromJSON<null>,
         withdraw_savings: this.txFromJSON<i128>
   }
 }
