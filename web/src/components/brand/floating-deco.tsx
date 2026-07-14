@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ComponentType } from 'react'
 import { cn } from '@/lib/utils'
 
@@ -6,10 +6,31 @@ type DecoProps = { uid: string }
 
 const SHADOW = { x: '-40%', y: '-40%', width: '180%', height: '180%' }
 
+// the three APAC hackathon countries this app targets: Indonesia, Vietnam, Philippines
+const APAC_CURRENCY_SYMBOLS = ['Rp', '₫', '₱']
+const CURRENCY_CYCLE_MS = 3200
+const CURRENCY_FLIP_MS = 420
+
 function RpCoin({ uid }: DecoProps) {
   const rim = `${uid}-rim`
   const face = `${uid}-face`
   const sh = `${uid}-sh`
+  const [symbolIndex, setSymbolIndex] = useState(0)
+  const [edgeOn, setEdgeOn] = useState(false)
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const cycle = setInterval(() => {
+      setEdgeOn(true)
+      const swap = setTimeout(() => {
+        setSymbolIndex((i) => (i + 1) % APAC_CURRENCY_SYMBOLS.length)
+        setEdgeOn(false)
+      }, CURRENCY_FLIP_MS / 2)
+      return () => clearTimeout(swap)
+    }, CURRENCY_CYCLE_MS)
+    return () => clearInterval(cycle)
+  }, [])
+
   return (
     <svg viewBox="0 0 64 64" width="100%" height="100%" overflow="visible" aria-hidden="true">
       <defs>
@@ -30,6 +51,9 @@ function RpCoin({ uid }: DecoProps) {
         <circle cx="32" cy="32" r="27" fill={`url(#${rim})`} />
         <circle cx="32" cy="32" r="21" fill={`url(#${face})`} />
         <circle cx="32" cy="32" r="21" fill="none" stroke="#b07f22" strokeWidth="1.2" opacity="0.5" />
+        {/* squashed to edge-on then un-squashed on the other side of the symbol swap,
+            like a coin flipping over to reveal its next face - swap itself is invisible
+            since it happens at the point the text is scaled to a hairline */}
         <text
           x="32"
           y="40"
@@ -38,8 +62,13 @@ function RpCoin({ uid }: DecoProps) {
           fontSize="20"
           fontWeight="700"
           fill="#8f6414"
+          style={{
+            transformOrigin: '32px 34px',
+            transform: edgeOn ? 'scaleX(0.04)' : 'scaleX(1)',
+            transition: `transform ${CURRENCY_FLIP_MS / 2}ms ease-in-out`,
+          }}
         >
-          Rp
+          {APAC_CURRENCY_SYMBOLS[symbolIndex]}
         </text>
         <ellipse cx="22" cy="16" rx="9" ry="4.2" fill="#fff" opacity="0.55" transform="rotate(-28 22 16)" />
       </g>
@@ -352,21 +381,40 @@ const PLACEMENTS: Placement[] = [
   { obj: Sparkle, side: 'right', top: '80%', right: '7%', size: 40, rotate: -10, depth: 24, duration: 6, delay: 0.3 },
 ]
 
+// a second composition (different positions, sizes, and left/right swaps of the same
+// coins) so a page that shows the deco twice - e.g. hero and closing CTA - doesn't just
+// repeat the identical layout
+const PLACEMENTS_ALT: Placement[] = [
+  { obj: CoinStack, side: 'left', top: '6%', left: '17%', size: 60, rotate: 7, depth: 14, duration: 7.6, delay: 0.3 },
+  { obj: LoopBlob, side: 'left', top: '18%', left: '8%', size: 84, rotate: 15, depth: 18, duration: 6.8, delay: 0.1 },
+  { obj: DollarCoin, side: 'left', top: '42%', left: '4%', size: 58, rotate: -10, depth: 26, duration: 5.8, delay: 0.9 },
+  { obj: Sparkle, side: 'left', top: '66%', left: '15%', size: 40, rotate: -6, depth: 22, duration: 5, delay: 0.5 },
+  { obj: UsdcCoin, side: 'left', top: '88%', left: '9%', size: 52, rotate: 12, depth: 16, duration: 7.4, delay: 1.1 },
+  { obj: RpCoin, side: 'right', top: '14%', right: '8%', size: 88, rotate: -14, depth: 20, duration: 7, delay: 0.4 },
+  { obj: SoftArrow, side: 'right', top: '38%', right: '17%', size: 72, rotate: -6, depth: 12, duration: 8, delay: 0 },
+  { obj: HeartBlob, side: 'right', top: '58%', right: '5%', size: 64, rotate: 8, depth: 24, duration: 6.3, delay: 1 },
+  { obj: XlmCoin, side: 'right', top: '80%', right: '15%', size: 46, rotate: 10, depth: 28, duration: 6.6, delay: 0.6 },
+  { obj: Sparkle, side: 'right', top: '93%', right: '22%', size: 36, rotate: -12, depth: 30, duration: 5.4, delay: 0.7 },
+]
+
 const LERP = 0.08
 
 export function FloatingDeco({
   side,
+  variant = 'default',
   className,
 }: {
   side: 'both' | 'left' | 'right'
+  variant?: 'default' | 'alt'
   className?: string
 }) {
-  const items = side === 'both' ? PLACEMENTS : PLACEMENTS.filter((p) => p.side === side)
+  const allPlacements = variant === 'alt' ? PLACEMENTS_ALT : PLACEMENTS
+  const items = side === 'both' ? allPlacements : allPlacements.filter((p) => p.side === side)
   const itemRefs = useRef<(HTMLDivElement | null)[]>([])
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const depths = (side === 'both' ? PLACEMENTS : PLACEMENTS.filter((p) => p.side === side)).map(
+    const depths = (side === 'both' ? allPlacements : allPlacements.filter((p) => p.side === side)).map(
       (p) => p.depth,
     )
     let raf = 0
@@ -402,7 +450,7 @@ export function FloatingDeco({
       window.removeEventListener('mousemove', onMove)
       cancelAnimationFrame(raf)
     }
-  }, [side])
+  }, [side, allPlacements])
 
   return (
     <div
@@ -445,7 +493,9 @@ export function FloatingDeco({
               }}
             >
               <div className="h-full w-full" style={{ transform: `rotate(${item.rotate}deg)` }}>
-                <Obj uid={`cel-${item.side}-${i}`} />
+                <div className="pointer-events-auto h-full w-full transition-transform duration-300 ease-out hover:scale-110">
+                  <Obj uid={`cel-${item.side}-${i}`} />
+                </div>
               </div>
             </div>
           </div>

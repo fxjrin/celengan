@@ -29,6 +29,8 @@
   --color-background: var(--background);
   --color-gold: var(--gold);
   --color-gold-ink: var(--gold-ink);
+  --color-growth: var(--growth);
+  --color-growth-ink: var(--growth-ink);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -60,6 +62,8 @@
   --ring: oklch(0.655 0.135 83.6); /* deep amber at 3:1 on the ivory bg; pure yellow vanishes */
   --gold: oklch(0.751 0.13 79.8); /* saturated savings gold; --accent stays a pale wash */
   --gold-ink: oklch(0.52 0.13 79.8); /* --gold is 2.25:1 on card, decorative only; this is the readable text shade */
+  --growth: oklch(0.751 0.13 145); /* same L/C as --gold, hue shifted to green for the earn-yield step */
+  --growth-ink: oklch(0.52 0.13 145); /* readable text shade, mirrors --gold-ink's contrast treatment */
   --radius: 0.75rem;
 }
 
@@ -85,6 +89,8 @@
   --ring: oklch(0.775 0.146 90.6);
   --gold: oklch(0.807 0.122 84);
   --gold-ink: oklch(0.85 0.122 84); /* lighter than --gold so it still clears 4.5:1 on the bg-gold/15 badge tint, not just on card */
+  --growth: oklch(0.807 0.122 145);
+  --growth-ink: oklch(0.85 0.122 145); /* mirrors --gold-ink's lighter-on-dark treatment */
 }
 
 @utility no-scrollbar {
@@ -92,6 +98,55 @@
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+@keyframes liquid-shimmer {
+  from {
+    background-position: 160% 0;
+  }
+  to {
+    background-position: -60% 0;
+  }
+}
+
+@utility animate-liquid-shimmer {
+  animation: liquid-shimmer 3.2s ease-in-out infinite;
+}
+
+@keyframes liquid-pulse-ring {
+  from {
+    transform: scale(0.6);
+    opacity: 0.45;
+  }
+  to {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+@utility animate-liquid-pulse-ring {
+  animation: liquid-pulse-ring 2.4s ease-out infinite;
+}
+
+@keyframes flow-line {
+  0% {
+    left: -10%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+@utility animate-flow-line {
+  animation: flow-line 3.2s linear infinite;
 }
 
 @layer base {
@@ -115,5 +170,11 @@
   }
   html {
     @apply font-sans;
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 }
